@@ -1,8 +1,5 @@
 package application;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import gui.MainFrame;
 
 public class Application {
@@ -12,7 +9,7 @@ public class Application {
 		MainFrame mf = MainFrame.getInstance();
 		mf.setSize(500, 500);
 		mf.setVisible(true);
-		
+		/*
 		try {
 			UIManager.setLookAndFeel("napkin.NapkinLookAndFeel");
 		} catch (ClassNotFoundException e) {
@@ -27,7 +24,7 @@ public class Application {
 		} catch (UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }
