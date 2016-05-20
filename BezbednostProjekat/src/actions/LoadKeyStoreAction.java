@@ -41,8 +41,6 @@ public class LoadKeyStoreAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		/*
-		*/
 
 		try {
 			KeyStore keyStore = KeyStore.getInstance("JKS", "SUN");
@@ -82,14 +80,11 @@ public class LoadKeyStoreAction extends AbstractAction {
 			}
 			panel.dispose();
 		} catch (Exception exp) {
-			JOptionPane.showMessageDialog(panel, "Could not open keyStore!",
-					"Error", JOptionPane.ERROR_MESSAGE);
-			if (parentDialog instanceof CertificateDialog) {
-				((CertificateDialog) parentDialog).getKeyStore()
-						.setSelectedIndex(0);
-			} else {
-				((ChooseKeyStore) parentDialog).getKeyStoresFromFileSystem()
-						.setSelectedIndex(0);
+			JOptionPane.showMessageDialog(panel, "Could not open keyStore!", "Error", JOptionPane.ERROR_MESSAGE);
+			if(parentDialog instanceof CertificateDialog){
+				((CertificateDialog)parentDialog).getKeyStore().setSelectedIndex(0);
+			}else{
+				((ChooseKeyStore)parentDialog).getKeyStoresFromFileSystem().setSelectedIndex(0);
 			}
 		}
 	}
