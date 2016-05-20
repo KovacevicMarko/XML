@@ -1,5 +1,3 @@
-/actions/
-/application/
-/gui/
-/security/
-/utils/
+/gui
+/actions
+/application
