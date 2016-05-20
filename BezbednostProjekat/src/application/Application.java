@@ -1,8 +1,5 @@
 package application;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import gui.MainFrame;
 
 public class Application {
@@ -27,7 +24,7 @@ public class Application {
 		} catch (UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		*/
 	}
 
