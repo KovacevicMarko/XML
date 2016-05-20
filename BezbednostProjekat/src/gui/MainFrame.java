@@ -68,7 +68,7 @@ public class MainFrame extends JFrame
 		mntmChooseCertificate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ShowKeyStoresDialog ckd = new ShowKeyStoresDialog();
+				ChooseKeyStore ckd = new ChooseKeyStore();
 				ckd.setModal(true);
 				ckd.setLocationRelativeTo(MainFrame.getInstance());
 				ckd.setVisible(true);
