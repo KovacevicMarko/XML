@@ -12,7 +12,7 @@ public class Application {
 		MainFrame mf = MainFrame.getInstance();
 		mf.setSize(500, 500);
 		mf.setVisible(true);
-		
+		/*
 		try {
 			UIManager.setLookAndFeel("napkin.NapkinLookAndFeel");
 		} catch (ClassNotFoundException e) {
@@ -28,6 +28,7 @@ public class Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }
