@@ -31,8 +31,7 @@ public class LoadKeyStoreAction extends AbstractAction{
 		
 		if(parentDialog instanceof CertificateDialog)
 		{
-			//TODO
-			this.selectedIndex = 1;//((CertificateDialog)parentDialog).getKeyStore().getSelectedIndex();
+			this.selectedIndex = ((CertificateDialog)parentDialog).getKeyStore().getSelectedIndex();
 		}
 	}
 	
