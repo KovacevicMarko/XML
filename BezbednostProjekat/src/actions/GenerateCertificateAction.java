@@ -72,7 +72,7 @@ public class GenerateCertificateAction extends AbstractAction{
 		try {
 			diag.getSelectedKeyStore().setKeyEntry(alias,keyPair.getPrivate(),password,  new X509Certificate[] {cert});
 			
-			FileOutputStream outputFile = new FileOutputStream("./keyStore/" + (String)diag.getKeyStore().getSelectedItem());
+			FileOutputStream outputFile = new FileOutputStream("./keyStores/" + (String)diag.getKeyStore().getSelectedItem());
 			diag.getSelectedKeyStore().store(outputFile,diag.getKeyStorePassword());
 		} catch (Exception e1) {
 

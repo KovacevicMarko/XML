@@ -337,8 +337,18 @@ public class CertificateDialog extends JDialog {
 		KeyStore keyStore;
 		this.keyStoreComboBox.addItem(" ");
 		for(File keyStoreFile : keyStoreFiles){
-			this.keyStoreComboBox.addItem(keyStoreFile.getName());
+			this.keyStoreComboBox.addItem(splitName(keyStoreFile.getName()));
 		}
+	}
+	
+	/**
+	 * Splituj naziv po tacki i vrati samo naziv bez extenzije.
+	 * @param name
+	 * @return
+	 */
+	private String splitName(String name)
+	{
+		return name.split(".jks")[0];
 	}
 
 	public char[] getKeyStorePassword() {

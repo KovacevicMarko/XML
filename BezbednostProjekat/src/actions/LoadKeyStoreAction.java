@@ -37,9 +37,6 @@ public class LoadKeyStoreAction extends AbstractAction{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		/*
-		*/
-
 
 		try {
 			KeyStore keyStore = KeyStore.getInstance("JKS","SUN");
@@ -48,9 +45,9 @@ public class LoadKeyStoreAction extends AbstractAction{
 			
 			
 			if(parentDialog instanceof CertificateDialog){
-				/*((CertificateDialog)parentDialog).setSelectedKeyStore(keyStore);
+				((CertificateDialog)parentDialog).setSelectedKeyStore(keyStore);
 				((CertificateDialog)parentDialog).setKeyStorePassword(password.getPassword());
-				((CertificateDialog)parentDialog).getKeyStore().setSelectedIndex(selectedIndex);*/
+				((CertificateDialog)parentDialog).getKeyStore().setSelectedIndex(selectedIndex);
 			}else{
 				ChooseCertificate ccf = new ChooseCertificate(keyStore, this.password.getPassword(),this.fileName);
 				ccf.setModal(true);
@@ -59,15 +56,12 @@ public class LoadKeyStoreAction extends AbstractAction{
 				this.parentDialog.dispose();
 				this.panel.dispose();
 				
-				//((ShowKeyStoresDialog)parentDialog).setSelectedKeyStore(keyStore);
-				//((ShowKeyStoresDialog)parentDialog).setKeyStorePassword(password.getPassword());
-				
 			}
 			panel.dispose();
 		} catch (Exception exp) {
 			JOptionPane.showMessageDialog(panel, "Could not open keyStore!", "Error", JOptionPane.ERROR_MESSAGE);
 			if(parentDialog instanceof CertificateDialog){
-				//((CertificateDialog)parentDialog).getKeyStore().setSelectedIndex(0);
+				((CertificateDialog)parentDialog).getKeyStore().setSelectedIndex(0);
 			}else{
 				((ChooseKeyStore)parentDialog).getKeyStoresFromFileSystem().setSelectedIndex(0);
 			}
