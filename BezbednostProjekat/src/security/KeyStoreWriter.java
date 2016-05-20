@@ -23,6 +23,10 @@ public class KeyStoreWriter {
 	
 	private KeyStore keyStore;
 	
+	public KeyStore getKeyStore() {
+		return keyStore;
+	}
+
 	public KeyStoreWriter() {
 		try {
 			keyStore = KeyStore.getInstance("JKS");
