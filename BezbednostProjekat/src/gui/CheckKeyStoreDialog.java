@@ -72,7 +72,7 @@ public class CheckKeyStoreDialog extends JDialog{
 					}
 				});
 				
-				okButton.addActionListener(new LoadKeyStoreAction(this, parentDialog, passwordField, fileName));
+				okButton.addActionListener(new LoadKeyStoreAction(this, parentDialog, passwordField, fileName,true));
 				
 				buttonPane.add(cancelButton);
 			}else{
@@ -89,7 +89,7 @@ public class CheckKeyStoreDialog extends JDialog{
 						that.dispose();
 					}
 				});
-				okButton.addActionListener(new LoadKeyStoreAction(this, parentDialog, passwordField, fileName));
+				okButton.addActionListener(new LoadKeyStoreAction(this, parentDialog, passwordField, fileName, false));
 				
 				buttonPane.add(cancelButton);
 			}
