@@ -66,10 +66,8 @@ public class CheckKeyStoreDialog extends JDialog{
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if(thatParentDialog instanceof CertificateDialog){
-							//TODO
-							//((CertificateDialog)thatParentDialog).getKeyStore().setSelectedIndex(0);
-						}
+						
+						((CertificateDialog)thatParentDialog).getKeyStore().setSelectedIndex(0);
 						that.dispose();
 					}
 				});
@@ -101,6 +99,10 @@ public class CheckKeyStoreDialog extends JDialog{
 
 	public JDialog getParentDialog() {
 		return parentDialog;
+	}
+	
+	public JPasswordField getPasswordField(){
+		return passwordField;
 	}
 
 	public void setParentDialog(JDialog parentDialog) {

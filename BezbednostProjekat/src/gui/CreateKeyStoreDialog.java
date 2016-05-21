@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -23,7 +24,7 @@ public class CreateKeyStoreDialog extends JDialog{
 
 	private final JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 	private JTextField nameKS;
-	private JTextField passwordKS;
+	private JPasswordField passwordKS;
 	
 	/**
 	 * Kreiranje nove instance KeyStore dijaloga.
@@ -48,7 +49,7 @@ public class CreateKeyStoreDialog extends JDialog{
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword);
 
-		passwordKS = new JTextField();
+		passwordKS = new JPasswordField();
 		panel.add(passwordKS);
 		passwordKS.setColumns(25);
 
@@ -86,10 +87,10 @@ public class CreateKeyStoreDialog extends JDialog{
 	public void setNameKS(JTextField nameKS) {
 		this.nameKS = nameKS;
 	}
-	public JTextField getPasswordKS() {
+	public JPasswordField getPasswordKS() {
 		return passwordKS;
 	}
-	public void setPasswordKS(JTextField passwordKS) {
+	public void setPasswordKS(JPasswordField passwordKS) {
 		this.passwordKS = passwordKS;
 	}
 }

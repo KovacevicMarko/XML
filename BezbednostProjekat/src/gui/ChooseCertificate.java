@@ -16,6 +16,7 @@ import java.security.cert.CertificateException;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -69,7 +70,7 @@ public class ChooseCertificate extends JDialog{
 		
 		final KeyStore selKeyStore = selectedKeyStore;
 		final char[]keyStorePass = keyStorePassword;
-		final String staticNameOfFile = nameOfFile;
+		final String staticNameOfFile = nameOfFile + ".jks";
 		final char[]certPassword = passwordField.getPassword();
 		final ChooseCertificate ecid = this;
 		JButton okButton = new JButton("OK");
@@ -83,6 +84,8 @@ public class ChooseCertificate extends JDialog{
 				
 				try {
 					in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE + staticNameOfFile));
+					System.out.println("KY" + keyStorePass);
+					System.err.println("CY" + certPassword);
 					selKeyStore.load(in, keyStorePass);
 					if(selKeyStore.isKeyEntry(alias.getText())) {
 						System.out.println("Sertifikat:");
@@ -94,6 +97,9 @@ public class ChooseCertificate extends JDialog{
 						scid.setLocationRelativeTo(MainFrame.getInstance());
 						scid.setVisible(true);
 							
+					}else{
+						JOptionPane.showMessageDialog(null, "The certificate doesn`t exists.");
+						return;
 					}
 				} catch (NoSuchAlgorithmException | CertificateException | IOException |  KeyStoreException e1) {
 					// TODO Auto-generated catch block
