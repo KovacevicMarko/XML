@@ -85,16 +85,15 @@ public class CheckCertificateDialog extends JDialog{
 					in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE + fileName));
 					ks.load(in, password);
 					if(ks.isKeyEntry(alias)) {
-						System.out.println("Sertifikat:");
 						Certificate cert = ks.getCertificate(alias);
 						PrivateKey privKey = null;
 						try {
 							privKey = (PrivateKey)ks.getKey(alias, passwordField.getPassword());
-							System.out.println("PASSSSSSSSSS!!!!!!!!" + passwordField.getText());
 							setCertifikatePassword(passwordField.getPassword());
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null, "The certificate doesn`t exists.");
+							return;
 							
 						}
 						that.setPrivateKey(privKey);

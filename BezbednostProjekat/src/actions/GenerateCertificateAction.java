@@ -1,28 +1,31 @@
 package actions;
 
 import gui.CertificateDialog;
+import gui.MainFrame;
 
 import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import security.CertificateGenerator;
 import security.IssuerData;
+import security.KeyStoreWriter;
 import security.SubjectData;
 
 /**
@@ -48,6 +51,16 @@ public class GenerateCertificateAction extends AbstractAction{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(!diag.checkAllFields()){
+			JOptionPane.showMessageDialog(null, "You must fill in all fields!");
+			return;
+		}else if(!diag.checkValidDate()){
+			JOptionPane.showMessageDialog(null, "Date is not in valid format! Valid format is yyyy-mm-dd");
+			return;
+		}else if(!diag.isValidEmail(diag.getEmail_address().getText())){
+			JOptionPane.showMessageDialog(null, "EMail is not in valid format!");
+			return;
+		}
 		
 		CertificateGenerator generator = new CertificateGenerator();
 		Certificate cerf = diag.getCertificate();
@@ -56,8 +69,10 @@ public class GenerateCertificateAction extends AbstractAction{
 		KeyStore keyStore = diag.getSelectedKeyStore();
 
 		X500NameBuilder builder = generateBuilder();
-		// TODO Hardcoded - needs to be fixed.
-		String certificateNumber = "1";
+
+		int snb=new Double( Math.random() * 100000 ).intValue();
+		String certificateNumber = Integer.toString(snb);
+
 		Date startDate = null, endDate = null;
 		SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -83,7 +98,6 @@ public class GenerateCertificateAction extends AbstractAction{
 			}
 			X500NameBuilder buildertmp = parseDataFromCertificate((X509Certificate)cerf);
 			issuerData = new IssuerData(diag.getPrivateKey(), buildertmp.build());
-			System.out.println(issuerData);
 		}else{
 			issuerData = new IssuerData(keyPair.getPrivate(), builder.build());
 		}
@@ -103,6 +117,9 @@ public class GenerateCertificateAction extends AbstractAction{
 
 			e1.printStackTrace();
 		}
+		
+		saveCertificate(cert, alias);
+		
 
 	    diag.dispose();
 	}
@@ -124,8 +141,8 @@ public class GenerateCertificateAction extends AbstractAction{
 	    builder.addRDN(BCStyle.OU, diag.getOrganization_unit().getText());
 	    builder.addRDN(BCStyle.C, diag.getCountry_code().getText());
 	    builder.addRDN(BCStyle.E, diag.getEmail_address().getText());
-	    // TODO Hardcoded - needs to be fixed.
-	    builder.addRDN(BCStyle.UID, "123445");
+	    int uid = new Double( Math.random() * 100000 ).intValue();
+	    builder.addRDN(BCStyle.UID, Integer.toString(uid));
 	    return builder;
 	}
 	
@@ -161,5 +178,25 @@ public class GenerateCertificateAction extends AbstractAction{
 	 		return builder;
 	 	}
 	
+ 	private void saveCertificate(X509Certificate cert, String alias){
+ 		
+ 		byte[] buf;
+		try {
+			buf = cert.getEncoded();
+			FileOutputStream os;	
+			os = new FileOutputStream("./cert/"+alias+".cer");	
+			os.write(buf);
+			os.close(); 
+		} catch (CertificateEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 	}
 
 }

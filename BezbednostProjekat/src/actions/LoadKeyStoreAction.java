@@ -45,7 +45,7 @@ public class LoadKeyStoreAction extends AbstractAction {
 		try {
 			KeyStore keyStore = KeyStore.getInstance("JKS", "SUN");
 			FileInputStream file = new FileInputStream("./keyStores/"
-					+ fileName);
+					+ fileName + ".jks");
 			keyStore.load(file, password.getPassword());
 
 			if (parentDialog instanceof CertificateDialog) {
@@ -66,8 +66,6 @@ public class LoadKeyStoreAction extends AbstractAction {
 					this.parentDialog.dispose();
 					this.panel.dispose();
 
-					// ((ShowKeyStoresDialog)parentDialog).setSelectedKeyStore(keyStore);
-					// ((ShowKeyStoresDialog)parentDialog).setKeyStorePassword(password.getPassword());
 
 				} else {
 					CertificateDialog c = (CertificateDialog) ((CheckKeyStoreDialog) parentDialog)

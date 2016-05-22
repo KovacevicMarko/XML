@@ -1,12 +1,21 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -24,6 +33,7 @@ public class MainFrame extends JFrame
 	
 	private static MainFrame instance;
 	private boolean selfSigned;
+	
 	
 	private JPanel contentPane;
 	
@@ -43,6 +53,13 @@ public class MainFrame extends JFrame
 		setBounds(100, 100, 450, 300);
 		setTitle("Certificates");
 		setLocationRelativeTo(null);
+		
+		/*MyDesktopPane destPane= new MyDesktopPane(new ImageIcon("ppk.png").getImage());
+		add(destPane);*/
+		
+		setContentPane(new JLabel(new ImageIcon("ppk.png")));
+	    setLayout(new FlowLayout());
+		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		

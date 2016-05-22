@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
@@ -84,18 +85,31 @@ public class ChooseCertificate extends JDialog{
 				
 				try {
 					in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE + staticNameOfFile));
-					System.out.println("KY" + keyStorePass);
-					System.err.println("CY" + certPassword);
 					selKeyStore.load(in, keyStorePass);
 					if(selKeyStore.isKeyEntry(alias.getText())) {
-						System.out.println("Sertifikat:");
 						Certificate cert = selKeyStore.getCertificate(alias.getText());
+						PrivateKey privKey = null;
+						try {
+							privKey = (PrivateKey)selKeyStore.getKey(alias.getText(), passwordField.getPassword());
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, "The certificate doesn`t exists.");
+							return;
+							
+						}
 						
 						ecid.dispose();
 						CertificateInformationDialog scid = new CertificateInformationDialog(cert);
-						scid.setModal(true);
-						scid.setLocationRelativeTo(MainFrame.getInstance());
-						scid.setVisible(true);
+						try {
+							scid.readKeyStore(cert);
+							
+							scid.setModal(true);
+							scid.setLocationRelativeTo(MainFrame.getInstance());
+							scid.setVisible(true);
+							scid.setResizable(false);
+							
+						} catch (Exception kse) {
+						}
 							
 					}else{
 						JOptionPane.showMessageDialog(null, "The certificate doesn`t exists.");
