@@ -50,15 +50,14 @@ public class MainFrame extends JFrame
 	private MainFrame()
 	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 500, 300);
 		setTitle("Certificates");
 		setLocationRelativeTo(null);
 		
 		/*MyDesktopPane destPane= new MyDesktopPane(new ImageIcon("ppk.png").getImage());
 		add(destPane);*/
 		
-		setContentPane(new JLabel(new ImageIcon("ppk.png")));
-	    setLayout(new FlowLayout());
+		
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -128,10 +127,12 @@ public class MainFrame extends JFrame
 		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
-		contentPane = new JPanel();
+		/*contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));*/
+		//setContentPane(new JLabel(new ImageIcon("ppk.png")));
+	    setLayout(new FlowLayout());
+		setContentPane(new JLabel(new ImageIcon("ppk.png")));
 	}
 
 
