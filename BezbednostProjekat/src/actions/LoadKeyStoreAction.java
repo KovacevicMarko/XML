@@ -1,6 +1,7 @@
 package actions;
 
 import gui.CertificateDialog;
+import gui.CertificateTableDialog;
 import gui.CheckKeyStoreDialog;
 import gui.ChooseCertificate;
 import gui.ChooseKeyStore;
@@ -58,11 +59,16 @@ public class LoadKeyStoreAction extends AbstractAction {
 			} else {
 
 				if (!isFromCertificateDialog) {
-					ChooseCertificate ccf = new ChooseCertificate(keyStore,
+					CertificateTableDialog cct= new CertificateTableDialog(keyStore,this.password.getPassword(), this.fileName);
+					cct.setModal(true);
+					cct.setLocationRelativeTo(MainFrame.getInstance());
+					cct.setVisible(true);
+					/*ChooseCertificate ccf = new ChooseCertificate(keyStore,
 							this.password.getPassword(), this.fileName);
 					ccf.setModal(true);
 					ccf.setLocationRelativeTo(MainFrame.getInstance());
 					ccf.setVisible(true);
+					*/
 					this.parentDialog.dispose();
 					this.panel.dispose();
 

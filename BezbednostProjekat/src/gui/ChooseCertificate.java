@@ -41,8 +41,9 @@ public class ChooseCertificate extends JDialog{
 	private char[] keyStorePassword;
 	private String nameOfFile;
 	
-	public ChooseCertificate(KeyStore selectedKeyStore,char[] keyStorePassword,String nameOfFile)
+	public ChooseCertificate(KeyStore selectedKeyStore,char[] keyStorePassword,String nameOfFile,String s)
 	{
+		
 		this.nameOfFile = nameOfFile;
 		this.selectedKeyStore= selectedKeyStore;
 		this.keyStorePassword= keyStorePassword;
@@ -63,7 +64,7 @@ public class ChooseCertificate extends JDialog{
 		panel.add(lblPassword, "cell 0 1");
 		passwordField = new JPasswordField();
 		panel.add(passwordField, "cell 2 1,growx");
-		
+		alias.setText(s);
 		final ChooseCertificate cid = this;
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));

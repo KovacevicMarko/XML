@@ -117,7 +117,7 @@ public class CertificateInformationDialog extends JDialog
 		tfsignAlg = new JTextField();
 		tfsignAlg.setEditable(false);
 
-	//labele
+		//labele
 		getContentPane().add(jlcert, "cell 0 0,align center, height 30, span");
 		getContentPane().add(jlversion, "cell 0 1,align right, height 30");
 		getContentPane().add(jlsubject, "cell 0 2,align right, height 30");
