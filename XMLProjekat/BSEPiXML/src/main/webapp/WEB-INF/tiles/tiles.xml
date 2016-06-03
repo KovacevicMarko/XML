@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+ <tiles-definitions>
+ 	
+ 	
+ 	 <definition name="layoutHome" template="/WEB-INF/jsp/layout/homeLayout.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="" />
+	</definition>
+	
+	 <definition name="layoutLogin" template="/WEB-INF/jsp/layout/loginLayout.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="" />
+	</definition>
+ 	
+ 	
+ 	<definition name="Home" extends="layoutHome">
+ 	<put-attribute name="title" value="title.homePage"/>
+ 	<put-attribute name="content" value="/WEB-INF/jsp/content/home.jsp" />
+ 	</definition>
+ 	
+ 	
+ 	<definition name ="homePage" extends="layoutLogin">
+ 		<put-attribute name="title" value="title.homePage"/>
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/home.jsp" />
+ 	</definition>
+ 	
+ 	<definition name ="logIn" extends="layoutLogin">
+ 		<put-attribute name="title" value="title.homePage"/>
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/login.jsp" />
+ 	</definition>
+ 	
+ 	
+ 	<definition name ="test" extends="layoutLogin">
+ 		<put-attribute name="title" value="title.homePage"/>
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/test.jsp" />
+ 	</definition>
+	
+ </tiles-definitions>
