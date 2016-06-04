@@ -5,11 +5,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
+
+		
+<script src="/js/jquery.min.js"></script>	
+<script src="/js/bootstrap.js"/></script>
+
 </head>
 <body>
+<tiles:insertAttribute name="header" />
 
 <h1>heading</h1>
 <p><a href="logIn">Ulogujte se </a> </p>
+
 
 
 </body>
