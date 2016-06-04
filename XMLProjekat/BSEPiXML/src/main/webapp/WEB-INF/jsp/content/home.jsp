@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Skupstina grada novog sada</title>
 
 		
 <script src="/js/jquery.min.js"></script>	
@@ -14,8 +14,28 @@
 <body>
 <tiles:insertAttribute name="header" />
 
-<h1>heading</h1>
-<p><a href="logIn">Ulogujte se </a> </p>
+<div align="left" class="col-xs-3">
+		<form action="./PretragaRestoranaController" method="post" class="dodavanjeStavke" accept-charset="ISO-8859-1">
+		<table><td><input required class="form-control" placeholder="Pretrazite akte..." type="text" name="pretragaAkata" ></td>  <td> 	<input type="submit" class="btn btn-primary" name="submit" value="Pretrazi"></td></table>
+		</form>
+</div>
+
+<div align="center" class="col-xs-3">
+	<table  align="center" class="table table-striped table-bordered table-hover table-condensed">
+			<caption style="border: inherit; background-color: lightgrey;">Akti....</caption>
+			<thead class="thead-inverse">
+				
+					<th>Naziv</th>
+					<th>Deo</th>
+					<th>Preambula</th>
+					<th>Opsirnije</th>
+					
+			</thead>
+			<tbody>
+			
+			</tbody>
+		</table>
+</div>
 
 
 
