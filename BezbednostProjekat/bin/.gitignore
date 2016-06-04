@@ -1,6 +1,1 @@
-/actions/
-/application/
-/gui/
-/security/
-/utils/
-/cert/
+/.gitignore

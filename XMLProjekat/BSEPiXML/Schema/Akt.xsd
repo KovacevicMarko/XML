@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.gradskaskupstina.rs/akt"
+    xmlns:gs_tipovi="http://www.gradskaskupstina.rs/tipovi"
+    xmlns:gs_akt="http://www.gradskaskupstina.rs/akt">
+    <xs:import namespace="http://www.gradskaskupstina.rs/tipovi" schemaLocation="TipoviIUloge.xsd"/>
+    <xs:element name="Akt">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Preambula" type="xs:string"/>
+                <xs:element name="Naziv" type="xs:string"/>
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" ref="gs_akt:Deo"/>
+                </xs:sequence>
+                <xs:element ref="gs_akt:PrelazneIZavrsneOdredbe"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Deo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" name="Sadrzaj" type="gs_tipovi:TSadrzajDela"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string" use="optional"/>
+            <xs:attribute name="Naziv" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Glava">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajGlave"/>
+            </xs:sequence>
+            <xs:attribute name="oznaka" type="xs:string"/>
+            <xs:attribute name="naziv" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Odeljak">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajOdeljka"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string"/>
+            <xs:attribute name="Naziv" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Clan">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajClana"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Stav">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajStava"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Tacka">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajTacke"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Alineja">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sadrzaj" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PrelazneIZavrsneOdredbe">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Predlagac" type="gs_tipovi:TOdbornik"/>
+                <xs:element maxOccurs="1" name="Datum" type="xs:dateTime"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.gradskaskupstina.rs/amandman"
+    xmlns:gs_akt="http://www.gradskaskupstina.rs/akt"
+    xmlns:gs_amandman="http://www.gradskaskupstina.rs/amandman"
+    xmlns:gs_tipovi="http://www.gradskaskupstina.rs/tipovi">
+
+    <xs:import namespace="http://www.gradskaskupstina.rs/akt" schemaLocation="Akt.xsd"/>
+    <xs:import namespace="http://www.gradskaskupstina.rs/tipovi" schemaLocation="TipoviIUloge.xsd"/>
+    <xs:element name="Amandman">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="PravniOsnov" type="xs:string"/>
+                <xs:element name="Predlagac" type="gs_tipovi:TOdbornik"/>
+                <xs:sequence>
+                    <xs:element ref="gs_akt:Akt"/>
+                    <xs:element name="PredmetIzmene" type="xs:string"/>
+                    <xs:element name="CiljIzmene" type="xs:string"/>
+                </xs:sequence>
+            </xs:sequence>
+            <xs:attribute name="DatumPredlaganja" type="xs:dateTime"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

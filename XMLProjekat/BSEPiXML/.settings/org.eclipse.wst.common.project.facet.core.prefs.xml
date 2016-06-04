@@ -6,7 +6,7 @@
   </facet>
   <facet id="jpt.jaxb">
     <node name="classgen">
-      <attribute name="package" value="klase"/>
+      <attribute name="package" value="model"/>
     </node>
   </facet>
 </root>
