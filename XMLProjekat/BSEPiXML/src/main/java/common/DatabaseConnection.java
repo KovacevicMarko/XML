@@ -10,6 +10,10 @@ import com.marklogic.client.DatabaseClientFactory;
  */
 public class DatabaseConnection
 {
+	
+	public static String USERS_DOC_ID="/Korisnici.xml";
+	public static String AKT_DOC_ID="/Akt.xml";
+	
 
     private static DatabaseClient client = null;
 

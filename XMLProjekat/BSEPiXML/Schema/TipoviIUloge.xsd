@@ -5,7 +5,7 @@
     xmlns:gs_tipovi="http://www.gradskaskupstina.rs/tipovi"
     xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
     <xs:complexType mixed="true" name="TSadrzajDela">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Glava">
                 <xs:complexType>
@@ -19,7 +19,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType mixed="true" name="TSadrzajGlave">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Odeljak">
                 <xs:complexType>
@@ -41,7 +41,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType mixed="true" name="TSadrzajOdeljka">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Clan">
                 <xs:complexType>
@@ -54,7 +54,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TSadrzajClana">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element maxOccurs="unbounded" name="Stav">
                 <xs:complexType>
@@ -67,7 +67,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TSadrzajStava">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
                 <xs:complexType>
@@ -80,7 +80,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TSadrzajTacke">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
             <xs:element name="Alineja">
                 <xs:complexType>

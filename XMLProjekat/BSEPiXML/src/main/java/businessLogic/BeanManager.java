@@ -48,7 +48,7 @@ public class BeanManager<T>
             client = DatabaseConnection.getDbClient();
             xmlManager = client.newXMLDocumentManager();
             schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            schema = schemaFactory.newSchema(new File("schema/Akt.xsd"));
+            schema = schemaFactory.newSchema(new File("Schema/Akt.xsd"));
             converter = new JaxbXmlConverter<>();
             databaseManager = new DatabaseManager<>(client,xmlManager,schemaFactory,schema, converter);
             
@@ -71,6 +71,7 @@ public class BeanManager<T>
 
             queryManager = new QueryManager(client,schema, converter);
         } catch (Exception e){
+        	e.printStackTrace();
             System.out.println("Can't initialize Bean manager.");
         }
     }

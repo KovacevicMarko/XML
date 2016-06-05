@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.hibernate.validator.internal.util.privilegedactions.GetClassLoader;
+
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 
 public class Util {
@@ -39,7 +41,9 @@ public class Util {
 
 		InputStream propsStream = openStream(propsName);
 		if (propsStream == null)
+		{
 			throw new IOException("Could not read properties " + propsName);
+		}	
 
 		Properties props = new Properties();
 		props.load(propsStream);
@@ -47,9 +51,10 @@ public class Util {
 		return new ConnectionProperties(props);
 	}
 
-	public static InputStream openStream(String fileName) throws IOException {
-
-		return Util.class.getClassLoader().getResourceAsStream(fileName);
+	public static InputStream openStream(String fileName) throws IOException 
+	{
+		
+		return Util.class.getClassLoader().getResourceAsStream("/cfg/" + fileName);
 	}
 	
 	

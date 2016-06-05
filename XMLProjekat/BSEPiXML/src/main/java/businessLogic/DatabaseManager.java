@@ -71,9 +71,7 @@ public class DatabaseManager<T> {
         this.schema = schema;
         this.converter = converter;
     }
-
-
-    
+  
     /*
      * Operacije za snimanje u bazu.
      */
@@ -146,19 +144,6 @@ public class DatabaseManager<T> {
         try{
             JAXBContext jc = JAXBContext.newInstance("model");
             JAXBHandle<T> handle = new JAXBHandle<>(jc);
-
-
-            // Input xml validation.
-            /*if (!convertInputToTmp(docId)){
-                ret = null;
-                throw  new Exception("Can't read from database!");
-            }
-            // For now. Signature check is not working?
-            // TODO: Refactor signature check.
-            if (!validateXML("tmp.xml")){
-                ret = null;
-                throw  new Exception("Input bean signature is not well formated!");
-            }*/
 
             // A metadata handle for metadata retrieval
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();

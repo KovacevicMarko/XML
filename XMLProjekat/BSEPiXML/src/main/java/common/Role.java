@@ -14,3 +14,4 @@ public class Role
     public static String ULOGA_PREDSEDNIK="PREDSEDNIK";
 
 }
+

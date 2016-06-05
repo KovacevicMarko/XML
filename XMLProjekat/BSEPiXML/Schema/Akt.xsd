@@ -25,56 +25,6 @@
             <xs:attribute name="Naziv" type="xs:string"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="Glava">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajGlave"/>
-            </xs:sequence>
-            <xs:attribute name="oznaka" type="xs:string"/>
-            <xs:attribute name="naziv" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Odeljak">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajOdeljka"/>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string"/>
-            <xs:attribute name="Naziv" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Clan">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajClana"/>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Stav">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajStava"/>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Tacka">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajTacke"/>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Alineja">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Sadrzaj" type="xs:string"/>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
     <xs:element name="PrelazneIZavrsneOdredbe">
         <xs:complexType>
             <xs:sequence>

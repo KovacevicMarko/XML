@@ -18,39 +18,21 @@ public class BeanContainer {
     	
         BeanManager<Akt> aktManager = new BeanManager<>();
         container.put(Akt.class,aktManager);
-    
-        BeanManager<Alineja> alinejaManager = new BeanManager<>();
-        container.put(Alineja.class,alinejaManager);
         
         BeanManager<Amandman> amandmanManager = new BeanManager<>();
         container.put(Amandman.class,amandmanManager);
         
-        BeanManager<Clan> clanManager = new BeanManager<>();
-        container.put(Clan.class,clanManager);
-        
         BeanManager<Deo> deoManager = new BeanManager<>();
         container.put(Deo.class, deoManager);
         
-        BeanManager<Glava> glavaManager = new BeanManager<>();
-        container.put(Glava.class, glavaManager);
-        
         BeanManager<Korisnici> korisniciManager = new BeanManager<>();
         container.put(Korisnici.class, korisniciManager);
-        
-        BeanManager<Odeljak> odeljakManager = new BeanManager<>();
-        container.put(Odeljak.class, odeljakManager);
         
         BeanManager<PrelazneIZavrsneOdredbe> prelazneOdredbeManager = new BeanManager<>();
         container.put(PrelazneIZavrsneOdredbe.class, prelazneOdredbeManager);
         
         BeanManager<Referenca> referencaManager = new BeanManager<>();
         container.put(Referenca.class, referencaManager);
-        
-        BeanManager<Stav> stavManager = new BeanManager<>();
-        container.put(Stav.class, stavManager);
-        
-        BeanManager<Tacka> tackaManager = new BeanManager<>();
-        container.put(Tacka.class, tackaManager);
         
         BeanManager<TGradjanin> tgradjManager = new BeanManager<>();
         container.put(TGradjanin.class, tgradjManager);

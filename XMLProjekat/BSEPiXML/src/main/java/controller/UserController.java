@@ -1,11 +1,17 @@
 package controller;
 
+import model.Korisnici;
+import model.TKorisnik;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import businessLogic.BeanManager;
+import common.DatabaseConnection;
+import common.Role;
 import dto.LoginUserDto;
 
 @Controller
@@ -13,24 +19,46 @@ import dto.LoginUserDto;
 public class UserController {
 
 	@RequestMapping(method = RequestMethod.GET)
-	 public String registerUser(Model model) {
-	  LoginUserDto userDto = new LoginUserDto();
-	  model.addAttribute("user", userDto);
-	  return "logIn";
-	 }
+	public String registerUser(Model model) 
+	{
+	
+		LoginUserDto userDto = new LoginUserDto();
+		model.addAttribute("user", userDto);
+		return "logIn";
+	}
 	
 	@RequestMapping(params = "login", method = RequestMethod.POST)
-	public String login(LoginUserDto user, BindingResult bindingResult, Model model){
-		if(!bindingResult.hasErrors()){
-		System.out.println(user.getUsername());
-		System.out.println(user.getPassword());
+	public String login(LoginUserDto user, BindingResult bindingResult, Model model)
+	{
+		String retVal = "";
+		
+		if(!bindingResult.hasErrors())
+		{
+
+			BeanManager<Korisnici> bm = new BeanManager<>("Schema/Korisnici.xsd");
+	
+	        /*citamo sve korisnike iz baze*/
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+	        for(TKorisnik tuser : users.getKorisnik())
+	        {
+	            if(user.getUsername().equals(tuser.getKorisnickoIme()))
+	            {
+	            	retVal = "test";
+	            }else{
+	            	retVal = "homePage";
+	            }
+	
+	        }
+
 		}
-		//TODO proveriti u bazi
+		
 		else
 		{
+			retVal = "homePage";
 			System.out.println("error");
 		}
-		return "test";
+
+		return retVal;
 	}
 	
 }
