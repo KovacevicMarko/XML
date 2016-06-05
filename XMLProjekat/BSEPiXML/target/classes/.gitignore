@@ -1,4 +1,5 @@
-/model/
+/businessLogic/
+/common/
 /controller/
 /dto/
-/password/
+/model/

@@ -7,10 +7,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title></title>
-<style type="text/css">
-		
-	
-		</style>
+<script src="<c:url value="/js/jquery.min.js"/>"></script>	
+<script src="<c:url value="/js/bootstrap.js"/>"></script>
 
 
 </head>

@@ -13,13 +13,6 @@
 		<put-attribute name="content" value="" />
 	</definition>
  	
- 	
- 	<definition name="Home" extends="layoutHome">
- 	<put-attribute name="title" value="title.homePage"/>
- 	<put-attribute name="content" value="/WEB-INF/jsp/content/home.jsp" />
- 	</definition>
- 	
- 	
  	<definition name ="homePage" extends="layoutHome">
  		<put-attribute name="title" value="title.homePage"/>
  		<put-attribute name="header" value="/WEB-INF/jsp/content/header.jsp" />
@@ -29,7 +22,7 @@
  	
  	<definition name ="logIn" extends="layoutHome">
  		<put-attribute name="title" value="title.homePage"/>
- 		<put-attribute name="content" value="/WEB-INF/jsp/content/login2.jsp" />
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/login.jsp" />
  	</definition>
  	
  	
