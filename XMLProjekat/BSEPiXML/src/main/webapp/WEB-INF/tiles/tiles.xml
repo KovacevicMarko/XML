@@ -20,9 +20,9 @@
  		
  	</definition>
  	
- 	<definition name ="logIn" extends="layoutLogin">
+ 	<definition name ="logIn" extends="layoutHome">
  		<put-attribute name="title" value="title.homePage"/>
- 		<put-attribute name="content" value="/WEB-INF/jsp/content/login.jsp" />
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/login2.jsp" />
  	</definition>
  	
  	
