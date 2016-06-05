@@ -36,5 +36,8 @@
 	<mvc:resources location="/css/" mapping="homePage/css/**" />
 	<mvc:resources location="/css/" mapping="/css/**" />
 	<mvc:resources location="/js/" mapping="/js/**" />
+	<mvc:resources location="/js/" mapping="homePage/js/**" />
+	<mvc:resources location="/css/" mapping="homePage/js/**" />
+	
 
 </beans>

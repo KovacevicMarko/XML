@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:gs_korisnici="http://www.gradskaskupstina.rs/Korisnici">
+    <xs:element name="Korisnici">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="Korisnik" type="TKorisnik"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TKorisnik">
+        <xs:sequence>
+            <xs:element name="KorisnickoIme" type="xs:string"/>
+            <xs:element name="Lozinka" type="xs:string"/>
+            <xs:element name="Ime" type="xs:string"/>
+            <xs:element name="Prezime" type="xs:string"/>
+            <xs:element name="Uloga" type="xs:string"/>
+            <xs:element name="Email" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

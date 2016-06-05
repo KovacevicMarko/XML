@@ -1,0 +1,42 @@
+package common;
+
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+
+/**
+ * Singleton patern za konekciju ka bazi. 
+ * @author marko
+ *
+ */
+public class DatabaseConnection
+{
+
+    private static DatabaseClient client = null;
+
+    public static DatabaseClient getDbClient() {
+        if (client == null){
+            client = initializeClient();
+        }
+
+        return client;
+    }
+
+    /**
+     * Inicijalizacija konekcije kroz parametre.
+     * @return
+     */
+    private static DatabaseClient initializeClient(){
+        Util.ConnectionProperties props = null;
+        DatabaseClient client = null;
+        try {
+            props = Util.loadProperties();
+            client = DatabaseClientFactory.newClient(props.host, props.port, props.database, props.user, props.password, props.authType);
+        } catch (Exception e) {
+            System.out.println("Unexpected error: " + e.getMessage());
+        } finally {
+            return client;
+        }
+
+    }
+
+}

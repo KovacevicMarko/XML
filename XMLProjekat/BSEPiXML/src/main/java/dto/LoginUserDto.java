@@ -6,7 +6,7 @@ import javax.validation.constraints.Pattern;
 import model.AbstractIdMaker;
 
 @SuppressWarnings("serial")
-public class UserDto extends AbstractIdMaker{
+public class LoginUserDto extends AbstractIdMaker{
 
 	
 	@Pattern(regexp = "^(?=\\s*\\S).*$")
@@ -19,7 +19,7 @@ public class UserDto extends AbstractIdMaker{
 	private String username;
 	
 	
-	public UserDto()
+	public LoginUserDto()
 	{
 		
 	}

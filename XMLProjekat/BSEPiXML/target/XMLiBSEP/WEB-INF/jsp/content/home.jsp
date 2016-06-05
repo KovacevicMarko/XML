@@ -4,17 +4,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-	
+<title>Skupstina grada Novog Sada</title>
+<script src="<c:url value="/js/jquery.min.js"/>"></script>	
 <script src="<c:url value="/js/bootstrap.js"/>"></script>
-<script src="<c:url value="/js/jquery.min.js"/>"></script>
-
 </head>
 <body>
 <tiles:insertAttribute name="header" />
 
 <h1>heading</h1>
 <p><a href="logIn">Ulogujte se </a> </p>
+
+
 
 
 </body>
