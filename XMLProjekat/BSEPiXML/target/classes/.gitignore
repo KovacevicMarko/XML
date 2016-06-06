@@ -1,5 +1,6 @@
 /businessLogic/
 /common/
-/controller/
-/dto/
-/model/
+/klase/
+/repository/
+/service/
+/validator/

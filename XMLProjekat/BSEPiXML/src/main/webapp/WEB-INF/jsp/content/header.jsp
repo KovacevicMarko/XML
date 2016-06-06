@@ -7,6 +7,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">	
+<script src="<c:url value="/js/bootstrap.js"/>"></script>
+ <script src="<c:url value="/js/jquery.min.js"/>"></script>
 
 </head>
 <body>
@@ -32,16 +34,33 @@
 		
 		<ul class="nav navbar-nav navbar-right">
 		
-			<c:if test="${empty korisnik}">
+			<c:if test="${empty user}">
 			<li class="dropdown"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">Login
 					<span class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="logIn">Logovanje odbornika</a></li>
 					<li class="divider"></li>
-					<li><a href="noviAkt">Dodavanje novog akta</a></li>
-					<li><a href="noviAmandman">Dodavanje novog amandmana</a></li>
 					
+			</c:if>
+			
+			<c:if test="${not empty user}">
+			<li class="dropdown"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown">${user.korisnickoIme}
+					<span class="caret"></span></a>
+				<ul class="dropdown-menu" role="menu">
+					<c:if test="${user.uloga == 'ODBORNIK'}">
+					<li><a href="noviAkt">Dodavanje novog akta</a></li>
+					<li class="divider"></li>
+					<li><a href="noviAmandman">Dodavanje novog amandmana</a></li>
+					</c:if>
+					<li>
+					<form:form id="formLogOut" action="logIn" method="post">
+						<button type="submit" class="btn" name="logOut" >
+							<b> Izloguj se </b>
+						</button>
+					</form:form>
+					</li>
 			</c:if>
 			
 			<c:if test="${not empty korisnik}">
@@ -60,37 +79,6 @@
 							</ul>
 						</li> 
 			</c:if>
-			
-			<c:if test="${not empty menadzer}">
-					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				
-							<span><b>Dobrodošli, <c:out value="${menadzer.imeMenadzera}" /> <c:out value="${menadzer.prezimeMenadzera}" /></b>  </span>
-								<span class="caret"></span></a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="IzmeniMenadzer.jsp">Moj profil</a></li>
-									<li class="divider"></li>
-
-									<li><a href="./LogoutController"> Odjavite se</a></li>
-							
-							</ul>
-						</li> 
-			</c:if>
-			
-			<c:if test="${not empty admin}">
-					<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-				
-							<span><b>Dobrodošli, <c:out value="${admin.imeMenadzera}" /> <c:out value="${admin.prezimeMenadzera}" /></b>  </span>
-								<span class="caret"></span></a>
-								<ul class="dropdown-menu" role="menu">
-									<li><a href="IzmeniMenadzer.jsp">Moj profil</a></li>
-									<li class="divider"></li>
-
-									<li><a href="./LogoutController"> Odjavite se</a></li>
-							
-							</ul>
-						</li> 
-			</c:if>
-			
 		</ul>
 	</div>
 	
