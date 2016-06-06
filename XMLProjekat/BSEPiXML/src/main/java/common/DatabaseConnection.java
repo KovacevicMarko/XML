@@ -12,6 +12,7 @@ public class DatabaseConnection
 {
 	
 	public static String USERS_DOC_ID="/Korisnici.xml";
+	public static String USERS_COL_ID="ColKorisnici";
 	public static String AKT_DOC_ID="/Akt.xml";
 	
 

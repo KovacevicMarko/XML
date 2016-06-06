@@ -189,6 +189,14 @@
 		    <artifactId>java-client-api</artifactId>
 			    <version>3.0.5</version>
 		</dependency>
+		
+		<!-- SECURITY -->
+		<dependency>
+		    <groupId>org.bouncycastle</groupId>
+		    <artifactId>bcprov-jdk15on</artifactId>
+		    <version>1.54</version>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>
