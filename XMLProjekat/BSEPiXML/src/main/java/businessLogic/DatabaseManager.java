@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import security.SignEnveloped;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -34,8 +36,12 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
+
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
+
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 
 /**
  * Klasa za rad sa osnovnim operacijama baze podataka, kao i za validaciju.
@@ -84,9 +90,9 @@ public class DatabaseManager<T> {
     public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
         boolean ret = false;
         try{
-            //if (!singXml(null)) {
-            //    throw  new Exception("Could not sign xml, check tmp.xml.");
-            //}
+            if (!singXml(null)) {
+                throw  new Exception("Could not sign xml, check tmp.xml.");
+            }
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -100,8 +106,6 @@ public class DatabaseManager<T> {
             return ret;
         }
     }
-
-
 
     /**
      * Snimanje bean-a u bazu.
@@ -340,6 +344,42 @@ public class DatabaseManager<T> {
             return ret;
         }
     }
+    
+    
+    /*
+     * Pomocne metode.
+     */
 
+    /**
+     * 
+     * @param filePath
+     * @return
+     */
+    private boolean singXml(String filePath){
+
+        boolean ret = false;
+
+        try{
+            SignEnveloped signEnveloped = new SignEnveloped();
+            Document document;
+            if (filePath == null) 
+            {
+                document  =signEnveloped.loadDocument("tmp.xml");
+            }  else 
+            {
+                document = signEnveloped.loadDocument(filePath);
+            }
+            PrivateKey pk = signEnveloped.readPrivateKey();
+            Certificate cert = signEnveloped.readCertificate();
+            document = signEnveloped.signDocument(document,pk,cert);
+            signEnveloped.saveDocument(document,"tmp.xml");
+            ret = true;
+
+        } catch (Exception e){
+            System.out.println("[WriteManager] Unexpected error: " +e.getMessage());
+        } finally {
+            return  ret;
+        }
+    }
 	
 }
