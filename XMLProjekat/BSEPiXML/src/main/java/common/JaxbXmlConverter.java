@@ -29,7 +29,7 @@ public class JaxbXmlConverter<T>
             JAXBContext jc = JAXBContext.newInstance("model");
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.gradskaskupstina.gov/");
+            marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.gradskaskupstina.rs/");
             marshaller.marshal(bean,fileOutputStream);
             fileOutputStream.close();
             ret = true;

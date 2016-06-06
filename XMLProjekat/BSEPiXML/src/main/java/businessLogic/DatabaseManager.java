@@ -20,7 +20,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import model.Akt;
-import model.Amandman;
 import model.Korisnici;
 
 import org.slf4j.Logger;
@@ -299,7 +298,8 @@ public class DatabaseManager<T> {
         boolean ret = false;
 
         try{
-            if (!(bean instanceof Akt) && !(bean instanceof Amandman) && !(bean instanceof Korisnici)){
+            //if (!(bean instanceof Akt) && !(bean instanceof Amandman) && !(bean instanceof Korisnici)){
+        	if (!(bean instanceof Akt) && !(bean instanceof Korisnici)){
                 throw  new Exception("Can't validateBeanBySchema element that is not Akt, Amandman or Korisnik!");
             }
             JAXBContext context = JAXBContext.newInstance("model");

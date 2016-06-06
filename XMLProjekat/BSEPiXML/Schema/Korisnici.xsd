@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-    xmlns:gs_korisnici="http://www.gradskaskupstina.rs/Korisnici">
+    targetNamespace="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/">
     <xs:element name="Korisnici">
         <xs:complexType>
             <xs:sequence maxOccurs="unbounded" minOccurs="0">

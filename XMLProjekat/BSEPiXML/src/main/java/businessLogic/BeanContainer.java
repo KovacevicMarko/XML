@@ -19,8 +19,8 @@ public class BeanContainer {
         BeanManager<Akt> aktManager = new BeanManager<>();
         container.put(Akt.class,aktManager);
         
-        BeanManager<Amandman> amandmanManager = new BeanManager<>();
-        container.put(Amandman.class,amandmanManager);
+        //BeanManager<Amandman> amandmanManager = new BeanManager<>();
+        //container.put(Amandman.class,amandmanManager);
         
         BeanManager<Deo> deoManager = new BeanManager<>();
         container.put(Deo.class, deoManager);
