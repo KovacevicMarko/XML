@@ -45,7 +45,7 @@ public class VerifySignatureEnveloped {
 	/**
 	 * Kreira DOM od XML dokumenta
 	 */
-	private Document loadDocument(String file) {
+	public Document loadDocument(String file) {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
@@ -68,7 +68,7 @@ public class VerifySignatureEnveloped {
 		}
 	}
 	
-	private boolean verifySignature(Document doc) {
+	public boolean verifySignature(Document doc) {
 		
 		try {
 			//Pronalazi se prvi Signature element 

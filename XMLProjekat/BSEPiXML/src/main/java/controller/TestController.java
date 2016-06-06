@@ -58,8 +58,7 @@ public class TestController {
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-		String docID = DatabaseConnection.USERS_DOC_ID;
-		bm1.write(korisnici, docID, docID);
+		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
 	}
 	
 	private void InitializeAkt()
@@ -99,7 +98,7 @@ public class TestController {
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		String docID = DatabaseConnection.AKT_DOC_ID;
-		bm1.write(akt, docID, docID);
+		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID);
 		
 	}
 	
