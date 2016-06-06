@@ -1,16 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/TagLibs.jsp"%>
     
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	
-<script src="<c:url value="/js/jquery.min.js"/>"></script>	
-<script src="<c:url value="/js/bootstrap.js"/>"></script>
+<link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">	
 
 </head>
 <body>
@@ -21,7 +17,9 @@
 	
 	<div class="navbar-header">
 	
-		<a class="navbar-brand" href="read.jsp">Restorani</a>
+		<a class="navbar-brand" href="homePage">Pocetna strana</a>
+		<a class="navbar-brand" href="homePage">Zakazane sednice</a>
+		<a class="navbar-brand" href="homePage">Poslanici</a>
 		<c:if test="${not empty korisnik}">
 			<a class="navbar-brand" href="PrikazPrijatelja.jsp">Moji prijatelji</a>
 			<a class="navbar-brand" href="MojProfil.jsp">Moj profil</a>
@@ -34,14 +32,15 @@
 		
 		<ul class="nav navbar-nav navbar-right">
 		
-			<c:if test="${ empty korisnik}">
+			<c:if test="${empty korisnik}">
 			<li class="dropdown"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">Login
 					<span class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu">
-					<li><a href="UserLogin.jsp">User login</a></li>
+					<li><a href="logIn">Logovanje odbornika</a></li>
 					<li class="divider"></li>
-					<li><a href="AdminLogin.jsp">Admin&Manager login</a></li>
+					<li><a href="noviAkt">Dodavanje novog akta</a></li>
+					
 			</c:if>
 			
 			<c:if test="${not empty korisnik}">
@@ -96,6 +95,9 @@
 	
 </div>
 
+	
+<script src="<c:url value="/js/jquery.min.js"/>"></script>	
+<script src="<c:url value="/js/bootstrap.js"/>"></script>
 
 
 </body>

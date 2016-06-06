@@ -39,6 +39,8 @@
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="logIn">Logovanje odbornika</a></li>
 					<li class="divider"></li>
+					<li><a href="noviAkt">Dodavanje novog akta</a></li>
+					<li><a href="noviAmandman">Dodavanje novog amandmana</a></li>
 					
 			</c:if>
 			

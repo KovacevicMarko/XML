@@ -58,8 +58,7 @@ else
 					<div align="center" class="panel-body">
 						<div class="row">
 							<div class="col-lg-12">
-								<c:url var="action" value="/logIn" />
-    								<form:form id="formLogIn" action="${action}" method="post" modelAttribute="user">
+								<form id="login-form" action="LoginController" method="post" role="form" style="display: block;">
 									<div class="form-group">
 									<c:if test="${porukaPostoji != null}">
 									<c:if test="${not empty porukaPostoji}">
@@ -69,24 +68,19 @@ else
 									</c:if>	
 									</c:if>
 									</div>
-									<fildSet>
 									<div class="form-group">
-										<form:input  path="username" cssErrorClass="error" placeholder="Korisnicko ime" />
-      									<form:errors path="username" cssClass="errorMessage" />
+										<input type="text" required name="korisnickoIme" id="korisnickoIme" tabindex="1" class="form-control" placeholder="Korisnicko ime" value="">
 									</div>
 									<div class="form-group">
-										<form:input type ="password" path="password" cssErrorClass="error" placeholder="Lozinka" />
-      									<form:errors path="password" cssClass="errorMessage" />
+										<input type="password" required name="logLozinka" id="logLozinka" tabindex="2" class="form-control" placeholder="Lozinka">
 									</div>
-									</fildSet>
-									
-									<div class="form-group text-center">	
+									<div class="form-group text-center">
+										
 									</div>
 									<div class="form-group">
 										<div class="row">
 											<div class="col-sm-6 col-sm-offset-3">
-												<input type="submit" name="login" tabindex="4" class="form-control btn btn-login" value="Prijavi se">
-												
+												<input type="submit" name="submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Prijavi se">
 											</div>
 										</div>
 									</div>
@@ -99,7 +93,7 @@ else
 											</div>
 										</div>
 									</div>
-								</form:form>
+								</form>
 								<form id="register-form" action="RegisterController" method="post" role="form" style="display: none;">
 									<div class="form-group">
 										<input type="text" required name="ime" id="ime" tabindex="1" class="form-control" placeholder="Ime" value="">
