@@ -96,6 +96,7 @@ public class TestController {
 		akt.setNaziv("Akt1");
 		akt.setPreambula("Preambula1");
 		akt.setPrelazneIZavrsneOdredbe(pzo);
+		akt.getDeo().add(deo);
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		String docID = DatabaseConnection.AKT_DOC_ID;
