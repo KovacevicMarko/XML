@@ -1,5 +1,6 @@
 package controller;
 
+import securityPackage.SignEnveloped;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import password.PasswordStorage;
+
 import businessLogic.BeanManager;
 import common.DatabaseConnection;
 import common.Role;
@@ -24,6 +26,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String registerUser(Model model) 
 	{
+		SignEnveloped sgn = new SignEnveloped();
 	
 		LoginUserDto userDto = new LoginUserDto();
 		model.addAttribute("user", userDto);
@@ -34,6 +37,8 @@ public class UserController {
 	public String login(HttpServletRequest request, LoginUserDto user, BindingResult bindingResult, Model model)
 	{
 		String retVal = "";
+		
+		
 		
 		if(!bindingResult.hasErrors())
 		{

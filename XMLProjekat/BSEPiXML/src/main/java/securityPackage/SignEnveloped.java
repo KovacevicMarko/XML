@@ -1,4 +1,4 @@
-package security;
+package securityPackage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -42,12 +43,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import common.Util;
+
 //Potpisuje dokument, koristi se enveloped tip
 public class SignEnveloped {
-	
+
 	private static final String IN_FILE = "./data/univerzitet.xml";
 	private static final String OUT_FILE = "./data/univerzitet_signed1.xml";
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
+	private static final String KEY_STORE_FILE = "/data/primer.jks";
 	
     static {
     	//staticka inicijalizacija
@@ -140,7 +143,7 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
+			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream("primer.jks"));
 			ks.load(in, "primer".toCharArray());
 			
 			if(ks.isKeyEntry("primer")) {
@@ -172,6 +175,12 @@ public class SignEnveloped {
 		} 
 	}
 	
+	public static InputStream openStream(String fileName) throws IOException 
+	{
+		
+		return Util.class.getClassLoader().getResourceAsStream("/cfg/data/" + fileName);
+	}
+	
 	/**
 	 * Ucitava privatni kljuc is KS fajla
 	 * alias primer
@@ -181,7 +190,7 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
+			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream("primer.jks"));
 			ks.load(in, "primer".toCharArray());
 			
 			if(ks.isKeyEntry("primer")) {

@@ -33,7 +33,7 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
+		//InitializeKorisnik();
 		InitializeAkt();
 		InitializeAmandman();
 

@@ -14,8 +14,8 @@ C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\Korisnici.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\common\Util.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TKorisnik.java
-C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\security\SignEnveloped.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\controller\TestController.java
+C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\securityPackage\VerifySignatureEnveloped.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\ObjectType.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\X509IssuerSerialType.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\dto\AlinejaDto.java
@@ -38,6 +38,7 @@ C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajGlave.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\ReferenceType.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\dto\AmandmanDto.java
+C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\securityPackage\SignEnveloped.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\dto\AktDto.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TPredsednikSkupstine.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\DSAKeyValueType.java
@@ -54,7 +55,6 @@ C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\RetrievalMethodType.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\dto\UserDto.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajOdeljka.java
-C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\security\VerifySignatureEnveloped.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\controller\UserController.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TOdbornik.java
 C:\Users\marko\Desktop\XML-BezbednostREPO\XML\XMLProjekat\BSEPiXML\src\main\java\model\TransformType.java

@@ -17,6 +17,7 @@
             <xs:element name="Uloga" type="xs:string"/>
             <xs:element name="Email" type="xs:string"/>
             <xs:element name="Salt" type="xs:string"/>
+            <xs:element name="DatumPromeneLozinke" type="xs:date"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

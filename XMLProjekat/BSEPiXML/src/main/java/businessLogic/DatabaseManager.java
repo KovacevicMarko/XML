@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import security.SignEnveloped;
-import security.VerifySignatureEnveloped;
+import securityPackage.SignEnveloped;
+import securityPackage.VerifySignatureEnveloped;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
@@ -39,6 +39,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
+
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -89,9 +90,10 @@ public class DatabaseManager<T> {
     public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
         boolean ret = false;
         try{
-            /*if (!singXml(null)) {
+            if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
-            }*/
+            }
+                        
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -359,12 +361,15 @@ public class DatabaseManager<T> {
         boolean ret = false;
 
         try{
+
             SignEnveloped signEnveloped = new SignEnveloped();
+
             Document document;
             if (filePath == null) 
             {
                 document  =signEnveloped.loadDocument("tmp.xml");
-            }  else 
+            } 
+            else 
             {
                 document = signEnveloped.loadDocument(filePath);
             }
