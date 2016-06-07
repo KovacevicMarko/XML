@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-    targetNamespace="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/">
+    targetNamespace="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+        schemaLocation="xmldsig-core-schema.xsd"/>
     <xs:element name="Akt">
         <xs:complexType>
             <xs:sequence>
@@ -10,6 +13,9 @@
                     <xs:element maxOccurs="unbounded" ref="Deo"/>
                 </xs:sequence>
                 <xs:element ref="PrelazneIZavrsneOdredbe"/>
+                <xs:element minOccurs="0" name="ID" type="xs:string"/>
+                <xs:element minOccurs="0" name="TimeStamp" type="xs:dateTime"/>
+                <xs:element ref="ds:Signature"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

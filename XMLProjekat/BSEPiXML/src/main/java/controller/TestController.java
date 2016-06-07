@@ -1,5 +1,8 @@
 package controller;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import model.Akt;
 import model.Deo;
 import model.Korisnici;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import password.PasswordStorage;
 import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
 import common.Role;
 
@@ -45,21 +50,63 @@ public class TestController {
 		k.setLozinka("despinica");
 		k.setPrezime("despinica");
 		k.setUloga(Role.ULOGA_GRADJANIN);
+		byte[] salt = new byte[0];
+		
+		try {
+            salt=PasswordStorage.generateSalt();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k.setSalt(PasswordStorage.base64Encode(salt));
+        /*hash pass*/
+        byte[] hashedPassword = new byte[0];
+        try {
+             hashedPassword = PasswordStorage.hashPassword("despinica", salt);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k.setLozinka(PasswordStorage.base64Encode(hashedPassword));
+		
 		
 		TKorisnik k2 = new TKorisnik();
 		k2.setKorisnickoIme("jocko");
-		k2.setEmail("jocko");
+		k2.setEmail("jocko2");
 		k2.setIme("jocko");
 		k2.setLozinka("jocko");
 		k2.setPrezime("jocko");
 		k2.setUloga(Role.ULOGA_ODBORNIK);
+		salt = new byte[0];
 		
-		korisnici.getKorisnik().add(k);
+		try {
+            salt=PasswordStorage.generateSalt();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k2.setSalt(PasswordStorage.base64Encode(salt));
+        /*hash pass*/
+        hashedPassword = new byte[0];
+        try {
+             hashedPassword = PasswordStorage.hashPassword("jocko", salt);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k2.setLozinka(PasswordStorage.base64Encode(hashedPassword));
+		
+		korisnici.getKorisnik().add(k2);
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-		String docID = DatabaseConnection.USERS_DOC_ID;
-		bm1.write(korisnici, docID, docID);
+		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
 	}
 	
 	private void InitializeAkt()
@@ -100,7 +147,7 @@ public class TestController {
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		String docID = DatabaseConnection.AKT_DOC_ID;
-		bm1.write(akt, docID, docID);
+		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID);
 		
 	}
 	

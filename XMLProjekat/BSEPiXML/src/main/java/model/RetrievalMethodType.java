@@ -12,24 +12,24 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for RetrievalMethodType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="RetrievalMethodType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Sadrzaj" type="{http://www.gradskaskupstina.rs/}TSadrzajDela"/>
+ *         &lt;element ref="{http://www.w3.org/2000/09/xmldsig#}Transforms" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="Oznaka" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="Naziv" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="URI" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="Type" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -38,89 +38,90 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "sadrzaj"
+@XmlType(name = "RetrievalMethodType", propOrder = {
+    "transforms"
 })
-@XmlRootElement(name = "Deo", namespace = "http://www.gradskaskupstina.rs/")
-public class Deo {
+public class RetrievalMethodType {
 
-    @XmlElement(name = "Sadrzaj", namespace = "http://www.gradskaskupstina.rs/", required = true)
-    protected TSadrzajDela sadrzaj;
-    @XmlAttribute(name = "Oznaka")
-    protected String oznaka;
-    @XmlAttribute(name = "Naziv")
-    protected String naziv;
+    @XmlElement(name = "Transforms")
+    protected TransformsType transforms;
+    @XmlAttribute(name = "URI")
+    @XmlSchemaType(name = "anyURI")
+    protected String uri;
+    @XmlAttribute(name = "Type")
+    @XmlSchemaType(name = "anyURI")
+    protected String type;
 
     /**
-     * Gets the value of the sadrzaj property.
+     * Gets the value of the transforms property.
      * 
      * @return
      *     possible object is
-     *     {@link TSadrzajDela }
+     *     {@link TransformsType }
      *     
      */
-    public TSadrzajDela getSadrzaj() {
-        return sadrzaj;
+    public TransformsType getTransforms() {
+        return transforms;
     }
 
     /**
-     * Sets the value of the sadrzaj property.
+     * Sets the value of the transforms property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TSadrzajDela }
+     *     {@link TransformsType }
      *     
      */
-    public void setSadrzaj(TSadrzajDela value) {
-        this.sadrzaj = value;
+    public void setTransforms(TransformsType value) {
+        this.transforms = value;
     }
 
     /**
-     * Gets the value of the oznaka property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getOznaka() {
-        return oznaka;
-    }
-
-    /**
-     * Sets the value of the oznaka property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setOznaka(String value) {
-        this.oznaka = value;
-    }
-
-    /**
-     * Gets the value of the naziv property.
+     * Gets the value of the uri property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getNaziv() {
-        return naziv;
+    public String getURI() {
+        return uri;
     }
 
     /**
-     * Sets the value of the naziv property.
+     * Sets the value of the uri property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setNaziv(String value) {
-        this.naziv = value;
+    public void setURI(String value) {
+        this.uri = value;
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
     }
 
 }

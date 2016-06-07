@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
@@ -28,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import security.SignEnveloped;
+import security.VerifySignatureEnveloped;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
@@ -36,12 +39,8 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
-
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
-
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
 
 /**
  * Klasa za rad sa osnovnim operacijama baze podataka, kao i za validaciju.
@@ -90,9 +89,9 @@ public class DatabaseManager<T> {
     public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
         boolean ret = false;
         try{
-            if (!singXml(null)) {
+            /*if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
-            }
+            }*/
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -177,10 +176,10 @@ public class DatabaseManager<T> {
         boolean ret = false;
 
         try{
-        	//TODO
-            /*VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+        	
+            VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
             Document document = verifySignatureEnveloped.loadDocument(filepath);
-            ret =  verifySignatureEnveloped.verifySignature(document);*/
+            ret =  verifySignatureEnveloped.verifySignature(document);
         } catch(Exception e){
             logger.info("ERROR: Unexpected error: " + e.getMessage());
         } finally {

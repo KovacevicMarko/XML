@@ -11,22 +11,21 @@ package model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TGradjanin complex type.
+ * <p>Java class for RSAKeyValueType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TGradjanin">
+ * &lt;complexType name="RSAKeyValueType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Ime" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Prezime" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="Modulus" type="{http://www.w3.org/2000/09/xmldsig#}CryptoBinary"/>
+ *         &lt;element name="Exponent" type="{http://www.w3.org/2000/09/xmldsig#}CryptoBinary"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,66 +35,59 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TGradjanin", namespace = "http://www.gradskaskupstina.rs/", propOrder = {
-    "ime",
-    "prezime"
+@XmlType(name = "RSAKeyValueType", propOrder = {
+    "modulus",
+    "exponent"
 })
-@XmlSeeAlso({
-    TOdbornik.class
-})
-public class TGradjanin {
+public class RSAKeyValueType {
 
-    @XmlElement(name = "Ime", required = true)
-    protected String ime;
-    @XmlElement(name = "Prezime", required = true)
-    protected String prezime;
+    @XmlElement(name = "Modulus", required = true)
+    protected byte[] modulus;
+    @XmlElement(name = "Exponent", required = true)
+    protected byte[] exponent;
 
     /**
-     * Gets the value of the ime property.
+     * Gets the value of the modulus property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
-     *     
+     *     byte[]
      */
-    public String getIme() {
-        return ime;
+    public byte[] getModulus() {
+        return modulus;
     }
 
     /**
-     * Sets the value of the ime property.
+     * Sets the value of the modulus property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
-     *     
+     *     byte[]
      */
-    public void setIme(String value) {
-        this.ime = value;
+    public void setModulus(byte[] value) {
+        this.modulus = value;
     }
 
     /**
-     * Gets the value of the prezime property.
+     * Gets the value of the exponent property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
-     *     
+     *     byte[]
      */
-    public String getPrezime() {
-        return prezime;
+    public byte[] getExponent() {
+        return exponent;
     }
 
     /**
-     * Sets the value of the prezime property.
+     * Sets the value of the exponent property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
-     *     
+     *     byte[]
      */
-    public void setPrezime(String value) {
-        this.prezime = value;
+    public void setExponent(byte[] value) {
+        this.exponent = value;
     }
 
 }

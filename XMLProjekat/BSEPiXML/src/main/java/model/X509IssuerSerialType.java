@@ -8,25 +8,25 @@
 
 package model;
 
+import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TGradjanin complex type.
+ * <p>Java class for X509IssuerSerialType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TGradjanin">
+ * &lt;complexType name="X509IssuerSerialType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Ime" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Prezime" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="X509IssuerName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="X509SerialNumber" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,66 +36,63 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TGradjanin", namespace = "http://www.gradskaskupstina.rs/", propOrder = {
-    "ime",
-    "prezime"
+@XmlType(name = "X509IssuerSerialType", propOrder = {
+    "x509IssuerName",
+    "x509SerialNumber"
 })
-@XmlSeeAlso({
-    TOdbornik.class
-})
-public class TGradjanin {
+public class X509IssuerSerialType {
 
-    @XmlElement(name = "Ime", required = true)
-    protected String ime;
-    @XmlElement(name = "Prezime", required = true)
-    protected String prezime;
+    @XmlElement(name = "X509IssuerName", required = true)
+    protected String x509IssuerName;
+    @XmlElement(name = "X509SerialNumber", required = true)
+    protected BigInteger x509SerialNumber;
 
     /**
-     * Gets the value of the ime property.
+     * Gets the value of the x509IssuerName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getIme() {
-        return ime;
+    public String getX509IssuerName() {
+        return x509IssuerName;
     }
 
     /**
-     * Sets the value of the ime property.
+     * Sets the value of the x509IssuerName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setIme(String value) {
-        this.ime = value;
+    public void setX509IssuerName(String value) {
+        this.x509IssuerName = value;
     }
 
     /**
-     * Gets the value of the prezime property.
+     * Gets the value of the x509SerialNumber property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link BigInteger }
      *     
      */
-    public String getPrezime() {
-        return prezime;
+    public BigInteger getX509SerialNumber() {
+        return x509SerialNumber;
     }
 
     /**
-     * Sets the value of the prezime property.
+     * Sets the value of the x509SerialNumber property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link BigInteger }
      *     
      */
-    public void setPrezime(String value) {
-        this.prezime = value;
+    public void setX509SerialNumber(BigInteger value) {
+        this.x509SerialNumber = value;
     }
 
 }

@@ -1,22 +1,19 @@
 package controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import model.Korisnici;
-import model.TKorisnik;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import password.PasswordStorage;
 import businessLogic.BeanManager;
 import common.DatabaseConnection;
 import common.Role;
+import model.Korisnici;
+import model.TKorisnik;
 import dto.LoginUserDto;
 import dto.UserDto;
 
@@ -47,8 +44,9 @@ public class UserController {
 			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
 	        for(TKorisnik tuser : users.getKorisnik())
 	        {
-	            if(user.getUsername().equals(tuser.getKorisnickoIme()) && user.getPassword().equals(tuser.getLozinka()) )
+	            if(user.getUsername().equals(tuser.getKorisnickoIme()) && PasswordStorage.checkPassword(user.getPassword(), tuser.getLozinka(), tuser.getSalt()) )
 	            {
+
 	            	UserDto userD=new UserDto(tuser);
             		request.getSession().setAttribute("user",userD);
 	            	if(tuser.getUloga().equals(Role.ULOGA_ODBORNIK)){
