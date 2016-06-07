@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import model.Akt;
 import model.TKorisnik;
 
+import org.springframework.context.annotation.Role;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

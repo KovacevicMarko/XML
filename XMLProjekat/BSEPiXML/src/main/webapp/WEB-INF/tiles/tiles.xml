@@ -43,5 +43,10 @@
  		<put-attribute name="content" value="/WEB-INF/jsp/content/noviAmandman.jsp" />	
  	</definition>
  	
+ 	<definition name ="registerPage" extends="layoutHome">
+ 		<put-attribute name="header" value="/WEB-INF/jsp/content/header.jsp" />
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/register.jsp" />	
+ 	</definition>
+ 	
 	
  </tiles-definitions>
