@@ -89,9 +89,9 @@ public class DatabaseManager<T> {
     public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
         boolean ret = false;
         try{
-            if (!singXml(null)) {
+            /*if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
-            }
+            }*/
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
