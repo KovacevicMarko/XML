@@ -59,7 +59,7 @@ else
 						<div class="row">
 							<div class="col-lg-12">
 								<c:url var="action" value="/logIn" />
-    								<form:form id="formLogIn" action="${action}" method="post" modelAttribute="user">
+    								<form:form id="formUser" action="${action}" method="post" modelAttribute="user">
 									<div class="form-group">
 									<c:if test="${porukaPostoji != null}">
 									<c:if test="${not empty porukaPostoji}">
