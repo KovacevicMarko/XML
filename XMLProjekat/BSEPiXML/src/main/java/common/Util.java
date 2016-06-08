@@ -15,6 +15,7 @@ public class Util {
 	 * @author marko
 	 *
 	 */
+	
 	static public class ConnectionProperties {
 
 		public String host;

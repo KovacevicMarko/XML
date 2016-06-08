@@ -29,11 +29,13 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import security.SignEnveloped;
-import security.VerifySignatureEnveloped;
+import securityPackage.SignEnveloped;
+import securityPackage.VerifySignatureEnveloped;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
+import com.marklogic.client.document.DocumentUriTemplate;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -89,9 +91,10 @@ public class DatabaseManager<T> {
     public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
         boolean ret = false;
         try{
-            /*if (!singXml(null)) {
+            if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
-            }*/
+            }
+                        
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -128,6 +131,58 @@ public class DatabaseManager<T> {
             logger.info("ERROR: Unexpected error: " + e.getMessage());
         }
         finally{
+            return ret;
+        }
+    }
+    
+    /**
+     * Upisivanje bean-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor write(T bean,String colId) {
+        DocumentDescriptor ret = null;
+        try {
+            // Try to convert to xml on default location.
+            if (converter.ConvertJaxbToXml(bean)){
+                FileInputStream inputStream = new FileInputStream(new File("tmp.xml"));
+                ret = write(inputStream,colId);
+            } else {
+                throw new Exception(" Can't convert JAXB bean to XML.");
+            }
+        }
+        catch (Exception e) {
+
+        }
+        finally{
+            return ret;
+        }
+    }
+    
+    /**
+     * Upisivanje fajla-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor write(FileInputStream inputStream, String colId) {
+        DocumentDescriptor ret = null;
+        try{
+            if (!singXml(null)) {
+                throw  new Exception("Could not sign xml, check tmp.xml.");
+            }
+            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            InputStreamHandle handle = new InputStreamHandle(inputStream);
+            ret = xmlManager.create(template,metadata, handle);
+        }
+        catch (Exception e){
+            logger.info("Could not write xml bean.");
+            logger.info("[ERROR] " + e.getMessage());
+            logger.info("[STACK TRACE] " + e.getStackTrace());
+        } finally{
             return ret;
         }
     }
@@ -359,12 +414,15 @@ public class DatabaseManager<T> {
         boolean ret = false;
 
         try{
+
             SignEnveloped signEnveloped = new SignEnveloped();
+
             Document document;
             if (filePath == null) 
             {
                 document  =signEnveloped.loadDocument("tmp.xml");
-            }  else 
+            } 
+            else 
             {
                 document = signEnveloped.loadDocument(filePath);
             }

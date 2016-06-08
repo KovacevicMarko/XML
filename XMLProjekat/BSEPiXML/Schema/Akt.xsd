@@ -15,7 +15,7 @@
                 <xs:element ref="PrelazneIZavrsneOdredbe"/>
                 <xs:element minOccurs="0" name="ID" type="xs:string"/>
                 <xs:element minOccurs="0" name="TimeStamp" type="xs:dateTime"/>
-                <xs:element ref="ds:Signature"/>
+                <xs:element ref="ds:Signature" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

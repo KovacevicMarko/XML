@@ -3,7 +3,7 @@ model\KeyInfoType.class
 model\TSadrzajClana$Stav.class
 password\EncoderForPassword.class
 dto\AmandmanDto.class
-security\VerifySignatureEnveloped.class
+securityPackage\SignEnveloped.class
 model\AbstractIdMaker.class
 model\RSAKeyValueType.class
 model\TSadrzajDela$Glava.class
@@ -21,7 +21,6 @@ model\TSadrzajGlave$Clan.class
 common\DatabaseConnection.class
 model\X509IssuerSerialType.class
 model\TSadrzajOdeljka.class
-security\SignEnveloped.class
 model\TKorisnik.class
 dto\DeoDto.class
 controller\HomeController.class
@@ -57,6 +56,7 @@ model\DigestMethodType.class
 model\ObjectFactory.class
 model\SignaturePropertiesType.class
 dto\AlinejaDto.class
+securityPackage\VerifySignatureEnveloped.class
 dto\LoginUserDto.class
 model\SignatureMethodType.class
 model\Akt.class
