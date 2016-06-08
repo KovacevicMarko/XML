@@ -1,6 +1,7 @@
 package controller;
 
-import java.util.Date;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import password.PasswordStorage;
 import securityPackage.SignEnveloped;
 import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
 import common.HelperClass;
 import common.Role;
+
 import dto.LoginUserDto;
 import dto.UserDto;
 
@@ -57,17 +60,20 @@ public class UserController {
 	            if(user.getUsername().equals(tuser.getKorisnickoIme()) && PasswordStorage.checkPassword(user.getPassword(), tuser.getLozinka(), tuser.getSalt()) )
 	            {
 	            	//provera da li je sifra istekla
-	            	if(!HelperClass.CheckPasswordDate(tuser, helpObj))
+	            	/*if(!HelperClass.CheckPasswordDate(tuser, helpObj))
 	            	{
 	            		System.out.println("HERE MONTH");
 	            		//TODO REDIRECT ON PAGE TO CHANGE PASSWORD
+	            		
 	            	}
+	            	
 	            	//provera da li je ostalo dovoljno dana do upozorenja
 	            	if(helpObj.getFlag())
 	            	{
 	            		System.out.println("HERE DAY");
 	            		//TODO SET WARNING MESSAGE + helpObj.getNumberOfExpiredDays(); 
-	            	}
+	            		request.setAttribute("porukaOIsteku", "Vazenje lozinke vam istice za "+helpObj.getNumberOfExpiredDays()+" dana. Promenite lozinku!");
+	            	}*/
 	            	
 	            	UserDto userD=new UserDto(tuser);
             		request.getSession().setAttribute("user",userD);
