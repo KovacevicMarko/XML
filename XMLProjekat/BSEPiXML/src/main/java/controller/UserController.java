@@ -112,5 +112,101 @@ public class UserController {
 
 		return retVal;
 	}
+	@RequestMapping(value="/register", method = RequestMethod.GET)
+	public String registerForm(Model model) 
+	{
 	
+		UserDto userDto = new UserDto();
+		model.addAttribute("user", userDto);
+		return "registerPage";
+	}
+	
+	@RequestMapping(params = "register", method = RequestMethod.POST)
+	public String register(HttpServletRequest request, UserDto user, BindingResult bindingResult, Model model)
+	{
+		String retVal = "";
+		
+		if(!bindingResult.hasErrors())
+		{
+			/*System.out.println(user.getIme());
+			System.out.println(user.getPrezime());
+			System.out.println(user.getKorisnickoIme());
+			System.out.println(user.getLozinka());
+			System.out.println(user.getUloga());
+			System.out.println(user.getEmail());*/
+			BeanManager<Korisnici> bm = new BeanManager<>("Schema/Korisnici.xsd");
+			
+			boolean postojiSaTimImenom=false;
+			
+	        /*citamo sve korisnike iz baze*/
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+	        for(TKorisnik tuser : users.getKorisnik())
+	        {
+	        	if(tuser.getKorisnickoIme().equals(user.getKorisnickoIme())){
+	        		postojiSaTimImenom=true;
+	        		System.out.println("postoji");
+	        	}
+			
+	        }
+	        
+	        if(postojiSaTimImenom==false){
+	        	
+	        	TKorisnik k = new TKorisnik();
+	        	k.setKorisnickoIme(user.getKorisnickoIme());
+	        	k.setEmail(user.getEmail());
+	        	k.setIme(user.getIme());
+	        	k.setLozinka(user.getLozinka());
+	        	k.setPrezime(user.getPrezime());
+	        	if(user.getUloga().equals("Odbornik")){
+	        		k.setUloga(Role.ULOGA_ODBORNIK);
+	        	}else{
+	        		if(user.getUloga().equals("Predsednik")){
+	        			k.setUloga(Role.ULOGA_PREDSEDNIK);
+	        		}
+	        	}
+			
+	        	byte[] salt = new byte[0];
+			
+	        	try {
+	        		salt=PasswordStorage.generateSalt();
+	        	} catch (NoSuchAlgorithmException e) {
+	        		e.printStackTrace();
+	        		System.out.println(e.toString());
+	        	}
+	        	k.setSalt(PasswordStorage.base64Encode(salt));
+	        	/*hash pass*/
+	        	byte[] hashedPassword = new byte[0];
+	        	try {
+	        		hashedPassword = PasswordStorage.hashPassword(k.getLozinka(), salt);
+	        	} catch (NoSuchAlgorithmException e) {
+	        		e.printStackTrace();
+	            	System.out.println(e.toString());
+	        	} catch (InvalidKeySpecException e) {
+	        		e.printStackTrace();
+	        		System.out.println(e.toString());
+	        	}
+	        	k.setLozinka(PasswordStorage.base64Encode(hashedPassword));
+	        	users.getKorisnik().add(k);
+			
+	        	BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
+	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+	        	retVal = "homePage";
+	        }
+	        else{
+	        	request.setAttribute("postojiVec", "postojiVec");
+	        	UserDto userDto = new UserDto();
+	    		model.addAttribute("user", userDto);
+	        	retVal="registerPage";
+	        }
+			
+		}
+		
+		else
+		{
+			retVal = "homePage";
+			System.out.println("error");
+		}
+
+		return retVal;
+	}
 }
