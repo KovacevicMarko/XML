@@ -16,6 +16,9 @@ public class DatabaseConnection
 	
 	public static String AKT_DOC_ID="/Akt.xml";
 	public static String AKT_COL_ID="/ColAkt";
+	
+	public static String AMANDMAN_DOC_ID="/Amandman.xml";
+	public static String AMANDMAN_COL_ID="/ColAmandman";
 
     private static DatabaseClient client = null;
 

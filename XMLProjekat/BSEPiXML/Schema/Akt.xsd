@@ -101,6 +101,7 @@
     <xs:complexType name="TSadrzajStava">
         <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
+            <xs:element ref="Tekst"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
                 <xs:complexType>
                     <xs:sequence>
@@ -114,7 +115,8 @@
     <xs:complexType name="TSadrzajTacke">
         <xs:choice maxOccurs="1" minOccurs="1">
             <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
-            <xs:element name="Alineja">
+            <xs:element ref="Tekst"/>
+            <xs:element name="Alineja" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Sadrzaj" type="xs:string"/>
@@ -163,4 +165,5 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+    <xs:element name="Tekst" type="xs:string"/>
 </xs:schema>
