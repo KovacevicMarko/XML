@@ -33,13 +33,14 @@ import securityPackage.SignEnveloped;
 import securityPackage.VerifySignatureEnveloped;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
+import com.marklogic.client.document.DocumentUriTemplate;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
-
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -130,6 +131,58 @@ public class DatabaseManager<T> {
             logger.info("ERROR: Unexpected error: " + e.getMessage());
         }
         finally{
+            return ret;
+        }
+    }
+    
+    /**
+     * Upisivanje bean-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor write(T bean,String colId) {
+        DocumentDescriptor ret = null;
+        try {
+            // Try to convert to xml on default location.
+            if (converter.ConvertJaxbToXml(bean)){
+                FileInputStream inputStream = new FileInputStream(new File("tmp.xml"));
+                ret = write(inputStream,colId);
+            } else {
+                throw new Exception(" Can't convert JAXB bean to XML.");
+            }
+        }
+        catch (Exception e) {
+
+        }
+        finally{
+            return ret;
+        }
+    }
+    
+    /**
+     * Upisivanje fajla-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor write(FileInputStream inputStream, String colId) {
+        DocumentDescriptor ret = null;
+        try{
+            if (!singXml(null)) {
+                throw  new Exception("Could not sign xml, check tmp.xml.");
+            }
+            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            InputStreamHandle handle = new InputStreamHandle(inputStream);
+            ret = xmlManager.create(template,metadata, handle);
+        }
+        catch (Exception e){
+            logger.info("Could not write xml bean.");
+            logger.info("[ERROR] " + e.getMessage());
+            logger.info("[STACK TRACE] " + e.getStackTrace());
+        } finally{
             return ret;
         }
     }

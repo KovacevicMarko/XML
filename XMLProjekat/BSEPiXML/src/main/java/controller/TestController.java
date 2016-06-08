@@ -2,6 +2,12 @@ package controller;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Random;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import model.Akt;
 import model.Deo;
@@ -33,7 +39,7 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		//InitializeKorisnik();
+		InitializeKorisnik();
 		InitializeAkt();
 		InitializeAmandman();
 
@@ -42,6 +48,7 @@ public class TestController {
 	
 	private void InitializeKorisnik()
 	{
+
 		Korisnici korisnici = new Korisnici();
 		TKorisnik k = new TKorisnik();
 		k.setKorisnickoIme("despinica");
@@ -50,6 +57,7 @@ public class TestController {
 		k.setLozinka("despinica");
 		k.setPrezime("despinica");
 		k.setUloga(Role.ULOGA_GRADJANIN);
+
 		byte[] salt = new byte[0];
 		
 		try {
@@ -102,6 +110,18 @@ public class TestController {
         }
         k2.setLozinka(PasswordStorage.base64Encode(hashedPassword));
 		
+        Date date = new Date();
+        GregorianCalendar c = new GregorianCalendar();
+		c.setTime(date);
+		try {
+			k.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
+			k2.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
 		korisnici.getKorisnik().add(k2);
 		korisnici.getKorisnik().add(k2);
 		
@@ -145,6 +165,18 @@ public class TestController {
 		akt.setPrelazneIZavrsneOdredbe(pzo);
 		akt.getDeo().add(deo);
 		
+		Date date = new Date();
+		
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTime(date);
+		try {
+			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		akt.setID(GenerateRandNumber());
+		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		String docID = DatabaseConnection.AKT_DOC_ID;
 		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID);
@@ -154,6 +186,13 @@ public class TestController {
 	private void InitializeAmandman()
 	{
 		
+	}
+	
+	private String GenerateRandNumber()
+	{
+		Random randomGenerator = new Random();
+		int a = 1;
+		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
 	}
 
 }
