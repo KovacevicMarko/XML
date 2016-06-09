@@ -12,17 +12,15 @@
 <script src="<c:url value="/js/bootstrap.js"/>"></script>
  <script src="<c:url value="/js/jquery.min.js"/>"></script>
 
-
-<script type="text/javascript">
-
-</script>
-
-
 </head>
 
 
 
 <body>
+<strong>Azuriranje lozinke</strong>Vreme vazenja vase lozinke je isteklo, azurirajte vasu lozinku!
+<br>
+<br>
+<br>
 <c:url var="action" value="/logIn" />
     <form:form id="formChangePass" action="${action}" method="post" modelAttribute="user">
     <table>
@@ -30,25 +28,39 @@
       <tr>
      <td>
       <form:label path="korisnickoIme">
-       <b> Stara lozinka: </b>
+       <b> Korisnicko ime: </b>
       </form:label>
      </td>
      <td>
-      <form:input class="form-control" type ="password"  path="korisnickoIme" cssErrorClass="error" />
+      <form:input class="form-control"  path="korisnickoIme" value="${user.korisnickoIme}" cssErrorClass="error" readonly="true" />
       <form:errors path="korisnickoIme" cssClass="errorMessage" />
      </td>
     </tr>
     
+    
+    
       <tr>
      <td>
       <form:label path="lozinka">
-       <b> Lozinka: </b>
+       <b> Trenutna lozinka: </b>
       </form:label>
      </td>
      <td>
       <form:input class="form-control" type ="password" path="lozinka" cssErrorClass="error" />
       <form:errors path="lozinka" cssClass="errorMessage" />
      <td>
+    </tr>
+    
+    <tr>
+     <td>
+      <form:label path="novaLozinka">
+       <b> Nova lozinka: </b>
+      </form:label>
+     </td>
+     <td>
+      <form:input class="form-control" type ="password"  path="novaLozinka" cssErrorClass="error" />
+      <form:errors path="novaLozinka" cssClass="errorMessage" />
+     </td>
     </tr>
 
     </fildSet>
@@ -62,6 +74,15 @@
       </tr>
      </table>
    </form:form>
+
+
+<c:if test="${pograsnaStara != null}">
+		<strong>Greska</strong> Unesite ispravnu trenutnu lozinku
+</c:if>
+
+<c:if test="${praznaNova != null}">
+		<strong>Greska</strong> Nova loznika ne sme biti prazna
+</c:if>
 
 
 </body>

@@ -20,6 +20,10 @@
 
 
 
+<c:if test="${not empty porukaOIsteku}">
+		<strong>Neuspesno registrovanje!</strong> ${porukaOIsteku}						
+</c:if>	
+
 
 
 

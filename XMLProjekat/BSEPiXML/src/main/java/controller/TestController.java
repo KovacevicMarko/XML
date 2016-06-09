@@ -121,6 +121,8 @@ public class TestController {
         k2.setLozinka(PasswordStorage.base64Encode(hashedPassword));
 		
         Date date = new Date();
+        
+        
         GregorianCalendar c = new GregorianCalendar();
 		c.setTime(date);
 		try {
@@ -132,11 +134,12 @@ public class TestController {
 		}
         
         
-		korisnici.getKorisnik().add(k2);
+		korisnici.getKorisnik().add(k);
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
 		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+		
 	}
 	
 	private void InitializeAkt()

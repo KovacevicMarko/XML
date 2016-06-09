@@ -48,5 +48,9 @@
  		<put-attribute name="content" value="/WEB-INF/jsp/content/register.jsp" />	
  	</definition>
  	
+ 		<definition name ="changePassPage" extends="layoutHome">
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/changePassword.jsp" />	
+ 	</definition>
+ 	
 	
  </tiles-definitions>

@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import password.PasswordStorage;
 import securityPackage.SignEnveloped;
 import businessLogic.BeanManager;
-
 import common.DatabaseConnection;
 import common.HelperClass;
 import common.Role;
-
+import dto.ChangePassDto;
 import dto.LoginUserDto;
 import dto.UserDto;
 
@@ -44,8 +43,6 @@ public class UserController {
 	{
 		String retVal = "homePage";
 		
-		
-		
 		if(!bindingResult.hasErrors())
 		{
 			HelperClass helpClass = new HelperClass();
@@ -59,12 +56,27 @@ public class UserController {
 	        {
 	            if(user.getUsername().equals(tuser.getKorisnickoIme()) && PasswordStorage.checkPassword(user.getPassword(), tuser.getLozinka(), tuser.getSalt()) )
 	            {
+	            	
+	            	//request.setAttribute("porukaOIsteku", "Vazenje lozinke vam istice za  dana. Promenite lozinku!");
 	            	//provera da li je sifra istekla
 	            	/*if(!HelperClass.CheckPasswordDate(tuser, helpObj))
 	            	{
 	            		System.out.println("HERE MONTH");
 	            		//TODO REDIRECT ON PAGE TO CHANGE PASSWORD
 	            		
+	            		ChangePassDto userDto = new ChangePassDto();
+	            		userDto.setKorisnickoIme(user.getUsername());
+	            		model.addAttribute("user", userDto);		
+	            		retVal="changePassPage";
+	            		return retVal;
+	            	}*/
+	            	
+	            	if(true){
+	            		ChangePassDto userDto = new ChangePassDto();
+	            		userDto.setKorisnickoIme(user.getUsername());
+	            		model.addAttribute("user", userDto);		
+	            		retVal="changePassPage";
+	            		return retVal;
 	            	}
 	            	
 	            	//provera da li je ostalo dovoljno dana do upozorenja
@@ -73,7 +85,7 @@ public class UserController {
 	            		System.out.println("HERE DAY");
 	            		//TODO SET WARNING MESSAGE + helpObj.getNumberOfExpiredDays(); 
 	            		request.setAttribute("porukaOIsteku", "Vazenje lozinke vam istice za "+helpObj.getNumberOfExpiredDays()+" dana. Promenite lozinku!");
-	            	}*/
+	            	}
 	            	
 	            	UserDto userD=new UserDto(tuser);
             		request.getSession().setAttribute("user",userD);
@@ -215,4 +227,90 @@ public class UserController {
 
 		return retVal;
 	}
+	
+	@RequestMapping(value="/changePass", method = RequestMethod.GET)
+	public String changePassForm(Model model) 
+	{
+	
+		ChangePassDto userDto = new ChangePassDto();
+		model.addAttribute("user", userDto);
+		return "changePassPage";
+	}
+	
+	@RequestMapping(params = "changePass", method = RequestMethod.POST)
+	public String changePassword(HttpServletRequest request, ChangePassDto user, BindingResult bindingResult, Model model)
+	{
+		String retVal = "";
+		
+		if(!bindingResult.hasErrors())
+		{
+			
+			BeanManager<Korisnici> bm = new BeanManager<>("Schema/Korisnici.xsd");
+			
+			boolean menjano=false;
+			
+	        //citamo sve korisnike iz baze
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+	        
+	        for(int i=0; i<users.getKorisnik().size(); i++)
+	        {
+	        	if(user.getKorisnickoIme().equals(users.getKorisnik().get(i).getKorisnickoIme()) && PasswordStorage.checkPassword(user.getLozinka(), users.getKorisnik().get(i).getLozinka(), users.getKorisnik().get(i).getSalt())){
+	        		if(!user.getNovaLozinka().equals("")){
+	        			
+	        			byte[] salt = new byte[0];
+	        			
+	    	        	try {
+	    	        		salt=PasswordStorage.generateSalt();
+	    	        	} catch (NoSuchAlgorithmException e) {
+	    	        		e.printStackTrace();
+	    	        		System.out.println(e.toString());
+	    	        	}
+	    	        	users.getKorisnik().get(i).setSalt(PasswordStorage.base64Encode(salt));
+	    	        	//hash pass
+	    	        	byte[] hashedPassword = new byte[0];
+	    	        	try {
+	    	        		hashedPassword = PasswordStorage.hashPassword(user.getNovaLozinka(), salt);
+	    	        	} catch (NoSuchAlgorithmException e) {
+	    	        		e.printStackTrace();
+	    	            	System.out.println(e.toString());
+	    	        	} catch (InvalidKeySpecException e) {
+	    	        		e.printStackTrace();
+	    	        		System.out.println(e.toString());
+	    	        	}
+	    	        	users.getKorisnik().get(i).setLozinka(PasswordStorage.base64Encode(hashedPassword));
+	    	        	menjano=true;
+	        		}else
+	        		{
+	        			ChangePassDto userDto = new ChangePassDto();
+	            		userDto.setKorisnickoIme(user.getKorisnickoIme());
+	            		model.addAttribute("user", userDto);
+	            		request.setAttribute("praznaNova", "praznaNova");
+	        			return "changePassPage"; //ne sme polje nova biti prazno
+	        		}
+	        	}/*else{
+	        		ChangePassDto userDto = new ChangePassDto();
+            		userDto.setKorisnickoIme(user.getKorisnickoIme());
+            		model.addAttribute("user", userDto);
+            		request.setAttribute("pograsnaStara", "pogresnaStara");
+        			return "changePassPage"; //Stara lozinka nije dobra
+	        	}*/
+			
+	        }
+	        if(menjano){
+	        	BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
+	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+	        }
+        	retVal="homePage";
+	        
+	        
+		}
+		else
+		{
+			retVal = "homePage";
+			System.out.println("error");
+		}
+
+		return retVal;
+	}
+
 }
