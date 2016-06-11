@@ -47,11 +47,15 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		//InitializeKorisnik();
-		//InitializeAkt();
+		InitializeKorisnik();
+		System.out.println("***************USPESNO INICIJALIZOVAN KORISNIK**********");
+		/*InitializeAkt();
+		System.out.println("***************USPESNO INICIJALIZOVAN Akt**********");
 		InitializeAmandman();
-		//InitializeAktEncrypt();
-
+		System.out.println("***************USPESNO INICIJALIZOVAN Amandman**********");
+		InitializeAktEncrypt();
+		System.out.println("***************USPESNO INICIJALIZOVAN AktEncrypt**********");
+		 */
 		return "homePage";
 	}
 	
@@ -137,7 +141,7 @@ public class TestController {
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false);
 		
 	}
 	
@@ -146,7 +150,7 @@ public class TestController {
 		
 		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID);
+		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID , true);
 		
 	}
 	
@@ -191,7 +195,7 @@ public class TestController {
 		amandman.setID(GenerateRandNumber());
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
-		bm1.write(amandman, DatabaseConnection.AMANDMAN_DOC_ID,  DatabaseConnection.AMANDMAN_COL_ID);
+		bm1.write(amandman, DatabaseConnection.AMANDMAN_DOC_ID,  DatabaseConnection.AMANDMAN_COL_ID, true);
 	}
 	
 	private void InitializeAktEncrypt()
@@ -199,7 +203,7 @@ public class TestController {
 		Akt akt = getAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID);
+		bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true);
 	}
 	
 	private Akt getAkt()

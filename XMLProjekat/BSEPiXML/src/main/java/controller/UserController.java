@@ -207,7 +207,7 @@ public class UserController {
 	        	users.getKorisnik().add(k);
 			
 	        	BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false);
 	        	retVal = "homePage";
 	        }
 	        else{
@@ -298,7 +298,7 @@ public class UserController {
 	        }
 	        if(menjano){
 	        	BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID);
+	        	bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID ,false);
 	        }
         	retVal="homePage";
 	        

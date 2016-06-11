@@ -40,10 +40,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "korisnik"
 })
-@XmlRootElement(name = "Korisnici")
+@XmlRootElement(name = "Korisnici", namespace = "http://www.gradskaskupstina.rs/")
 public class Korisnici {
 
-    @XmlElement(name = "Korisnik")
+    @XmlElement(name = "Korisnik", namespace = "http://www.gradskaskupstina.rs/")
     protected List<TKorisnik> korisnik;
 
     /**

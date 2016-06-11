@@ -79,16 +79,16 @@ public class BeanManager<T>
     /**
      * Upis fajla u bazu.
      */
-    public boolean write(FileInputStream inputStream, String docId, String colId) {
-        return  databaseManager.writeFile(inputStream,docId,colId);
+    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
+        return  databaseManager.writeFile(inputStream,docId,colId, signFlag);
     }
 
 
     /**
      * Upis beana u bazu.
      */
-    public boolean write(T bean, String docId, String colId) {
-        return databaseManager.writeBean(bean,docId,colId);
+    public boolean write(T bean, String docId, String colId, boolean signFlag) {
+        return databaseManager.writeBean(bean,docId,colId, signFlag);
     }
 
     /**
