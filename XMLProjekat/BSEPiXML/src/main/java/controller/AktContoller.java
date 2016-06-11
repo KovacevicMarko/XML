@@ -32,7 +32,7 @@ public class AktContoller {
       query.append("\")");
       ArrayList<Akt> akti=bm.executeQuery(query.toString());
 	  
-      System.out.println(akti.size());
+      System.out.println(" ****************************************** " + akti.size());
 	  
 	  return "noviAkt";
 	 }

@@ -12,7 +12,7 @@
                 <xs:element name="SadrzajAmandmana" type="TSadrzajAmandmana"/>
                 <xs:element minOccurs="0" name="ID" type="xs:string"/>
                 <xs:element minOccurs="0" name="Timestamp" type="xs:dateTime"/>
-                <xs:element minOccurs="0" name="Signature" type="ds:SignatureType"/>
+                <xs:element minOccurs="0" ref="ds:Signature"/>
             </xs:sequence>
             <xs:attribute name="DatumPredlaganja" type="xs:dateTime"/>
         </xs:complexType>

@@ -44,14 +44,13 @@ import common.Role;
 @RequestMapping(value = "/initialize")
 public class TestController {
 	
-	
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
-		InitializeAkt();
+		//InitializeKorisnik();
+		//InitializeAkt();
 		InitializeAmandman();
+		//InitializeAktEncrypt();
 
 		return "homePage";
 	}
@@ -144,81 +143,8 @@ public class TestController {
 	
 	private void InitializeAkt()
 	{
-		Alineja alineja = new Alineja();
-		alineja.setOznaka("Alineja1");
-		alineja.setSadrzaj("Sadrzaj alineje o donosenju akta.");
 		
-		TSadrzajTacke sadrzajTacke = new TSadrzajTacke();
-		sadrzajTacke.getAlineja().add(alineja);
-		sadrzajTacke.setTekst("Sadrzaj tacke o donosenju akta.");
-		
-		Tacka tacka = new Tacka();
-		tacka.setSadrzaj(sadrzajTacke);
-		
-		TSadrzajStava sadrzajStava = new TSadrzajStava();
-		sadrzajStava.getTacka().add(tacka);
-		sadrzajStava.setTekst("Sadrzaj stava o donosenju akta.");
-		
-		
-		Stav stav = new Stav();
-		stav.setOznaka("stav1");
-		stav.setSadrzaj(sadrzajStava);
-		
-		TSadrzajClana sadrzajClana = new TSadrzajClana();
-		sadrzajClana.getStav().add(stav);
-		
-		Clan clan = new Clan();
-		clan.setOznaka("clan1");
-		clan.setSadrzaj(sadrzajClana);
-		
-		Clan clan2 = new Clan();
-		clan2.setOznaka("clan2");
-		
-		
-		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
-		sadrzajGlave.getClan().add(clan);
-		sadrzajGlave.getClan().add(clan2);
-		
-		Glava glava = new Glava();
-		glava.setNaziv("glava1");
-		glava.setOznaka("glava1");
-		glava.setSadrzaj(sadrzajGlave);
-		
-		TSadrzajDela sadrzajDela = new TSadrzajDela();
-		sadrzajDela.getGlava().add(glava);
-		
-		Deo deo = new Deo();
-		deo.setNaziv("deo1");
-		deo.setOznaka("oznaka1");
-		deo.setSadrzaj(sadrzajDela);
-		
-		TOdbornik odbornik = new TOdbornik();
-		odbornik.setIme("odbornikIme");
-		odbornik.setPrezime("odbornikPrezime");
-		odbornik.setStranka("odbornikStranka");
-		
-		PrelazneIZavrsneOdredbe pzo = new PrelazneIZavrsneOdredbe();
-		pzo.setDatum(null);
-		pzo.setPredlagac(odbornik);
-		
-		Akt akt = new Akt();
-		akt.setNaziv("Akt1");
-		akt.setPreambula("Preambula1");
-		akt.setPrelazneIZavrsneOdredbe(pzo);
-		akt.getDeo().add(deo);
-		
-		Date date = new Date();
-		
-		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(date);
-		try {
-			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
-		} catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		akt.setID(GenerateRandNumber());
-		
+		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID);
 		
@@ -266,6 +192,96 @@ public class TestController {
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
 		bm1.write(amandman, DatabaseConnection.AMANDMAN_DOC_ID,  DatabaseConnection.AMANDMAN_COL_ID);
+	}
+	
+	private void InitializeAktEncrypt()
+	{
+		Akt akt = getAkt();
+		
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID);
+	}
+	
+	private Akt getAkt()
+	{
+		Alineja alineja = new Alineja();
+		alineja.setOznaka("Alineja1");
+		alineja.setSadrzaj("Sadrzaj alineje o donosenju akta.");
+		
+		TSadrzajTacke sadrzajTacke = new TSadrzajTacke();
+		sadrzajTacke.getAlineja().add(alineja);
+		sadrzajTacke.setTekst("Sadrzaj tacke o donosenju akta.");
+		
+		Tacka tacka = new Tacka();
+		tacka.setSadrzaj(sadrzajTacke);
+		
+		TSadrzajStava sadrzajStava = new TSadrzajStava();
+		//sadrzajStava.getTacka().add(tacka);
+		sadrzajStava.setTekst("Sadrzaj stava o donosenju akta.");
+		
+		
+		Stav stav = new Stav();
+		stav.setOznaka("stav1");
+		stav.setSadrzaj(sadrzajStava);
+		
+		TSadrzajClana sadrzajClana = new TSadrzajClana();
+		sadrzajClana.getStav().add(stav);
+		
+		Clan clan = new Clan();
+		clan.setOznaka("clan1");
+		clan.setSadrzaj(sadrzajClana);
+		
+		Clan clan2 = new Clan();
+		clan2.setOznaka("clan2");
+		
+		
+		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
+		sadrzajGlave.getClan().add(clan);
+		//sadrzajGlave.getClan().add(clan2);
+		
+		Glava glava = new Glava();
+		glava.setNaziv("glava1");
+		glava.setOznaka("glava1");
+		glava.setSadrzaj(sadrzajGlave);
+		
+		TSadrzajDela sadrzajDela = new TSadrzajDela();
+		sadrzajDela.getGlava().add(glava);
+		
+		Deo deo = new Deo();
+		deo.setNaziv("deo1");
+		deo.setOznaka("oznaka1");
+		deo.setSadrzaj(sadrzajDela);
+		
+		TOdbornik odbornik = new TOdbornik();
+		odbornik.setIme("odbornikIme");
+		odbornik.setPrezime("odbornikPrezime");
+		odbornik.setStranka("odbornikStranka");
+		
+		PrelazneIZavrsneOdredbe pzo = new PrelazneIZavrsneOdredbe();
+		pzo.setPredlagac(odbornik);
+		
+		Akt akt = new Akt();
+		akt.setNaziv("Akt1");
+		akt.setPreambula("Preambula1");
+		
+		akt.getDeo().add(deo);
+		
+		Date date = new Date();
+		
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTime(date);
+		try {
+			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+			pzo.setDatum(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		akt.setID(GenerateRandNumber());
+		akt.setPrelazneIZavrsneOdredbe(pzo);
+		
+		return akt;
+		
 	}
 	
 	private String GenerateRandNumber()
