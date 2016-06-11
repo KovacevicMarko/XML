@@ -1,19 +1,19 @@
 package businessLogic;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentMetadataPatchBuilder;
-import com.marklogic.client.document.XMLDocumentManager;
-
-import common.JaxbXmlConverter;
-import common.DatabaseConnection;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
+import com.marklogic.client.document.DocumentMetadataPatchBuilder;
+import com.marklogic.client.document.XMLDocumentManager;
+import common.DatabaseConnection;
+import common.JaxbXmlConverter;
 
 
 /**
@@ -81,6 +81,20 @@ public class BeanManager<T>
      */
     public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
         return  databaseManager.writeFile(inputStream,docId,colId, signFlag);
+    }
+    
+    /**
+     * Upis fajla u bazu po document template-u.
+     */
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
+        return databaseManager.writeDocument(inputStream,colId, signFlag);
+    }
+    
+    /**
+     * Upis bean-a u bazu po document template-u.
+     */
+    public DocumentDescriptor writeDocument(T bean,String colId, boolean signFlag) {
+    	return databaseManager.write(bean,colId , signFlag);
     }
 
 

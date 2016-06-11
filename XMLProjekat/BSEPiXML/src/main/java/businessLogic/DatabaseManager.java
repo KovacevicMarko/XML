@@ -161,7 +161,7 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor write(T bean,String colId) {
+    public DocumentDescriptor write(T bean,String colId, boolean signFlag) {
         DocumentDescriptor ret = null;
         try {
         	if(!validateBeanBySchema(bean)){
@@ -172,7 +172,7 @@ public class DatabaseManager<T> {
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = write(inputStream,colId);
+                ret = writeDocument(inputStream,colId, signFlag);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -191,10 +191,10 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor write(FileInputStream inputStream, String colId) {
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
         DocumentDescriptor ret = null;
         try{
-        	if (!singXml(null)) {
+        	if (signFlag && !singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
             //TODO FIX ENCRIPTION

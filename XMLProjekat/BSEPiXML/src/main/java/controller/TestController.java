@@ -49,13 +49,13 @@ public class TestController {
 	{
 		InitializeKorisnik();
 		System.out.println("***************USPESNO INICIJALIZOVAN KORISNIK**********");
-		/*InitializeAkt();
+		InitializeAkt();
 		System.out.println("***************USPESNO INICIJALIZOVAN Akt**********");
 		InitializeAmandman();
 		System.out.println("***************USPESNO INICIJALIZOVAN Amandman**********");
 		InitializeAktEncrypt();
 		System.out.println("***************USPESNO INICIJALIZOVAN AktEncrypt**********");
-		 */
+		
 		return "homePage";
 	}
 	
@@ -150,7 +150,7 @@ public class TestController {
 		
 		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID , true);
+		bm1.writeDocument(akt, DatabaseConnection.AKT_COL_ID , true);
 		
 	}
 	
