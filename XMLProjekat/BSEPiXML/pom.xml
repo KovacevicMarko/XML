@@ -213,7 +213,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>XMLiBSEP</finalName>
+		<finalName>BezbednostXmlProject</finalName>
 
 		<plugins>
 			<plugin>

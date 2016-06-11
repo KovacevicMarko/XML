@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
+import javax.crypto.SecretKey;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
@@ -22,6 +23,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import model.Akt;
+import model.Amandman;
 import model.Korisnici;
 
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
 import securityPackage.VerifySignatureEnveloped;
 
@@ -41,6 +44,7 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
+
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -64,6 +68,8 @@ public class DatabaseManager<T> {
     private JaxbXmlConverter<T> converter;
     
     private static TransformerFactory transformerFactory;
+    
+    private static String INPUT_OUTPUT_TMP_FILE = "tmp.xml";
     
     static {
         transformerFactory = TransformerFactory.newInstance();
@@ -94,7 +100,12 @@ public class DatabaseManager<T> {
             if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-                        
+            //TODO FIX ENCRIPTION
+            /*
+            if (!encriptContent(null, null)) {
+                throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            }
+            */
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -121,7 +132,7 @@ public class DatabaseManager<T> {
         try {
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
-                FileInputStream inputStream = new FileInputStream(new File("tmp.xml"));
+                FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeFile(inputStream,docId,colId);
             } else {
                 throw new Exception("Can't convert JAXB bean " + bean.toString() + " to XML.");
@@ -146,7 +157,7 @@ public class DatabaseManager<T> {
         try {
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
-                FileInputStream inputStream = new FileInputStream(new File("tmp.xml"));
+                FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = write(inputStream,colId);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
@@ -257,7 +268,7 @@ public class DatabaseManager<T> {
             xmlManager.read(docId, metadata, content);
 
             Document doc = content.get();
-            FileOutputStream fileOutputStream = new FileOutputStream("tmp.xml");
+            FileOutputStream fileOutputStream = new FileOutputStream(INPUT_OUTPUT_TMP_FILE);
             transform(doc, fileOutputStream);
             ret = true;
 
@@ -356,8 +367,7 @@ public class DatabaseManager<T> {
         boolean ret = false;
 
         try{
-            //if (!(bean instanceof Akt) && !(bean instanceof Amandman) && !(bean instanceof Korisnici)){
-        	if (!(bean instanceof Akt) && !(bean instanceof Korisnici)){
+            if (!(bean instanceof Akt) && !(bean instanceof Amandman) && !(bean instanceof Korisnici)){
                 throw  new Exception("Can't validateBeanBySchema element that is not Akt, Amandman or Korisnik!");
             }
             JAXBContext context = JAXBContext.newInstance("model");
@@ -366,7 +376,7 @@ public class DatabaseManager<T> {
             // Podešavanje unmarshaller-a za XML schema validaciju
             unmarshaller.setSchema(schema);
             unmarshaller.setEventHandler(new ValidationXmlSchema());
-            T tmpAkt = (T) JAXBIntrospector.getValue(unmarshaller.unmarshal(new File("tmp.xml")));
+            T tmpAkt = (T) JAXBIntrospector.getValue(unmarshaller.unmarshal(new File(INPUT_OUTPUT_TMP_FILE)));
             ret = true;
         } catch (Exception e){
             logger.debug("Unexpected error: " +e.getMessage());
@@ -420,7 +430,7 @@ public class DatabaseManager<T> {
             Document document;
             if (filePath == null) 
             {
-                document  =signEnveloped.loadDocument("tmp.xml");
+                document  =signEnveloped.loadDocument(INPUT_OUTPUT_TMP_FILE);
             } 
             else 
             {
@@ -429,14 +439,44 @@ public class DatabaseManager<T> {
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
             document = signEnveloped.signDocument(document,pk,cert);
-            signEnveloped.saveDocument(document,"tmp.xml");
+            signEnveloped.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
             ret = true;
 
         } catch (Exception e){
-            System.out.println("[WriteManager] Unexpected error: " +e.getMessage());
+            System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
         } finally {
             return  ret;
         }
+    }
+    
+    private boolean encriptContent(String filePath, String element)
+    {
+    	boolean ret = false;
+    	try{
+    		
+    		EncryptKEK encryptKek = new EncryptKEK();
+    		Document document;
+            if (filePath == null) 
+            {
+                document  = encryptKek.loadDocument(INPUT_OUTPUT_TMP_FILE);
+            } 
+            else 
+            {
+                document = encryptKek.loadDocument(filePath);
+            }
+            System.out.println("Generating secret key ....");
+            SecretKey secretKey = encryptKek.generateDataEncryptionKey();
+            
+            Certificate cert = encryptKek.readCertificate();
+            System.out.println("Encrypting....");
+            document = encryptKek.encrypt(document ,secretKey, cert);
+            encryptKek.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
+            return true;
+    		
+    	} catch(Exception e){
+    		System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
+    		return false;
+    	}
     }
 	
 }
