@@ -48,8 +48,8 @@ public class TestController {
 	public String Initialize()
 	{
 		//InitializeKorisnik();
-		InitializeAkt();
-		//InitializeAmandman();
+		//InitializeAkt();
+		InitializeAmandman();
 		//InitializeAktEncrypt();
 
 		return "homePage";
