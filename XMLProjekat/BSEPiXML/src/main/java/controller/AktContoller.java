@@ -25,7 +25,7 @@ public class AktContoller {
 	  AktDto aktDto = new AktDto();
 	  model.addAttribute("akt", aktDto);
 	  
-	  /*BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+	  BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 	  StringBuilder query = new StringBuilder();
       query.append("fn:collection(\"");
       query.append(DatabaseConnection.AKT_COL_ID);
@@ -33,7 +33,7 @@ public class AktContoller {
       ArrayList<Akt> akti=bm.executeQuery(query.toString());
 	  
       System.out.println(akti.size());
-	  */
+	  
 	  return "noviAkt";
 	 }
 	

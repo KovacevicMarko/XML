@@ -68,5 +68,7 @@ public class QueryManager<T> {
         }
         return ret;
     }
+    
+    
 	
 }
