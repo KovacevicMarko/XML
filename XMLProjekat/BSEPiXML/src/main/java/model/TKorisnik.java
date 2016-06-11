@@ -55,21 +55,21 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 public class TKorisnik {
 
-    @XmlElement(name = "KorisnickoIme", required = true)
+    @XmlElement(name = "KorisnickoIme", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String korisnickoIme;
-    @XmlElement(name = "Lozinka", required = true)
+    @XmlElement(name = "Lozinka", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String lozinka;
-    @XmlElement(name = "Ime", required = true)
+    @XmlElement(name = "Ime", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String ime;
-    @XmlElement(name = "Prezime", required = true)
+    @XmlElement(name = "Prezime", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String prezime;
-    @XmlElement(name = "Uloga", required = true)
+    @XmlElement(name = "Uloga", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String uloga;
-    @XmlElement(name = "Email", required = true)
+    @XmlElement(name = "Email", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String email;
-    @XmlElement(name = "Salt", required = true)
+    @XmlElement(name = "Salt", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected String salt;
-    @XmlElement(name = "DatumPromeneLozinke", required = true)
+    @XmlElement(name = "DatumPromeneLozinke", namespace = "http://www.gradskaskupstina.rs/", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar datumPromeneLozinke;
 

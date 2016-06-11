@@ -39,16 +39,53 @@
 			<thead class="thead-inverse">
 				
 					<th>Naziv</th>
-					<th>Deo</th>
+					<th>Delovi</th>
 					<th>Preambula</th>
 					<th>Opsirnije</th>
-					
+				
 			</thead>
 			<tbody>
+				<c:forEach items="${akti}" var="akt">
+				<tr>
+					<td>${akt.naziv}</td>
+					<td>
+						<c:url var="action" value="/deo" />
+						<form:form id="formFindDeo" action="${action}" method="post" modelAttribute="deo">
 			
+						  <fildSet>	
+							<form:input type="hidden" path="id" value="${akt.ID}" rows="5" cols="50" />
+							<form:errors type="hidden" path="id" cssClass="error" />
+				
+						  </fildSet>
+							<button type="submit" class="btn btn-success" name="save" >
+								<b> Delovi </b>
+							</button>				
+						</form:form>
+					</td>
+					<td>${akt.preambula}</td>
+					<td>
+						<c:url var="action" value="/deo" />
+						<form:form id="formFindDeo" action="${action}" method="post" modelAttribute="deo">
+			
+						  <fildSet>	
+							<form:input type="hidden" path="id" value="${akt.ID}" rows="5" cols="50" />
+							<form:errors type="hidden" path="id" cssClass="error" />
+				
+						  </fildSet>
+							<button type="submit" class="btn btn-success" name="save" >
+								<b> Delovi </b>
+							</button>				
+						</form:form>
+					</td>
+					
+
+				</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 </div>
+
+
 
 
 

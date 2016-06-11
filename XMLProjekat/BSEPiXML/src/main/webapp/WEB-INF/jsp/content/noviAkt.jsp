@@ -17,7 +17,7 @@
 
 <br><br><br><br><br>
 
-<c:url var="action" value="/noviAkt" />
+<c:url var="action" value="/akt" />
 <form:form id="formNewAkt" action="${action}" method="post" modelAttribute="akt">
 			<table class="dodavanjeAkta">
 			<fildSet>

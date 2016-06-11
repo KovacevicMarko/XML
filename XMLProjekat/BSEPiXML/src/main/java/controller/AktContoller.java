@@ -17,7 +17,7 @@ import common.DatabaseConnection;
 import dto.AktDto;
 
 @Controller
-@RequestMapping(value = "/noviAkt")
+@RequestMapping(value = "/akt")
 public class AktContoller {
 	
 	@RequestMapping(method = RequestMethod.GET)//AKT_DOC_ID

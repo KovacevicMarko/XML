@@ -94,12 +94,16 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeFile(FileInputStream inputStream, String docId, String colId) {
+    public boolean writeFile(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
         boolean ret = false;
         try{
-            if (!singXml(null)) {
+        	
+    		if (signFlag &&!singXml(null)) 
+    		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
+        	
+            
             //TODO FIX ENCRIPTION
             /*
             if (!encriptContent(null, null)) {
@@ -127,13 +131,18 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeBean(T bean, String docId, String colId) {
+    public boolean writeBean(T bean, String docId, String colId, boolean signFlag) {
         boolean ret = false;
         try {
+        	if(!validateBeanBySchema(bean)){
+        		logger.info("Can`t to validate bean by schema!");
+        		System.out.println("Can`t to validate bean by schema!");
+        		return false;
+        	}
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = writeFile(inputStream,docId,colId);
+                ret = writeFile(inputStream,docId,colId, signFlag);
             } else {
                 throw new Exception("Can't convert JAXB bean " + bean.toString() + " to XML.");
             }
@@ -155,6 +164,11 @@ public class DatabaseManager<T> {
     public DocumentDescriptor write(T bean,String colId) {
         DocumentDescriptor ret = null;
         try {
+        	if(!validateBeanBySchema(bean)){
+        		logger.info("Can`t to validate bean by schema!");
+        		System.out.println("Can`t to validate bean by schema!");
+        		return null;
+        	}
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
@@ -180,9 +194,15 @@ public class DatabaseManager<T> {
     public DocumentDescriptor write(FileInputStream inputStream, String colId) {
         DocumentDescriptor ret = null;
         try{
-            if (!singXml(null)) {
+        	if (!singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
+            //TODO FIX ENCRIPTION
+            /*
+            if (!encriptContent(null, null)) {
+                throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            }
+            */
             DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
