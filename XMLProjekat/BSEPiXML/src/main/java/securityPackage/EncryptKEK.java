@@ -209,6 +209,7 @@ public class EncryptKEK {
 			}catch(Exception e){
 				e.printStackTrace();
 			}
+			System.out.println("**********************2**********************");
 		      //inicijalizacija za kriptovanje tajnog kljuca javnim RSA kljucem
 			keyCipher.init(XMLCipher.WRAP_MODE, certificate.getPublicKey());
 			

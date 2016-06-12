@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,7 +50,38 @@ public class AktContoller {
       System.out.println(" ****************************************** " + aktiPredlozeni.size());
 	  
 	  return "noviAkt";
-	 }
+	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String searchAkt() {
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		String value = "tacke";
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(value, DatabaseConnection.AKT_PREDLOZEN_COL_ID);
+    	
+    	Iterator it = predlozeni.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+        }
+    	
+		return "homePage";
+	}
+	
+	@RequestMapping(value = "/searchTag", method = RequestMethod.GET)
+	public String searchAktTag() {
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		String value = "Sadrzaj tacke";
+		String tag = "Tacka";
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(value, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tag);
+    	
+    	Iterator it = predlozeni.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+        }
+    	
+		return "homePage";
+	}
 	
 	@RequestMapping(params = "save", method = RequestMethod.POST)
 	public String dodajAkt(AktDto akt, BindingResult bindingResult, Model model){//kad se preuzme ceo xml text se upise u preamublu to je tipa string, da ne pravim novi dto

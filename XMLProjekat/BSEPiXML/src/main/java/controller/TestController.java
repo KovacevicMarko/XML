@@ -46,14 +46,14 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
-		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-		InitializeAkt();
-		System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-		InitializeAmandman();
-		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
-//		InitializeAktEncrypt();
-//		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
+//		InitializeKorisnik();
+//		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
+//		InitializeAkt();
+//		System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+//		InitializeAmandman();
+//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+		InitializeAktEncrypt();
+		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
