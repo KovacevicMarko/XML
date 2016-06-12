@@ -1,11 +1,15 @@
 package controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import model.Akt;
 
@@ -17,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.xml.sax.SAXException;
 
 import businessLogic.BeanManager;
+
 import common.CommonQueries;
 import common.DatabaseConnection;
+import common.JaxbXmlConverter;
 
 import dto.AktDto;
 
@@ -47,13 +53,29 @@ public class AktContoller {
 	public String dodajAkt(AktDto akt, BindingResult bindingResult, Model model){//kad se preuzme ceo xml text se upise u preamublu to je tipa string, da ne pravim novi dto
 		if(!bindingResult.hasErrors()){
 		
+		JaxbXmlConverter converter = new JaxbXmlConverter();
+		converter.writeStringToFile(akt.getPreambula());
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		Schema schema = null;
+		try {
+			schema = schemaFactory.newSchema(new File("Schema/Akt.xsd"));
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Akt akt2= (Akt) converter.convertFromXml(new File("tmp.xml"), schema);
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		bm.writeDocument(akt2, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true);
+		
 		System.out.println(akt.getPreambula());
 		
 		}
 		//TODO validirati xml i dodati u bazu 
 		else
 		{
-			System.out.println("error  konjino glupa");
+			System.out.println("errorS");
 			System.out.println(akt.getNaziv());
 			System.out.println(akt.getPreambula());
 			
@@ -74,7 +96,7 @@ public class AktContoller {
 			BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		    StringBuilder query = new StringBuilder();
 		    query.append("fn:collection(\"");
-		    query.append(DatabaseConnection.AKT_COL_ID);
+		    query.append(DatabaseConnection.AKT_PREDLOZEN_COL_ID);
 		    query.append("\")");
 		    ArrayList<Akt> akti =bm.executeQuery(query.toString());
 		    String aktXML="";
@@ -103,6 +125,21 @@ public class AktContoller {
 		
 		model.addAttribute("aktText", s);
 		return "test";
+	}
+	
+	
+	
+	
+	@RequestMapping(params = "searchString", method = RequestMethod.POST)
+	public String searchAktByString(AktDto akt, BindingResult bindingResult, Model model){//kad se preuzme ceo xml text se upise u preamublu to je tipa string, da ne pravim novi dto
+		if(!bindingResult.hasErrors()){
+			System.out.println(akt.getPreambula());
+		}
+		 AktDto aktId= new AktDto();
+		    
+		//model.addAttribute("akti", akti);	    
+		model.addAttribute("aktId", aktId);
+		return "homePage";
 	}
 	
 	

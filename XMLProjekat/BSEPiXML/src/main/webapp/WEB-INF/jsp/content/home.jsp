@@ -29,10 +29,28 @@
 
 
 <div align="left" class="col-xs-3">
-		<form action="./PretragaRestoranaController" method="post" class="dodavanjeStavke" accept-charset="ISO-8859-1">
-		<table><td><input required class="form-control" placeholder="Pretrazite akte..." type="text" name="pretragaAkata" ></td>  <td> 	<input type="submit" class="btn btn-primary" name="submit" value="Pretrazi"></td></table>
-		</form>
+	<c:url var="action" value="/akt" />
+	<form:form id="formSearchAkt" action="${action}" method="post" modelAttribute="aktId">
+			<table class="pretraga">
+			<fildSet>						
+				<tr>
+					<td>
+						<form:input  path="preambula" placeholder="Pretrazite akte..." rows="5" cols="50" />
+						<form:errors path="preambula" cssClass="error" />
+					</td>	
+				
+			</fildSet>
+					<td>
+						<button type="submit" class="btn btn-primary" name="searchString" >
+							<b> Pretrazi </b>
+						</button>				
+					</td>				
+				</tr>
+			</table>							
+	</form:form>
 </div>
+
+
 
 <div align="center" class="col-xs-3">
 	<table  align="center" class="table table-striped table-bordered table-hover table-condensed">
@@ -46,6 +64,7 @@
 				
 			</thead>
 			<tbody>
+				<c:if test="${akti != null}">
 				<c:forEach items="${akti}" var="akt">
 				<tr>
 					<td>${akt.naziv}</td>
@@ -69,6 +88,7 @@
 
 				</tr>
 				</c:forEach>
+				</c:if>
 			</tbody>
 		</table>
 </div>

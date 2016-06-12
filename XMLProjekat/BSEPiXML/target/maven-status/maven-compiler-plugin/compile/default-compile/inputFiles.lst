@@ -7,6 +7,7 @@ C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\Ak
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\CanonicalizationMethodType.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajOdeljka.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajAmandmana.java
+C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\common\CommonQueries.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajStava.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\controller\AktContoller.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\SPKIDataType.java
@@ -44,8 +45,8 @@ C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\Ab
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TSadrzajClana.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\Amandman.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\common\ValidationXmlSchema.java
-C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TransformsType.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\controller\TestController.java
+C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\TransformsType.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\KeyValueType.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\model\RSAKeyValueType.java
 C:\Users\Bojan\Desktop\workspace\XML\XMLProjekat\BSEPiXML\src\main\java\controller\AmandmanController.java
