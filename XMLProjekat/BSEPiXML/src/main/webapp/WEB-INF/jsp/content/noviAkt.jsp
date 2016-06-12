@@ -17,20 +17,12 @@
 
 <br><br><br><br><br>
 
-<c:url var="action" value="/noviAkt" />
+<c:url var="action" value="/akt" />
 <form:form id="formNewAkt" action="${action}" method="post" modelAttribute="akt">
 			<table class="dodavanjeAkta">
-			<fildSet>
+			<fildSet>						
 				<tr>
-					 <td><form:label path="naziv">Naziv akta:</form:label></td>
-					 <td>
-					 <form:input  path="naziv" cssErrorClass="error" />
-      				 <form:errors path="naziv" cssClass="errorMessage" />
-					 </td>	
-				</tr>
-						
-				<tr>
-					<td><form:label path="preambula">Preambula:</form:label></td>
+					<td><form:label path="preambula">Unesite novi akt:</form:label></td>
 					<td>
 						<form:textarea path="preambula" rows="5" cols="50" />
 						<form:errors path="preambula" cssClass="error" />

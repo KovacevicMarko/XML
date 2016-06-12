@@ -13,48 +13,25 @@
 <body>
 <br><br><br><br><br>
 
-<c:url var="action" value="/noviAmandman" />
+<c:url var="action" value="/amandman" />
 <form:form id="formNewAkt" action="${action}" method="post" modelAttribute="amandman">
-			<table class="dodavanjeAmandmana">
-			<fildSet>
-				
+			<table class="dodavanjeAkta">
+			<fildSet>						
 				<tr>
-					<td><form:label path="akt">Pravni osnov:</form:label></td>
+					<td><form:label path="ciljIzmene">Unesite novi amandman:</form:label></td>
 					<td>
-					<form:select path="akt">
-   						<form:option value="NONE" label="--- Select ---"/>
-					</form:select>
+						<form:textarea path="ciljIzmene" rows="5" cols="50" />
+						<form:errors path="ciljIzmene" cssClass="error" />
 					</td>
-				</tr>
-				<tr>
-					 <td><form:label path="pravniOsnov">Pravni osnov:</form:label></td>
-					 <td>
-					 <form:input  path="pravniOsnov" cssErrorClass="error" />
-      				 <form:errors path="pravniOsnov" cssClass="errorMessage" />
-					 </td>	
-				</tr>
-				
-				<tr>
-					 <td><form:label path="predmetIzmene">Predmet izmene:</form:label></td>
-					 <td>
-					 <form:input  path="predmetIzmene" cssErrorClass="error" />
-      				 <form:errors path="predmetIzmene" cssClass="errorMessage" />
-					 </td>	
-				</tr>
-				
-				<tr>
-					 <td><form:label path="ciljIzmene">Cilj izmene:</form:label></td>
-					 <td>
-					 <form:input  path="ciljIzmene" cssErrorClass="error" />
-      				 <form:errors path="ciljIzmene" cssClass="errorMessage" />
-					 </td>	
+					
+											
 				</tr>
 				
 				</fildSet>
 				<tr>
 					<td>
 						<button type="submit" class="btn btn-success" name="save" >
-							<b> Predlozi </b>
+							<b> DodajAmandman </b>
 						</button>
 						&nbsp;&nbsp;&nbsp;
 						<button type="submit" class="btn btn-danger" name="cancel" >

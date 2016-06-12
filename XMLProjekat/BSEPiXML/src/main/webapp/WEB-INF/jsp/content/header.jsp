@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="<c:url value="/css/bootstrap.css" />" rel="stylesheet">	
 <script src="<c:url value="/js/bootstrap.js"/>"></script>
- <script src="<c:url value="/js/jquery.min.js"/>"></script>
+<script src="<c:url value="/js/jquery.min.js"/>"></script>
 
 </head>
 <body>
@@ -22,6 +22,7 @@
 		<a class="navbar-brand" href="homePage">Pocetna strana</a>
 		<a class="navbar-brand" href="homePage">Zakazane sednice</a>
 		<a class="navbar-brand" href="homePage">Poslanici</a>
+		<a class="navbar-brand" href="amandmaniPage">Amandmani</a>
 		<c:if test="${not empty korisnik}">
 			<a class="navbar-brand" href="PrikazPrijatelja.jsp">Moji prijatelji</a>
 			<a class="navbar-brand" href="MojProfil.jsp">Moj profil</a>
@@ -50,7 +51,7 @@
 					<span class="caret"></span></a>
 				<ul class="dropdown-menu" role="menu">
 					<c:if test="${user.uloga == 'ODBORNIK'}">
-					<li><a href="noviAkt">Dodavanje novog akta</a></li>
+					<li><a href="akt">Dodavanje novog akta</a></li>
 					<li class="divider"></li>
 					<li><a href="noviAmandman">Dodavanje novog amandmana</a></li>
 					</c:if>

@@ -17,8 +17,19 @@ public class AktDto {
     protected List<Deo> deo;
    
     protected PrelazneIZavrsneOdredbe prelazneIZavrsneOdredbe;
-
     
+    protected String id;
+    
+    
+    
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getPreambula() {
 		return preambula;
 	}

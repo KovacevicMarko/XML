@@ -69,7 +69,14 @@ public class UserController {
 	            		model.addAttribute("user", userDto);		
 	            		retVal="changePassPage";
 	            		return retVal;
-	            	}
+
+	            	/*if(true){
+	            		ChangePassDto userDto = new ChangePassDto();
+	            		userDto.setKorisnickoIme(user.getUsername());
+	            		model.addAttribute("user", userDto);		
+	            		retVal="changePassPage";
+	            		return retVal;
+	            	}*/
 	            	
 //	            	if(true){
 //	            		ChangePassDto userDto = new ChangePassDto();
