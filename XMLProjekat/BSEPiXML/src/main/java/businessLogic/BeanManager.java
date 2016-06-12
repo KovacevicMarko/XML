@@ -8,6 +8,8 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.w3c.dom.Document;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
@@ -108,8 +110,12 @@ public class BeanManager<T>
     /**
      * Citanje xml dokumnta iz baze po DocId-u.
      */
-    public T read(String docId){
-        return databaseManager.read(docId);
+    public T read(String docId, boolean signatureFlag){
+        return databaseManager.read(docId, signatureFlag);
+    }
+    
+    public Document read(boolean signatureFlag, String docId){
+        return databaseManager.read(signatureFlag, docId);
     }
 
     /**

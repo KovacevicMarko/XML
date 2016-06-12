@@ -227,11 +227,17 @@ public class DatabaseManager<T> {
      * @param docId
      * @return
      */
-    public T read(String docId){
+    public T read(String docId, boolean signatureFlag){
         T ret = null;
         try{
             JAXBContext jc = JAXBContext.newInstance("model");
             JAXBHandle<T> handle = new JAXBHandle<>(jc);
+            
+            if(signatureFlag && !validateXMLBySignature(docId)){
+            	ret = null;
+            	throw new Exception("Could not validate xml by signature.");
+            }
+            System.out.println("Uspesno validiran xml po potpisu");
 
             // A metadata handle for metadata retrieval
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -246,31 +252,31 @@ public class DatabaseManager<T> {
             }
         }
         catch (Exception e) {
-            //System.out.println("Unexpected error: " + e.getMessage());
-            logger.info("ERROR: Unexpected error: " + e.getMessage());
+
         } finally {
             return ret;
         }
     }
+        
+    public Document read(boolean signatureFlag, String docId)
+    {
+        Document ret = null;
+        // A metadata handle for metadata retrieval
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        // A handle to receive the document's content.
+        DOMHandle content = new DOMHandle();
+        xmlManager.read(docId, metadata, content);
 
-    /**
-     * Validacija potipsanog tmp.xml dokumenta.  
-     * @param filepath
-     * @return
-     */
-    public boolean validateXMLBySignature(String filepath){
-        boolean ret = false;
-
-        try{
-        	
+        ret = content.get();
+        if (signatureFlag)
+        {
             VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            Document document = verifySignatureEnveloped.loadDocument(filepath);
-            ret =  verifySignatureEnveloped.verifySignature(document);
-        } catch(Exception e){
-            logger.info("ERROR: Unexpected error: " + e.getMessage());
-        } finally {
-            return  ret;
+            if (!verifySignatureEnveloped.verifySignature(ret))
+            {
+                ret = null;
+            }
         }
+        return ret;
     }
 
     /**
@@ -497,6 +503,32 @@ public class DatabaseManager<T> {
     		System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
     		return false;
     	}
+    }
+    
+    /**
+     * Validacija potipsanog tmp.xml dokumenta.  
+     * @param filepath
+     * @return
+     */
+    public boolean validateXMLBySignature(String docId){
+        boolean ret = false;
+
+        try{
+        	// A metadata handle for metadata retrieval
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            // A handle to receive the document's content.
+            DOMHandle content = new DOMHandle();
+            xmlManager.read(docId, metadata, content);
+
+            Document doc = content.get();
+        	
+            VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+            ret =  verifySignatureEnveloped.verifySignature(doc);
+        } catch(Exception e){
+            System.out.println("Ne validan format!");
+        } finally {
+            return  ret;
+        }
     }
 	
 }

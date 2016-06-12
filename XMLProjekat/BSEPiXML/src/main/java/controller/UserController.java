@@ -51,7 +51,7 @@ public class UserController {
 			BeanManager<Korisnici> bm = new BeanManager<>("Schema/Korisnici.xsd");
 	
 	        /*citamo sve korisnike iz baze*/
-			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID, false);
 	        for(TKorisnik tuser : users.getKorisnik())
 	        {
 	            if(user.getUsername().equals(tuser.getKorisnickoIme()) && PasswordStorage.checkPassword(user.getPassword(), tuser.getLozinka(), tuser.getSalt()) )
@@ -157,7 +157,7 @@ public class UserController {
 			boolean postojiSaTimImenom=false;
 			
 	        /*citamo sve korisnike iz baze*/
-			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID, false);
 	        for(TKorisnik tuser : users.getKorisnik())
 	        {
 	        	if(tuser.getKorisnickoIme().equals(user.getKorisnickoIme())){
@@ -250,7 +250,7 @@ public class UserController {
 			boolean menjano=false;
 			
 	        //citamo sve korisnike iz baze
-			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID);
+			Korisnici users = bm.read(DatabaseConnection.USERS_DOC_ID, false);
 	        
 	        for(int i=0; i<users.getKorisnik().size(); i++)
 	        {

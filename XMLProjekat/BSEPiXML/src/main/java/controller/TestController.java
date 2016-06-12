@@ -47,16 +47,20 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
-		System.out.println("***************USPESNO INICIJALIZOVAN KORISNIK**********");
-		InitializeAkt();
-		System.out.println("***************USPESNO INICIJALIZOVAN Akt**********");
-		InitializeAmandman();
-		System.out.println("***************USPESNO INICIJALIZOVAN Amandman**********");
-		InitializeAktEncrypt();
-		System.out.println("***************USPESNO INICIJALIZOVAN AktEncrypt**********");
+//		InitializeKorisnik();
+//		InitializeAkt();
+//		InitializeAmandman();
+//		InitializeAktEncrypt();
+		TestReadAkt();
 		
 		return "homePage";
+	}
+	
+	private void TestReadAkt()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm1.read(DatabaseConnection.AKT_DOC_ID, true);
+		System.out.println(akt.getNaziv());
 	}
 	
 	private void InitializeKorisnik()
