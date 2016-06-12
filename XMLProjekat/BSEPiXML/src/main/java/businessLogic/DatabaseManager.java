@@ -104,10 +104,10 @@ public class DatabaseManager<T> {
         	
             
             //TODO FIX ENCRIPTION
-            /*
+            
             if (!encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }*/
+            }
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();

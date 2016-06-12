@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
     targetNamespace="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
     <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
         schemaLocation="xmldsig-core-schema.xsd"/>
     <xs:element name="Akt">
@@ -22,7 +23,15 @@
     <xs:element name="Deo">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="1" name="Sadrzaj" type="TSadrzajDela"/>
+                <xs:element maxOccurs="unbounded" minOccurs="2" name="Glava">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Sadrzaj" type="TSadrzajGlave"/>
+                        </xs:sequence>
+                        <xs:attribute name="Oznaka" type="xs:string"/>
+                        <xs:attribute name="Naziv" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
             </xs:sequence>
             <xs:attribute name="Oznaka" type="xs:string" use="optional"/>
             <xs:attribute name="Naziv" type="xs:string"/>
@@ -36,62 +45,42 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:complexType name="TSadrzajDela">
-        <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="Glava">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Sadrzaj" type="TSadrzajGlave"/>
-                    </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
-                    <xs:attribute name="Naziv" type="xs:string"/>
-                </xs:complexType>
-            </xs:element>
-        </xs:choice>
-    </xs:complexType>
     <xs:complexType name="TSadrzajGlave">
         <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="Odeljak">
+            <xs:element maxOccurs="unbounded" minOccurs="2" name="Odeljak">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Sadrzaj" type="TSadrzajOdeljka"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" name="Stav">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                                            </xs:sequence>
+                                            <xs:attribute name="Oznaka" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="Oznaka" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                     <xs:attribute name="Oznaka" type="xs:string"/>
                     <xs:attribute name="Naziv" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="Clan">
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Sadrzaj" type="TSadrzajClana"/>
-                    </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
-                </xs:complexType>
-            </xs:element>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="TSadrzajOdeljka">
-        <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="Clan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Sadrzaj" type="TSadrzajClana"/>
-                    </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
-                </xs:complexType>
-            </xs:element>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="TSadrzajClana">
-        <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
-            <xs:element maxOccurs="unbounded" name="Stav">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                        <xs:element maxOccurs="unbounded" name="Stav">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                                </xs:sequence>
+                                <xs:attribute name="Oznaka" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                     <xs:attribute name="Oznaka" type="xs:string"/>
                 </xs:complexType>
@@ -99,8 +88,7 @@
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TSadrzajStava">
-        <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
+        <xs:sequence maxOccurs="1" minOccurs="1">
             <xs:element ref="Tekst"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
                 <xs:complexType>
@@ -110,11 +98,10 @@
                     <xs:attribute name="Oznaka" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
-        </xs:choice>
+        </xs:sequence>
     </xs:complexType>
     <xs:complexType name="TSadrzajTacke">
-        <xs:choice maxOccurs="1" minOccurs="1">
-            <xs:element maxOccurs="unbounded" minOccurs="0" ref="referenca"/>
+        <xs:sequence maxOccurs="1" minOccurs="1">
             <xs:element ref="Tekst"/>
             <xs:element name="Alineja" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
@@ -124,23 +111,8 @@
                     <xs:attribute name="Oznaka" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
-        </xs:choice>
+        </xs:sequence>
     </xs:complexType>
-    <xs:element name="referenca">
-        <xs:complexType mixed="false">
-            <xs:simpleContent>
-                <xs:extension base="xs:string">
-                    <xs:attribute name="oznaka">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:pattern value="(\/[A-Za-z]*[0-9]*)+"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:attribute>
-                </xs:extension>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
     <xs:complexType name="TGradjanin">
         <xs:sequence>
             <xs:element name="Ime" type="xs:string"/>

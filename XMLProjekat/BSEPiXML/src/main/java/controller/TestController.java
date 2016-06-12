@@ -12,6 +12,7 @@ import javax.xml.datatype.DatatypeFactory;
 import model.Akt;
 import model.Amandman;
 import model.Deo;
+import model.Deo.Glava;
 import model.Korisnici;
 import model.PrelazneIZavrsneOdredbe;
 import model.TKorisnik;
@@ -20,12 +21,9 @@ import model.TSadrzajAmandmana;
 import model.TSadrzajAmandmana.GlavaAmandman;
 import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam;
 import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam.StavAmandman;
-import model.TSadrzajClana;
-import model.TSadrzajClana.Stav;
-import model.TSadrzajDela;
-import model.TSadrzajDela.Glava;
 import model.TSadrzajGlave;
 import model.TSadrzajGlave.Clan;
+import model.TSadrzajGlave.Clan.Stav;
 import model.TSadrzajStava;
 import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
@@ -37,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import password.PasswordStorage;
 import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
 import common.Role;
 
@@ -47,13 +46,44 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		//InitializeKorisnik();
-		//InitializeAkt();
-		//InitializeAmandman();
-		//InitializeAktEncrypt();
-		//TestReadAkt();
+		InitializeKorisnik();
+		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
+		InitializeAkt();
+		System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+		InitializeAmandman();
+		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+//		InitializeAktEncrypt();
+//		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
+//		TestReadAkt();
+	
+//		DeleteActs();
 		
 		return "homePage";
+	}
+	
+	private void DeleteActs()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		
+		bm1.deleteDocument("/Akt.xml");
+		bm1.deleteDocument("/AktEncrypt.xml");
+		
+		bm1.deleteDocument("16506433079667505009.xml");
+		bm1.deleteDocument("1701816993435181422.xml");
+		bm1.deleteDocument("1961348271332506490.xml");
+		
+		bm1.deleteDocument("2886738861788396180.xml");
+		bm1.deleteDocument("3019671464692161100.xml");
+		
+		System.out.println("USPESNO OBRISANI DOKUMENTI AKTA");
+		
+		BeanManager<Akt> bm2 = new BeanManager<>("Schema/Amandman.xsd");
+		bm2.deleteDocument("/Amandman.xml");
+		bm2.deleteDocument("2237058586671322019.xml");
+		bm2.deleteDocument("3328921903491720347.xml");
+		bm2.deleteDocument("8503535133437807659.xml");
+		
+		System.out.println("USPESNO OBRISANI DOKUMENTI AMANDMANA");
 	}
 	
 	private void TestReadAkt()
@@ -225,44 +255,47 @@ public class TestController {
 		sadrzajTacke.setTekst("Sadrzaj tacke o donosenju akta.");
 		
 		Tacka tacka = new Tacka();
+		tacka.setOznaka("Tacka1");
 		tacka.setSadrzaj(sadrzajTacke);
 		
-		TSadrzajStava sadrzajStava = new TSadrzajStava();
-		//sadrzajStava.getTacka().add(tacka);
-		sadrzajStava.setTekst("Sadrzaj stava o donosenju akta.");
+		Tacka tacka2 = new Tacka();
+		tacka2.setOznaka("Tacka2");
+		tacka2.setSadrzaj(sadrzajTacke);
+			
 		
+		TSadrzajStava sadrzajStava = new TSadrzajStava();
+
+		sadrzajStava.setTekst("Sadrzaj stava o donosenju akta.");
+		sadrzajStava.getTacka().add(tacka);	
+		sadrzajStava.getTacka().add(tacka2);
 		
 		Stav stav = new Stav();
 		stav.setOznaka("stav1");
 		stav.setSadrzaj(sadrzajStava);
 		
-		TSadrzajClana sadrzajClana = new TSadrzajClana();
-		sadrzajClana.getStav().add(stav);
-		
 		Clan clan = new Clan();
 		clan.setOznaka("clan1");
-		clan.setSadrzaj(sadrzajClana);
-		
-		Clan clan2 = new Clan();
-		clan2.setOznaka("clan2");
+		clan.getStav().add(stav);
 		
 		
 		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
 		sadrzajGlave.getClan().add(clan);
-		//sadrzajGlave.getClan().add(clan2);
 		
 		Glava glava = new Glava();
 		glava.setNaziv("glava1");
 		glava.setOznaka("glava1");
 		glava.setSadrzaj(sadrzajGlave);
 		
-		TSadrzajDela sadrzajDela = new TSadrzajDela();
-		sadrzajDela.getGlava().add(glava);
+		Glava glava2 = new Glava();
+		glava2.setNaziv("glava2");
+		glava2.setOznaka("glava2");
+		glava2.setSadrzaj(sadrzajGlave);
 		
 		Deo deo = new Deo();
 		deo.setNaziv("deo1");
 		deo.setOznaka("oznaka1");
-		deo.setSadrzaj(sadrzajDela);
+		deo.getGlava().add(glava);
+		deo.getGlava().add(glava2);
 		
 		TOdbornik odbornik = new TOdbornik();
 		odbornik.setIme("odbornikIme");
