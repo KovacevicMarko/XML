@@ -48,8 +48,13 @@
  		<put-attribute name="content" value="/WEB-INF/jsp/content/register.jsp" />	
  	</definition>
  	
- 		<definition name ="changePassPage" extends="layoutHome">
+ 	<definition name ="changePassPage" extends="layoutHome">
  		<put-attribute name="content" value="/WEB-INF/jsp/content/changePassword.jsp" />	
+ 	</definition>
+ 	
+ 	<definition name ="amandmaniPage" extends="layoutHome">
+ 		<put-attribute name="header" value="/WEB-INF/jsp/content/header.jsp" />
+ 		<put-attribute name="content" value="/WEB-INF/jsp/content/amandmani.jsp" />	
  	</definition>
  	
 	

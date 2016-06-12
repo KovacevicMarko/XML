@@ -22,6 +22,7 @@ model\TransformsType.class
 model\TGradjanin.class
 model\CanonicalizationMethodType.class
 model\KeyValueType.class
+controller\DeoController.class
 model\SignedInfoType.class
 businessLogic\QueryManager.class
 password\PasswordStorage.class
@@ -67,7 +68,6 @@ model\TSadrzajAmandmana.class
 businessLogic\DatabaseManager.class
 model\TSadrzajAmandmana$GlavaAmandman$OdeljakAmandman$ClanAmandnam$StavAmandman$TackaAmandman.class
 model\TSadrzajAmandmana$GlavaAmandman$OdeljakAmandman$ClanAmandnam.class
-businessLogic\BeanContainer.class
 common\JaxbXmlConverter.class
 common\ValidationXmlSchema.class
 model\TSadrzajTacke$Alineja.class

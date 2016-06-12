@@ -12,5 +12,7 @@
 		${sessionScope.user.korisnickoIme} 
 </c:if>
 
+	${aktText} 
+
 </body>
 </html>

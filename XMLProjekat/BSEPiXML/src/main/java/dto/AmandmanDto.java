@@ -16,9 +16,17 @@ public class AmandmanDto {
     protected String predmetIzmene;
     protected String ciljIzmene;
     protected String datumPredlaganja;
+    protected String id;
 	
     
-    public String getPravniOsnov() {
+    
+    public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getPravniOsnov() {
 		return pravniOsnov;
 	}
 	public void setPravniOsnov(String pravniOsnov) {

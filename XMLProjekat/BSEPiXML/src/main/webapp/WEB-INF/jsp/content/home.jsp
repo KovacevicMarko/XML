@@ -7,6 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Skupstina grada novog sada</title>
 
+
 		
 <script src="/js/jquery.min.js"></script>	
 <script src="/js/bootstrap.js"/></script>
@@ -39,7 +40,7 @@
 			<thead class="thead-inverse">
 				
 					<th>Naziv</th>
-					<th>Delovi</th>
+					<th>Predlagac</th>
 					<th>Preambula</th>
 					<th>Opsirnije</th>
 				
@@ -48,32 +49,19 @@
 				<c:forEach items="${akti}" var="akt">
 				<tr>
 					<td>${akt.naziv}</td>
-					<td>
-						<c:url var="action" value="/deo" />
-						<form:form id="formFindDeo" action="${action}" method="post" modelAttribute="deo">
-			
-						  <fildSet>	
-							<form:input type="hidden" path="id" value="${akt.ID}" rows="5" cols="50" />
-							<form:errors type="hidden" path="id" cssClass="error" />
-				
-						  </fildSet>
-							<button type="submit" class="btn btn-success" name="save" >
-								<b> Delovi </b>
-							</button>				
-						</form:form>
-					</td>
+					<td>${akt.prelazneIZavrsneOdredbe.predlagac.ime} ${akt.prelazneIZavrsneOdredbe.predlagac.prezime}</td>
 					<td>${akt.preambula}</td>
 					<td>
-						<c:url var="action" value="/deo" />
-						<form:form id="formFindDeo" action="${action}" method="post" modelAttribute="deo">
+						<c:url var="action" value="/akt" />
+						<form:form id="formFindDeo" action="${action}" method="post" modelAttribute="aktId">
 			
 						  <fildSet>	
 							<form:input type="hidden" path="id" value="${akt.ID}" rows="5" cols="50" />
 							<form:errors type="hidden" path="id" cssClass="error" />
 				
 						  </fildSet>
-							<button type="submit" class="btn btn-success" name="save" >
-								<b> Delovi </b>
+							<button type="submit" class="btn btn-success" name="opsirnije" >
+								<b> Opsirnije </b>
 							</button>				
 						</form:form>
 					</td>

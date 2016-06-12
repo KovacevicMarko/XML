@@ -28,10 +28,10 @@ public class HomeController {
 		  
 	    System.out.println(" ****************************************** " + akti.size());
 	    
-	    AktDto deo= new AktDto();
+	    AktDto aktId= new AktDto();
 	    
 	    model.addAttribute("akti", akti);	    
-	    model.addAttribute("deo", deo);
+	    model.addAttribute("aktId", aktId);
 		
 			
 		return "homePage";
