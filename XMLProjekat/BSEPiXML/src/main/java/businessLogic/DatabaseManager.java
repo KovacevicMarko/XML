@@ -44,7 +44,6 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
-
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -108,8 +107,8 @@ public class DatabaseManager<T> {
             /*
             if (!encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
-            */
+            }*/
+            
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -161,7 +160,7 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor write(T bean,String colId) {
+    public DocumentDescriptor write(T bean,String colId, boolean signFlag) {
         DocumentDescriptor ret = null;
         try {
         	if(!validateBeanBySchema(bean)){
@@ -172,7 +171,7 @@ public class DatabaseManager<T> {
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = write(inputStream,colId);
+                ret = writeDocument(inputStream,colId, signFlag);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -191,10 +190,10 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor write(FileInputStream inputStream, String colId) {
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
         DocumentDescriptor ret = null;
         try{
-        	if (!singXml(null)) {
+        	if (signFlag && !singXml(null)) {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
             //TODO FIX ENCRIPTION
@@ -227,11 +226,17 @@ public class DatabaseManager<T> {
      * @param docId
      * @return
      */
-    public T read(String docId){
+    public T read(String docId, boolean signatureFlag){
         T ret = null;
         try{
             JAXBContext jc = JAXBContext.newInstance("model");
             JAXBHandle<T> handle = new JAXBHandle<>(jc);
+            
+            if(signatureFlag && !validateXMLBySignature(docId)){
+            	ret = null;
+            	throw new Exception("Could not validate xml by signature.");
+            }
+            System.out.println("Uspesno validiran xml po potpisu");
 
             // A metadata handle for metadata retrieval
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -240,37 +245,47 @@ public class DatabaseManager<T> {
 
             ret = handle.get();
             // Convert bean to tmp.xml so that you can validateBeanBySchema it.
-            if (!converter.ConvertJaxbToXml(ret)){
+            /*if (!converter.ConvertJaxbToXml(ret)){
                 ret = null;
                 throw  new Exception("Could not convert bean to xml!");
+            }*/
+            if(!validateBeanBySchema(ret))
+            {
+            	System.out.println("Ne uspesna validacija beana po semi");
+            	throw  new Exception("Could not bean bean by schema!");
             }
+            if(ret!= null)
+            {
+            	 System.out.println("Uspesno validiran bean po semi!");
+            }
+           
         }
         catch (Exception e) {
-            //System.out.println("Unexpected error: " + e.getMessage());
-            logger.info("ERROR: Unexpected error: " + e.getMessage());
+
         } finally {
             return ret;
         }
     }
+        
+    public Document read(boolean signatureFlag, String docId)
+    {
+        Document ret = null;
+        // A metadata handle for metadata retrieval
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        // A handle to receive the document's content.
+        DOMHandle content = new DOMHandle();
+        xmlManager.read(docId, metadata, content);
 
-    /**
-     * Validacija potipsanog tmp.xml dokumenta.  
-     * @param filepath
-     * @return
-     */
-    public boolean validateXMLBySignature(String filepath){
-        boolean ret = false;
-
-        try{
-        	
+        ret = content.get();
+        if (signatureFlag)
+        {
             VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            Document document = verifySignatureEnveloped.loadDocument(filepath);
-            ret =  verifySignatureEnveloped.verifySignature(document);
-        } catch(Exception e){
-            logger.info("ERROR: Unexpected error: " + e.getMessage());
-        } finally {
-            return  ret;
+            if (!verifySignatureEnveloped.verifySignature(ret))
+            {
+                ret = null;
+            }
         }
+        return ret;
     }
 
     /**
@@ -497,6 +512,32 @@ public class DatabaseManager<T> {
     		System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
     		return false;
     	}
+    }
+    
+    /**
+     * Validacija potipsanog tmp.xml dokumenta.  
+     * @param filepath
+     * @return
+     */
+    public boolean validateXMLBySignature(String docId){
+        boolean ret = false;
+
+        try{
+        	// A metadata handle for metadata retrieval
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            // A handle to receive the document's content.
+            DOMHandle content = new DOMHandle();
+            xmlManager.read(docId, metadata, content);
+
+            Document doc = content.get();
+        	
+            VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+            ret =  verifySignatureEnveloped.verifySignature(doc);
+        } catch(Exception e){
+            System.out.println("Ne validan format!");
+        } finally {
+            return  ret;
+        }
     }
 	
 }

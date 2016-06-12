@@ -14,14 +14,20 @@ public class DatabaseConnection
 	public static String USERS_DOC_ID="/Korisnici.xml";
 	public static String USERS_COL_ID="/ColKorisnici";
 	
-	public static String AKT_DOC_ID="/Akt.xml";
-	public static String AKT_COL_ID="/ColAkt";
+	public static String AKT_PREDLOZEN_DOC_ID="/AktPredlozen.xml";
+	public static String AKT_PREDLOZEN_COL_ID="/ColAktPredlozen";
+	
+	public static String AKT_USVOJEN_DOC_ID="/AktUsvojen.xml";
+	public static String AKT_USVOJEN_COL_ID="/ColAktUsvojen";
 	
 	public static String AKT_ENCRYPT_DOC_ID="/AktEncrypt.xml";
 	public static String AKT_ENCRYPT_COL_ID="/ColEncryptAkt";
 	
-	public static String AMANDMAN_DOC_ID="/Amandman.xml";
-	public static String AMANDMAN_COL_ID="/ColAmandman";
+	public static String AMANDMAN_PREDLOZEN_DOC_ID="/AmandmanPredlozen.xml";
+	public static String AMANDMAN_PREDLOZEN_COL_ID="/ColAmandmanPredlozen";
+	
+	public static String AMANDMAN_USVOJEN_DOC_ID="/AmandmanUsvojen.xml";
+	public static String AMANDMAN_USVOJEN_COL_ID="/ColAmandmanUsvojen";
 
     private static DatabaseClient client = null;
 

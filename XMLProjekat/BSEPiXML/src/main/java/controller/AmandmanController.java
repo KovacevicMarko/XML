@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import businessLogic.BeanManager;
+import common.CommonQueries;
 import common.DatabaseConnection;
 import dto.AktDto;
 import dto.AmandmanDto;
@@ -22,6 +23,12 @@ public class AmandmanController {
 	@RequestMapping(value="/noviAmandman", method = RequestMethod.GET)
 	 public String naFormu(Model model) 
 	{
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+	    
+	    ArrayList<Amandman> amandmani =bm.executeQuery(CommonQueries.getAllProposedAmandmans());
+		  
+	    System.out.println(" ****************************************** " + amandmani.size());
+		
 		AmandmanDto amandmanDto = new AmandmanDto();
 		model.addAttribute("amandman", amandmanDto);
 		return "noviAmandman";

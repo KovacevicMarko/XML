@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.xml.sax.SAXException;
 
 import businessLogic.BeanManager;
-
+import common.CommonQueries;
 import common.DatabaseConnection;
 
 import dto.AktDto;
@@ -32,6 +32,13 @@ public class AktContoller {
 	 public String naFormu(Model model) {
 	  AktDto aktDto = new AktDto();
 	  model.addAttribute("akt", aktDto);
+	  
+	  BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+	  
+      ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
+      ArrayList<Akt> aktiUsvojeni = bm.executeQuery(CommonQueries.getAllApprovedActs());	
+      
+      System.out.println(" ****************************************** " + aktiPredlozeni.size());
 	  
 	  return "noviAkt";
 	 }

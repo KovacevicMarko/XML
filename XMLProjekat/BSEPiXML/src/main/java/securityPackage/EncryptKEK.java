@@ -201,6 +201,17 @@ public class EncryptKEK {
 		
 		try {
 			System.out.println("**********************1**********************");
+			
+
+			XMLCipher keyCipher = null;
+			try{
+				keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		      //inicijalizacija za kriptovanje tajnog kljuca javnim RSA kljucem
+			keyCipher.init(XMLCipher.WRAP_MODE, certificate.getPublicKey());
+			
 			//cipher za kriptovanje tajnog kljuca,
 			//Koristi se Javni RSA kljuc za kriptovanje
 			
@@ -220,15 +231,6 @@ public class EncryptKEK {
 		    //u EncryptedData elementa koji se kriptuje kao KeyInfo stavljamo kriptovan tajni kljuc
 		    EncryptedData encryptedData = xmlCipher.getEncryptedData();
 		    
-			XMLCipher keyCipher = null;
-			try{
-				keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		      //inicijalizacija za kriptovanje tajnog kljuca javnim RSA kljucem
-			System.out.println("**********************2**********************");
-			keyCipher.init(XMLCipher.WRAP_MODE, certificate.getPublicKey());
 		    EncryptedKey encryptedKey = keyCipher.encryptKey(doc, key);
 			
 

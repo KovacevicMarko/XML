@@ -1,19 +1,21 @@
 package businessLogic;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentMetadataPatchBuilder;
-import com.marklogic.client.document.XMLDocumentManager;
-
-import common.JaxbXmlConverter;
-import common.DatabaseConnection;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
+import org.w3c.dom.Document;
+
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentDescriptor;
+import com.marklogic.client.document.DocumentMetadataPatchBuilder;
+import com.marklogic.client.document.XMLDocumentManager;
+import common.DatabaseConnection;
+import common.JaxbXmlConverter;
 
 
 /**
@@ -82,6 +84,20 @@ public class BeanManager<T>
     public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
         return  databaseManager.writeFile(inputStream,docId,colId, signFlag);
     }
+    
+    /**
+     * Upis fajla u bazu po document template-u.
+     */
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
+        return databaseManager.writeDocument(inputStream,colId, signFlag);
+    }
+    
+    /**
+     * Upis bean-a u bazu po document template-u.
+     */
+    public DocumentDescriptor writeDocument(T bean,String colId, boolean signFlag) {
+    	return databaseManager.write(bean,colId , signFlag);
+    }
 
 
     /**
@@ -94,8 +110,12 @@ public class BeanManager<T>
     /**
      * Citanje xml dokumnta iz baze po DocId-u.
      */
-    public T read(String docId){
-        return databaseManager.read(docId);
+    public T read(String docId, boolean signatureFlag){
+        return databaseManager.read(docId, signatureFlag);
+    }
+    
+    public Document read(boolean signatureFlag, String docId){
+        return databaseManager.read(signatureFlag, docId);
     }
 
     /**

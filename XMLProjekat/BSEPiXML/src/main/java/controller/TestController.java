@@ -47,16 +47,20 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
-		System.out.println("***************USPESNO INICIJALIZOVAN KORISNIK**********");
-		/*InitializeAkt();
-		System.out.println("***************USPESNO INICIJALIZOVAN Akt**********");
-		InitializeAmandman();
-		System.out.println("***************USPESNO INICIJALIZOVAN Amandman**********");
-		InitializeAktEncrypt();
-		System.out.println("***************USPESNO INICIJALIZOVAN AktEncrypt**********");
-		 */
+		//InitializeKorisnik();
+		//InitializeAkt();
+		//InitializeAmandman();
+		//InitializeAktEncrypt();
+		//TestReadAkt();
+		
 		return "homePage";
+	}
+	
+	private void TestReadAkt()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm1.read(DatabaseConnection.AKT_PREDLOZEN_DOC_ID, true);
+		System.out.println(akt.getNaziv());
 	}
 	
 	private void InitializeKorisnik()
@@ -150,7 +154,7 @@ public class TestController {
 		
 		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.write(akt, DatabaseConnection.AKT_DOC_ID,  DatabaseConnection.AKT_COL_ID , true);
+		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true);
 		
 	}
 	
@@ -195,7 +199,7 @@ public class TestController {
 		amandman.setID(GenerateRandNumber());
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
-		bm1.write(amandman, DatabaseConnection.AMANDMAN_DOC_ID,  DatabaseConnection.AMANDMAN_COL_ID, true);
+		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true);
 	}
 	
 	private void InitializeAktEncrypt()
@@ -203,7 +207,11 @@ public class TestController {
 		Akt akt = getAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true);
+		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true)){
+			System.out.println("Uspesno zapisan enkriptovan akt");
+		}else{
+			System.out.println("Ne uspesno zapisan enkriptovan akt");
+		}
 	}
 	
 	private Akt getAkt()
