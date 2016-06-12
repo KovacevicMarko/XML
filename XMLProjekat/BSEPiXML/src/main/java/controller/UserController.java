@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import password.PasswordStorage;
 import securityPackage.SignEnveloped;
 import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
 import common.HelperClass;
 import common.Role;
+
 import dto.ChangePassDto;
 import dto.LoginUserDto;
 import dto.UserDto;
@@ -69,7 +71,7 @@ public class UserController {
 	            		model.addAttribute("user", userDto);		
 	            		retVal="changePassPage";
 	            		return retVal;
-
+	            	}
 	            	/*if(true){
 	            		ChangePassDto userDto = new ChangePassDto();
 	            		userDto.setKorisnickoIme(user.getUsername());

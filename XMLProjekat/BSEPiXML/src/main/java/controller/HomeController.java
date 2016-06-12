@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
+
 import dto.AktDto;
-import dto.DeoDto;
 
 @Controller
 public class HomeController {
@@ -22,7 +23,7 @@ public class HomeController {
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 	    StringBuilder query = new StringBuilder();
 	    query.append("fn:collection(\"");
-	    query.append(DatabaseConnection.AKT_COL_ID);
+	    query.append(DatabaseConnection.AKT_PREDLOZEN_COL_ID);
 	    query.append("\")");
 	    ArrayList<Akt> akti =bm.executeQuery(query.toString());
 		  

@@ -65,9 +65,11 @@ public class JaxbXmlConverter<T>
     /**
 	 * Upisati string sadrzaj unutar xml-a.
      */
-    public boolean writeStringToFile(String fileContent) {
+    public boolean writeStringToFile(String fileContent) 
+    {
         boolean ret = false;
-        try {
+        try 
+        {
             FileOutputStream fileOutputStream = new FileOutputStream("tmp.xml");
             fileOutputStream.write(fileContent.getBytes());
             fileOutputStream.close();

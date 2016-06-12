@@ -44,6 +44,10 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.StringQueryDefinition;
+
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -67,7 +71,7 @@ public class DatabaseManager<T> {
     private JaxbXmlConverter<T> converter;
     
     private static TransformerFactory transformerFactory;
-    
+        
     private static String INPUT_OUTPUT_TMP_FILE = "tmp.xml";
     
     static {
@@ -104,10 +108,10 @@ public class DatabaseManager<T> {
         	
             
             //TODO FIX ENCRIPTION
-            
+            /*
             if (!encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
+            }*/
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -139,10 +143,13 @@ public class DatabaseManager<T> {
         		return false;
         	}
             // Try to convert to xml on default location.
-            if (converter.ConvertJaxbToXml(bean)){
+            if (converter.ConvertJaxbToXml(bean))
+            {
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeFile(inputStream,docId,colId, signFlag);
-            } else {
+            } 
+            else 
+            {
                 throw new Exception("Can't convert JAXB bean " + bean.toString() + " to XML.");
             }
         }
@@ -538,6 +545,36 @@ public class DatabaseManager<T> {
         } finally {
             return  ret;
         }
+    }
+    
+    /*
+     * Operacije za pretragu.
+     */
+    
+    /**
+     * Pretraga kolekcije po vrednosti sadrzaja.
+     * */
+    public MatchDocumentSummary[] searchByField(String parameterOfSearch, String uriOfCollection){
+
+        // Initialize query manager
+        com.marklogic.client.query.QueryManager queryManager = client.newQueryManager();
+
+        // Query definition is used to specify Google-style query string
+        StringQueryDefinition queryDefinition = queryManager.newStringDefinition();
+
+        // Set the criteria
+        queryDefinition.setCriteria(parameterOfSearch);
+
+        // Search within a specific collection
+        queryDefinition.setCollections(uriOfCollection);
+
+        // Perform search
+        SearchHandle results = queryManager.search(queryDefinition, new SearchHandle());
+
+        // Serialize search results to the standard output
+        MatchDocumentSummary matches[] = results.getMatchResults();
+
+        return matches;
     }
 	
 }

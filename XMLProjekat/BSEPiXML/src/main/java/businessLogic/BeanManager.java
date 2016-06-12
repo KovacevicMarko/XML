@@ -3,6 +3,7 @@ package businessLogic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
@@ -14,6 +15,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
+
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 
@@ -26,10 +28,6 @@ import common.JaxbXmlConverter;
  */
 public class BeanManager<T> 
 {
-	
-    private final String DOC_ID_DEFAULT = "default/document";
-
-    private final String COL_ID_DEFAULT = "default/collection";
 
     private DatabaseClient client;
 
@@ -45,6 +43,8 @@ public class BeanManager<T>
 
     private QueryManager queryManager;
     
+    private SearchManager searchManager;
+    
     public BeanManager() {
         try {
             client = DatabaseConnection.getDbClient();
@@ -55,6 +55,7 @@ public class BeanManager<T>
             databaseManager = new DatabaseManager<>(client,xmlManager,schemaFactory,schema, converter);
             
             queryManager = new QueryManager(client, schema,converter);
+            searchManager = new SearchManager();
 
         } catch (Exception e){
             System.out.println("Can't initialize Bean manager.");
@@ -72,6 +73,7 @@ public class BeanManager<T>
             databaseManager = new DatabaseManager<>(client,xmlManager,schemaFactory,schema, converter);
 
             queryManager = new QueryManager(client,schema, converter);
+            searchManager = new SearchManager();
         } catch (Exception e){
         	e.printStackTrace();
             System.out.println("Can't initialize Bean manager.");
@@ -173,5 +175,14 @@ public class BeanManager<T>
     public ArrayList<T> executeQuery(String query){
         return queryManager.executeQuery(query);
     }
-
+    
+    public HashMap<String,ArrayList<String>> searchByContent(String content, String uriOfCollection)
+    {
+    	return searchManager.documentsMatchedWithParametar(content, uriOfCollection, databaseManager);
+    }
+    
+    public HashMap<String,ArrayList<String>> searchByContentAndTag(String content, String uriOfCollection, String tag)
+    {
+    	return searchManager.documentsMatchedWithParametarAndTag(tag, content, uriOfCollection, databaseManager);
+    }
 }

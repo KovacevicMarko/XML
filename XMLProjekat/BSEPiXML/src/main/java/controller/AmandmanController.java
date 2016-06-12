@@ -64,7 +64,7 @@ public class AmandmanController {
 		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
 	    StringBuilder query = new StringBuilder();
 	    query.append("fn:collection(\"");
-	    query.append(DatabaseConnection.AMANDMAN_COL_ID);
+	    query.append(DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID);
 	    query.append("\")");
 	    ArrayList<Amandman> amandmani =bm.executeQuery(query.toString());
 		  
