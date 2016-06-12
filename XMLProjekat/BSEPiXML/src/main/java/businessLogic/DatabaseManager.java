@@ -44,7 +44,6 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JAXBHandle;
-
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -108,8 +107,8 @@ public class DatabaseManager<T> {
             /*
             if (!encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
-            */
+            }*/
+            
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -246,10 +245,20 @@ public class DatabaseManager<T> {
 
             ret = handle.get();
             // Convert bean to tmp.xml so that you can validateBeanBySchema it.
-            if (!converter.ConvertJaxbToXml(ret)){
+            /*if (!converter.ConvertJaxbToXml(ret)){
                 ret = null;
                 throw  new Exception("Could not convert bean to xml!");
+            }*/
+            if(!validateBeanBySchema(ret))
+            {
+            	System.out.println("Ne uspesna validacija beana po semi");
+            	throw  new Exception("Could not bean bean by schema!");
             }
+            if(ret!= null)
+            {
+            	 System.out.println("Uspesno validiran bean po semi!");
+            }
+           
         }
         catch (Exception e) {
 

@@ -67,7 +67,6 @@ model\TSadrzajAmandmana.class
 businessLogic\DatabaseManager.class
 model\TSadrzajAmandmana$GlavaAmandman$OdeljakAmandman$ClanAmandnam$StavAmandman$TackaAmandman.class
 model\TSadrzajAmandmana$GlavaAmandman$OdeljakAmandman$ClanAmandnam.class
-businessLogic\BeanContainer.class
 common\JaxbXmlConverter.class
 common\ValidationXmlSchema.class
 model\TSadrzajTacke$Alineja.class

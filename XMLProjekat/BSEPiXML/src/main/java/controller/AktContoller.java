@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import businessLogic.BeanManager;
+import common.CommonQueries;
 import common.DatabaseConnection;
 import dto.AktDto;
 
@@ -26,13 +27,11 @@ public class AktContoller {
 	  model.addAttribute("akt", aktDto);
 	  
 	  BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-	  StringBuilder query = new StringBuilder();
-      query.append("fn:collection(\"");
-      query.append(DatabaseConnection.AKT_COL_ID);
-      query.append("\")");
-      ArrayList<Akt> akti=bm.executeQuery(query.toString());
 	  
-      System.out.println(" ****************************************** " + akti.size());
+      ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
+      ArrayList<Akt> aktiUsvojeni = bm.executeQuery(CommonQueries.getAllApprovedActs());	
+      
+      System.out.println(" ****************************************** " + aktiPredlozeni.size());
 	  
 	  return "noviAkt";
 	 }
