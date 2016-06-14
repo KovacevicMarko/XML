@@ -26,7 +26,7 @@ import dto.AmandmanDto;
 @Controller
 public class AmandmanController {
 	
-	@RequestMapping(value="/noviAmandman", method = RequestMethod.GET)
+	@RequestMapping(value = "/noviAmandman", method = RequestMethod.GET)
 	 public String naFormu(Model model) 
 	{
 		/*eanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
@@ -64,7 +64,7 @@ public class AmandmanController {
 			Amandman amandman2= (Amandman) converter.convertFromXml(new File("tmp.xml"), schema);
 			
 			BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
-			bm.writeDocument(amandman2, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true);
+			bm.writeDocument(amandman2, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, "jocko");
 			
 		
 		}

@@ -29,7 +29,7 @@ public class SearchManager
 
 
             locations = result.getMatchLocations();
-
+            System.out.println("****** LOCATIONS" + locations);
 
             for (MatchLocation location : locations) {
 
@@ -66,7 +66,8 @@ public class SearchManager
 
         HashMap<String,ArrayList<String>> returnMap = new HashMap<>();
 
-        for (int i = 0; i < matches.length; i++) {
+        for (int i = 0; i < matches.length; i++) 
+        {
             result = matches[i];
             ArrayList<String> listOfMatched = new ArrayList<>();
 
@@ -74,9 +75,16 @@ public class SearchManager
             locations = result.getMatchLocations();
 
 
-            for (MatchLocation location : locations) {
+            for (MatchLocation location : locations) 
+            {
                 String putanja = location.getPath();
                 String retSplit [] = putanja.split(":");
+                
+                System.out.println("Putanja : " + putanja);
+                for(int k=0; k<retSplit.length; k++)
+                {
+                	System.out.println("RET SPLIT : " + retSplit[k]);
+                }
 
                 if(retSplit[retSplit.length-1].split("\\[")[0].equals(tag)) {
                     String item = "";

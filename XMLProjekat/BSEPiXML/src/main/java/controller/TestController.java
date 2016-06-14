@@ -53,12 +53,12 @@ public class TestController {
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		InitializeAktEncrypt();
-		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
+//		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
 		
-		return "homePage";
+		return "test";
 	}
 	
 	private void DeleteActs()
@@ -175,7 +175,7 @@ public class TestController {
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false);
+		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false, "jocko");
 		
 	}
 	
@@ -184,7 +184,7 @@ public class TestController {
 		
 		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true);
+		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true, "jocko");
 		
 	}
 	
@@ -216,20 +216,10 @@ public class TestController {
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
 		amandman.setPredlagac(odbornik);
-		Date date = new Date();
 		
-		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(date);
-		try {
-			amandman.setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
-		} catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		amandman.setID(GenerateRandNumber());
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
-		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true);
+		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, "jocko");
 	}
 	
 	private void InitializeAktEncrypt()
@@ -237,7 +227,7 @@ public class TestController {
 		Akt akt = getAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true)){
+		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true, "jocko")){
 			System.out.println("Uspesno zapisan enkriptovan akt");
 		}else{
 			System.out.println("Ne uspesno zapisan enkriptovan akt");
@@ -316,13 +306,11 @@ public class TestController {
 		GregorianCalendar c = new GregorianCalendar();
 		c.setTime(date);
 		try {
-			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 			pzo.setDatum(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 		} catch (DatatypeConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		akt.setID(GenerateRandNumber());
 		akt.setPrelazneIZavrsneOdredbe(pzo);
 		
 		return akt;

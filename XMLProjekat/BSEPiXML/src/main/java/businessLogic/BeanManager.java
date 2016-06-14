@@ -83,30 +83,30 @@ public class BeanManager<T>
     /**
      * Upis fajla u bazu.
      */
-    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
-        return  databaseManager.writeFile(inputStream,docId,colId, signFlag);
+    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+        return  databaseManager.writeFile(inputStream,docId,colId, signFlag, username);
     }
     
     /**
      * Upis fajla u bazu po document template-u.
      */
-    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
-        return databaseManager.writeDocument(inputStream,colId, signFlag);
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
+        return databaseManager.writeDocument(inputStream,colId, signFlag, username);
     }
     
     /**
      * Upis bean-a u bazu po document template-u.
      */
-    public DocumentDescriptor writeDocument(T bean,String colId, boolean signFlag) {
-    	return databaseManager.write(bean,colId , signFlag);
+    public DocumentDescriptor writeDocument(T bean,String colId, boolean signFlag, String username) {
+    	return databaseManager.write(bean,colId , signFlag, username);
     }
 
 
     /**
      * Upis beana u bazu.
      */
-    public boolean write(T bean, String docId, String colId, boolean signFlag) {
-        return databaseManager.writeBean(bean,docId,colId, signFlag);
+    public boolean write(T bean, String docId, String colId, boolean signFlag, String username) {
+        return databaseManager.writeBean(bean,docId,colId, signFlag, username);
     }
 
     /**

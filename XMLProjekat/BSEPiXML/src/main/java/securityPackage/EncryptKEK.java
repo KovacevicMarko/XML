@@ -51,8 +51,8 @@ public class EncryptKEK {
 	
 	private static final String IN_FILE = "./data/univerzitet.xml";
 	private static final String OUT_FILE = "./data/univerzitet_enc2.xml";
-	private static final String KEY_STORE_FILE = "./data/primer.jks";
-	private static String INPUT_OUTPUT_TMP_FILE = "tmp.xml";
+	private static final String KEY_STORE_FILE = "src/main/resources/cfg/data/sgns.jks";
+	private static String INPUT_OUTPUT_TMP_FILE = "src/main/resources/cfg/data/tmp.xml";
 	
     static {
     	//staticka inicijalizacija
@@ -112,11 +112,12 @@ public class EncryptKEK {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(EncryptKEK.openStream("primer.jks"));
-			ks.load(in, "primer".toCharArray());
+			//BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
+			BufferedInputStream in = new BufferedInputStream(EncryptKEK.openStream("sgns.jks"));
+			ks.load(in, "sgns".toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				Certificate cert = ks.getCertificate("primer");
+			if(ks.isKeyEntry("jocko")) {
+				Certificate cert = ks.getCertificate("jocko");
 				return cert;
 				
 			}
@@ -200,16 +201,13 @@ public class EncryptKEK {
 	public Document encrypt(Document doc, SecretKey key, Certificate certificate) {
 		
 		try {
-			System.out.println("**********************1**********************");
 			
-
 			XMLCipher keyCipher = null;
 			try{
 				keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			System.out.println("**********************2**********************");
 		      //inicijalizacija za kriptovanje tajnog kljuca javnim RSA kljucem
 			keyCipher.init(XMLCipher.WRAP_MODE, certificate.getPublicKey());
 			
@@ -244,8 +242,15 @@ public class EncryptKEK {
 	        encryptedData.setKeyInfo(keyInfo);
 			
 			//trazi se element ciji sadrzaj se kriptuje
-			NodeList akt = doc.getElementsByTagName("Akt");
+			NodeList akt = doc.getElementsByTagName("ns2:Akt");
 			Element odsek = (Element) akt.item(0);
+			if(odsek == null)
+			{
+				akt = doc.getElementsByTagName("Akt");
+				odsek = (Element) akt.item(0);
+			}
+			
+			
 			
 			xmlCipher.doFinal(doc, odsek, true); //kriptuje sa sadrzaj
 			
