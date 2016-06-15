@@ -112,10 +112,10 @@ public class DatabaseManager<T> {
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-        	            
-            if (signFlag && !encriptContent(null, null)) {
-                throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
+        	//TODO odkomentarisati            
+            //if (signFlag && !encriptContent(null, null)) {
+            //    throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            //}
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -221,11 +221,11 @@ public class DatabaseManager<T> {
         	{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-            
-            if (signFlag && !encriptContent(null, null))
-            {
-                throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
+            //TODO odkomentarisati.
+            //if (signFlag && !encriptContent(null, null))
+            //{
+            //    throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            //}
             
             DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
