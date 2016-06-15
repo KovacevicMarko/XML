@@ -232,6 +232,7 @@ public class DatabaseManager<T> {
             metadata.getCollections().add(colId);
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             ret = xmlManager.create(template,metadata, handle);
+
         }
         catch (Exception e){
             logger.info("Could not write xml bean.");

@@ -54,6 +54,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.StringQueryDefinition;
 
+import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -107,14 +108,12 @@ public class DatabaseManager<T> {
         boolean ret = false;
         try{
         	
-        	
-        	
     		if (signFlag &&!singXml(null, username)) 
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
         	            
-            if (!encriptContent(null, null)) {
+            if (signFlag && !encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
             }
             
@@ -142,7 +141,7 @@ public class DatabaseManager<T> {
     public boolean writeBean(T bean, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try {
-        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
         		return false;
@@ -182,7 +181,7 @@ public class DatabaseManager<T> {
         DocumentDescriptor ret = null;
         try {
         	//ako su korisnici u pitanju, ne treba timestamp i id
-        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
         		return null;
@@ -196,6 +195,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeDocument(inputStream,colId, signFlag, username);
+                boolean flagSet = setIdToBean(bean, ret.getUri());
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -222,7 +222,7 @@ public class DatabaseManager<T> {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
             
-            if (!encriptContent(null, null))
+            if (signFlag && !encriptContent(null, null))
             {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
             }
@@ -472,7 +472,7 @@ public class DatabaseManager<T> {
     /*
      * Pomocne metode.
      */
-    private boolean writeIdAndTimeStamp(T bean)
+    private boolean writeTimeStamp(T bean)
     {
     	Date date = new Date();
 		
@@ -480,9 +480,7 @@ public class DatabaseManager<T> {
 		c.setTime(date);
 		
     	if(bean instanceof Akt)
-    	{
-    		((Akt) bean).setId(GenerateRandNumber());
-    		
+    	{    		
     		try {
     			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
@@ -493,9 +491,7 @@ public class DatabaseManager<T> {
     		return true;
     	}
     	else if(bean instanceof Amandman)
-    	{
-    		((Amandman) bean).setId(GenerateRandNumber());
-    		
+    	{    		
     		try {
     			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
@@ -512,11 +508,31 @@ public class DatabaseManager<T> {
     	
     }
     
-    private String GenerateRandNumber()
-	{
-		Random randomGenerator = new Random();
-		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
-	}
+    /**
+     * Upisi id u bean ako je u pitanju akt ili amandman.
+     * @param bean
+     * @param id
+     * @return
+     */
+    private boolean setIdToBean(T bean, String id)
+    {
+    	if(bean instanceof Akt)
+    	{
+    		((Akt) bean).setId(id);
+    		writeBean(bean, id, DatabaseConnection.AKT_PREDLOZEN_COL_ID, false, null);
+    		return true;
+    	}
+    	else if(bean instanceof Amandman)
+    	{
+    		((Amandman) bean).setId(id);
+    		writeBean(bean, id, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, false, null);
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    }
     
     /**
      * 
