@@ -2,7 +2,6 @@ package securityPackage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,28 +49,27 @@ public class SignEnveloped {
 
 	private static final String IN_FILE = "./data/univerzitet.xml";
 	private static final String OUT_FILE = "./data/univerzitet_signed1.xml";
-	private static final String KEY_STORE_FILE = "/data/primer.jks";
+	private static final String KEY_STORE_FILE = "primer.jks";
+	private static final String KEY_STORE_FILE2 = "sgns.jks";
+	private static final String CERT_PASS = "sgns";
+	
+	private String username;
+	
+	public String getUsername()
+	{
+		return username;
+	}
+	
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
 	
     static {
     	//staticka inicijalizacija
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
-	
-	public void testIt() {
-		//ucitava se dokument
-		Document doc = loadDocument(IN_FILE);
-		//ucitava privatni kljuc
-		PrivateKey pk = readPrivateKey();
-		//ucitava sertifikat
-		Certificate cert = readCertificate();
-		//potpisuje
-		System.out.println("Signing....");
-		doc = signDocument(doc, pk, cert);
-		//snima se dokument
-		saveDocument(doc, OUT_FILE);
-		System.out.println("Signing of document done");
-	}
 	
 	/**
 	 * Kreira DOM od XML dokumenta
@@ -143,11 +141,11 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream("primer.jks"));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream(KEY_STORE_FILE2));
+			ks.load(in, CERT_PASS.toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				Certificate cert = ks.getCertificate("primer");
+			if(ks.isKeyEntry(username)) {
+				Certificate cert = ks.getCertificate(username);
 				return cert;
 				
 			}
@@ -190,11 +188,11 @@ public class SignEnveloped {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream("primer.jks"));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream(KEY_STORE_FILE2));
+			ks.load(in, CERT_PASS.toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				PrivateKey pk = (PrivateKey) ks.getKey("primer", "primer".toCharArray());
+			if(ks.isKeyEntry(username)) {
+				PrivateKey pk = (PrivateKey) ks.getKey(username, CERT_PASS.toCharArray());
 				return pk;
 			}
 			else

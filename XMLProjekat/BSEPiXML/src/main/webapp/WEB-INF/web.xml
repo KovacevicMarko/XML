@@ -35,7 +35,7 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
   
-  <!-- Security for HTTPS -->
+  <!-- Security for HTTPS 
   
   <security-constraint>
     <web-resource-collection>
@@ -46,7 +46,7 @@
         <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
 </security-constraint>
- 
+ -->
  <!-- Do not copy/write nothing before this line --> 
  
 </web-app>

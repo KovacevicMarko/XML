@@ -6,11 +6,16 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Random;
 
 import javax.crypto.SecretKey;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -31,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import securityPackage.DecryptKEK;
 import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
 import securityPackage.VerifySignatureEnveloped;
@@ -97,21 +103,20 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeFile(FileInputStream inputStream, String docId, String colId, boolean signFlag) {
+    public boolean writeFile(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try{
         	
-    		if (signFlag &&!singXml(null)) 
+        	
+        	
+    		if (signFlag &&!singXml(null, username)) 
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-        	
-            
-            //TODO FIX ENCRIPTION
-            /*
+        	            
             if (!encriptContent(null, null)) {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }*/
+            }
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -122,8 +127,8 @@ public class DatabaseManager<T> {
         catch (Exception e){
             logger.info("Unexpected error: " + e.getMessage());
             //System.out.println("Unexpected error: " + e.getMessage());
-        } finally{
-            return ret;
+        }finally{
+        	return ret;
         }
     }
 
@@ -134,9 +139,15 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeBean(T bean, String docId, String colId, boolean signFlag) {
+    public boolean writeBean(T bean, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try {
+        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	{
+        		System.out.println("Can`t to write id and timestamp!");
+        		return false;
+        	}
+        	
         	if(!validateBeanBySchema(bean)){
         		logger.info("Can`t to validate bean by schema!");
         		System.out.println("Can`t to validate bean by schema!");
@@ -146,7 +157,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean))
             {
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = writeFile(inputStream,docId,colId, signFlag);
+                ret = writeFile(inputStream,docId,colId, signFlag, username);
             } 
             else 
             {
@@ -167,9 +178,15 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor write(T bean,String colId, boolean signFlag) {
+    public DocumentDescriptor write(T bean,String colId, boolean signFlag, String username) {
         DocumentDescriptor ret = null;
         try {
+        	//ako su korisnici u pitanju, ne treba timestamp i id
+        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	{
+        		System.out.println("Can`t to write id and timestamp!");
+        		return null;
+        	}
         	if(!validateBeanBySchema(bean)){
         		logger.info("Can`t to validate bean by schema!");
         		System.out.println("Can`t to validate bean by schema!");
@@ -178,7 +195,7 @@ public class DatabaseManager<T> {
             // Try to convert to xml on default location.
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = writeDocument(inputStream,colId, signFlag);
+                ret = writeDocument(inputStream,colId, signFlag, username);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -197,18 +214,19 @@ public class DatabaseManager<T> {
      * @param
      * @return
      */
-    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag) {
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
         DocumentDescriptor ret = null;
         try{
-        	if (signFlag && !singXml(null)) {
+        	if (signFlag && !singXml(null, username))
+        	{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-            //TODO FIX ENCRIPTION
-            /*
-            if (!encriptContent(null, null)) {
+            
+            if (!encriptContent(null, null))
+            {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
             }
-            */
+            
             DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             metadata.getCollections().add(colId);
@@ -251,11 +269,7 @@ public class DatabaseManager<T> {
             xmlManager.read(docId,metadata,handle);
 
             ret = handle.get();
-            // Convert bean to tmp.xml so that you can validateBeanBySchema it.
-            /*if (!converter.ConvertJaxbToXml(ret)){
-                ret = null;
-                throw  new Exception("Could not convert bean to xml!");
-            }*/
+
             if(!validateBeanBySchema(ret))
             {
             	System.out.println("Ne uspesna validacija beana po semi");
@@ -285,9 +299,12 @@ public class DatabaseManager<T> {
 
         ret = content.get();
         if (signatureFlag)
-        {
+        {	
+        	
+        	Document decrypredDoc = decryptContenc(ret); 
+        	System.out.println("**********************" + decrypredDoc.toString());
             VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            if (!verifySignatureEnveloped.verifySignature(ret))
+            if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
             {
                 ret = null;
             }
@@ -455,19 +472,65 @@ public class DatabaseManager<T> {
     /*
      * Pomocne metode.
      */
-
+    private boolean writeIdAndTimeStamp(T bean)
+    {
+    	Date date = new Date();
+		
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTime(date);
+		
+    	if(bean instanceof Akt)
+    	{
+    		((Akt) bean).setId(GenerateRandNumber());
+    		
+    		try {
+    			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+    		} catch (DatatypeConfigurationException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		
+    		return true;
+    	}
+    	else if(bean instanceof Amandman)
+    	{
+    		((Amandman) bean).setId(GenerateRandNumber());
+    		
+    		try {
+    			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+    		} catch (DatatypeConfigurationException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    	
+    }
+    
+    private String GenerateRandNumber()
+	{
+		Random randomGenerator = new Random();
+		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
+	}
+    
     /**
      * 
      * @param filePath
      * @return
      */
-    private boolean singXml(String filePath){
+    private boolean singXml(String filePath, String username){
 
         boolean ret = false;
 
         try{
 
             SignEnveloped signEnveloped = new SignEnveloped();
+            signEnveloped.setUsername(username);
 
             Document document;
             if (filePath == null) 
@@ -478,6 +541,7 @@ public class DatabaseManager<T> {
             {
                 document = signEnveloped.loadDocument(filePath);
             }
+            
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
             document = signEnveloped.signDocument(document,pk,cert);
@@ -519,6 +583,27 @@ public class DatabaseManager<T> {
     		System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
     		return false;
     	}
+    }
+    
+    private Document decryptContenc(Document doc)
+    {
+    	Document retValue = null;
+    	
+    	try
+    	{
+    		DecryptKEK decript = new DecryptKEK();
+    		PrivateKey privateKey = decript.readPrivateKey();
+    		Document document = decript.decrypt(doc, privateKey);
+    		decript.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
+    		retValue = document;
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("Ne uspesna dekripcija!");
+    		retValue = null;
+    	}
+    	
+    	return retValue;
     }
     
     /**

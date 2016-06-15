@@ -30,7 +30,7 @@
 				</fildSet>
 				<tr>
 					<td>
-						<button type="submit" class="btn btn-success" name="searchString" >
+						<button type="submit" class="btn btn-success" name="save" >
 							<b> DodajAmandman </b>
 						</button>
 						&nbsp;&nbsp;&nbsp;

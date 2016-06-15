@@ -8,6 +8,7 @@
 
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "glava"
 })
 @XmlRootElement(name = "Deo", namespace = "http://www.gradskaskupstina.rs/")
-public class Deo {
+public class Deo implements Serializable {
 
     @XmlElement(name = "Glava", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected List<Deo.Glava> glava;

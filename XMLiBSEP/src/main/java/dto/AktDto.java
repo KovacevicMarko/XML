@@ -1,5 +1,6 @@
 package dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -7,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import model.Deo;
 import model.PrelazneIZavrsneOdredbe;
 
-public class AktDto {
+public class AktDto implements Serializable {
 
 	
     protected String preambula;
@@ -20,7 +21,9 @@ public class AktDto {
     
     protected String id;
     
-    
+    public AktDto() {
+		// TODO Auto-generated constructor stub
+	}
     
 	public String getId() {
 		return id;

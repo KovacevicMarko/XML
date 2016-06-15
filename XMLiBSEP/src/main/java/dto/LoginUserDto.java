@@ -1,30 +1,21 @@
 package dto;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import model.AbstractIdMaker;
 
 @SuppressWarnings("serial")
 public class LoginUserDto extends AbstractIdMaker{
 
-	
-	@Pattern(regexp = "^(?=\\s*\\S).*$")
-	@NotNull
 	private String password;
 	
-	
-	@Pattern(regexp = "^[(a-zA-Z-0-9-\\_\\+\\.)]+@[(a-z-A-z)]+\\.[(a-zA-z)]{2,3}$")
-	@NotNull
 	private String username;
 	
 	
 	public LoginUserDto()
 	{
-		
+		/*Default constructor*/
 	}
-	
-	
+		
 	public String getPassword() {
 		return password;
 	}

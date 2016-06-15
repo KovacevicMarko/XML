@@ -10,20 +10,18 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import model.Akt;
+import model.Akt.PrelazneIZavrsneOdredbe;
 import model.Amandman;
-import model.Deo;
-import model.Deo.Glava;
 import model.Korisnici;
-import model.PrelazneIZavrsneOdredbe;
+import model.TClan.Stav;
+import model.TClanAmandnam;
+import model.TClanAmandnam.StavAmandman;
+import model.TDeo.Glava;
 import model.TKorisnik;
 import model.TOdbornik;
 import model.TSadrzajAmandmana;
 import model.TSadrzajAmandmana.GlavaAmandman;
-import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam;
-import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam.StavAmandman;
 import model.TSadrzajGlave;
-import model.TSadrzajGlave.Clan;
-import model.TSadrzajGlave.Clan.Stav;
 import model.TSadrzajStava;
 import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
@@ -52,15 +50,20 @@ public class TestController {
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT!");
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
-		InitializeAktEncrypt();
-		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
+//		InitializeAktEncrypt();
+		DecryptAkt();
+//		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
 		
-		return "homePage";
+		return "test";
 	}
-	
+	private void DecryptAkt()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		bm1.read(true, DatabaseConnection.AKT_ENCRYPT_DOC_ID);
+	}
 	private void DeleteActs()
 	{
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
@@ -90,7 +93,7 @@ public class TestController {
 	{
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm1.read(DatabaseConnection.AKT_PREDLOZEN_DOC_ID, true);
-		System.out.println(akt.getNaziv());
+		System.out.println(akt.getNazivAkt());
 	}
 	
 	private void InitializeKorisnik()
@@ -175,26 +178,27 @@ public class TestController {
 		korisnici.getKorisnik().add(k2);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false);
+		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false, "jocko");
 		
 	}
 	
 	private void InitializeAkt()
 	{
-		
+		/*
 		Akt akt = getAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true);
-		
+		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true, "jocko");
+		*/
 	}
 	
 	private void InitializeAmandman()
 	{
-		StavAmandman stav = new StavAmandman();
+		/*
+		TClanAmandnam.StavAmandman stav= new StavAmandman();
 		stav.setOznakaStava("stav1");
 		stav.setTekstIzmene("Predlog izmene iznosa navednom u ovom stavu se menja sa n na m.");
 		
-		ClanAmandnam clanAmandnam = new ClanAmandnam();
+		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
 		clanAmandnam.getStavAmandman().add(stav);
 		
@@ -216,36 +220,26 @@ public class TestController {
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
 		amandman.setPredlagac(odbornik);
-		Date date = new Date();
 		
-		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(date);
-		try {
-			amandman.setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
-		} catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		amandman.setID(GenerateRandNumber());
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
-		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true);
+		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, "jocko");*/
 	}
 	
 	private void InitializeAktEncrypt()
 	{
-		Akt akt = getAkt();
+		/*Akt akt = getAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true)){
+		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true, "jocko")){
 			System.out.println("Uspesno zapisan enkriptovan akt");
 		}else{
 			System.out.println("Ne uspesno zapisan enkriptovan akt");
-		}
+		}*/
 	}
 	
-	private Akt getAkt()
-	{
+	private void getAkt()
+	{/*
 		Alineja alineja = new Alineja();
 		alineja.setOznaka("Alineja1");
 		alineja.setSadrzaj("Sadrzaj alineje o donosenju akta.");
@@ -316,17 +310,15 @@ public class TestController {
 		GregorianCalendar c = new GregorianCalendar();
 		c.setTime(date);
 		try {
-			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 			pzo.setDatum(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 		} catch (DatatypeConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		akt.setID(GenerateRandNumber());
 		akt.setPrelazneIZavrsneOdredbe(pzo);
 		
 		return akt;
-		
+		*/
 	}
 	
 	private String GenerateRandNumber()

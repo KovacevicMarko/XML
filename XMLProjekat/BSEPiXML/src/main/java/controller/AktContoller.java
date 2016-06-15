@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -24,11 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.xml.sax.SAXException;
 
 import businessLogic.BeanManager;
-
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
-
 import dto.AktDto;
 
 @Controller
@@ -101,7 +103,7 @@ public class AktContoller {
 		Akt akt2= (Akt) converter.convertFromXml(new File("tmp.xml"), schema);
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		bm.writeDocument(akt2, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true);
+		bm.writeDocument(akt2, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, "jocko");
 		
 		System.out.println(akt.getPreambula());
 		
@@ -136,7 +138,7 @@ public class AktContoller {
 		    String aktXML="";
 		    
 		    for(int i=0; i<akti.size(); i++){
-		    	if(akti.get(i).getID().equals(akt.getId())){
+		    	if(akti.get(i).getId().equals(akt.getId())){
 		    		if(bm.convertToXml((akti.get(i)))){
 		    			System.out.println("uspeo");
 		    		}
@@ -189,4 +191,5 @@ public class AktContoller {
 
       return sb.toString();
 	}
+	
 }

@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -35,6 +36,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import common.Util;
 
 //Dekriptuje tajni kljuc privatnim kljucem
 //Tajnim kljucem dekriptuje podatke
@@ -66,7 +69,7 @@ public class DecryptKEK {
 	/**
 	 * Kreira DOM od XML dokumenta
 	 */
-	private Document loadDocument(String file) {
+	public Document loadDocument(String file) {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setNamespaceAware(true);
@@ -92,7 +95,7 @@ public class DecryptKEK {
 	/**
 	 * Snima DOM u XML fajl 
 	 */
-	private void saveDocument(Document doc, String fileName) {
+	public void saveDocument(Document doc, String fileName) {
 		try {
 			File outFile = new File(fileName);
 			FileOutputStream f = new FileOutputStream(outFile);
@@ -128,16 +131,16 @@ public class DecryptKEK {
 	 * Ucitava privatni kljuc is KS fajla
 	 * alias primer
 	 */
-	private PrivateKey readPrivateKey() {
+	public PrivateKey readPrivateKey() {
 		try {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			//ucitavamo podatke
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(KEY_STORE_FILE));
-			ks.load(in, "primer".toCharArray());
+			BufferedInputStream in = new BufferedInputStream(DecryptKEK.openStream("sgns.jks"));
+			ks.load(in, "sgns".toCharArray());
 			
-			if(ks.isKeyEntry("primer")) {
-				PrivateKey pk = (PrivateKey) ks.getKey("primer", "primer".toCharArray());
+			if(ks.isKeyEntry("jocko")) {
+				PrivateKey pk = (PrivateKey) ks.getKey("jocko", "sgns".toCharArray());
 				return pk;
 			}
 			else
@@ -167,10 +170,16 @@ public class DecryptKEK {
 		} 
 	}
 	
+	public static InputStream openStream(String fileName) throws IOException 
+	{
+		
+		return Util.class.getClassLoader().getResourceAsStream("/cfg/data/" + fileName);
+	}
+	
 	/**
 	 * Kriptuje sadrzaj prvog elementa odsek
 	 */
-	private Document decrypt(Document doc, PrivateKey privateKey) {
+	public Document decrypt(Document doc, PrivateKey privateKey) {
 		
 		try {
 			//cipher za dekritpovanje XML-a
