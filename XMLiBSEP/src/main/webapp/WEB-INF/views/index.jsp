@@ -11,8 +11,13 @@
       <script data-require="angular-ui-router@*" data-semver="0.2.15" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
       <script src="<c:url value='/static/js/app.js' />"></script>
       <script src="<c:url value='/static/js/service/UserService.js' />"></script>
+      <script src="<c:url value='/static/js/service/AktService.js' />"></script>
+      <script src="<c:url value='/static/js/service/AmandmanService.js' />"></script>
+      
       <script src="<c:url value='/static/js/controller/UserController.js' />"></script>
       <script src="<c:url value='/static/js/controller/MainController.js' />"></script>
+      <script src="<c:url value='/static/js/controller/AktController.js' />"></script>
+      <script src="<c:url value='/static/js/controller/AmandmanController.js' />"></script>
       <script src="<c:url value='/static/js/router/MainRouter.js' />"></script>
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   </head>

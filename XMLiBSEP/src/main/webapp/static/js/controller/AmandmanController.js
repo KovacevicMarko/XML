@@ -1,8 +1,9 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var UserController = function($scope, UserService) {
-        
+	var AmandmanController = function($scope, AmandmanService) {
+		
+		$scope.amandmanSearch = {};
 		
 		var onSuccess = function(response){	  
 			console.log(response.data);
@@ -23,16 +24,15 @@
 			//alertify.error("ERROR");
 		}
 		
-		$scope.signin = function(){
-			UserService.signin(
-				   $scope.username, 
-				   $scope.password, 
+		$scope.searchAmandman = function(){
+			AmandmanService.searchAmandman(
+				   $scope.amandmanSearch, 
 				   onSuccess
 				   ,onError);
 	  		};
     }
 	
-	app.controller('UserController', UserController);
+	app.controller('AmandmanController', AmandmanController);
 
 }());
 

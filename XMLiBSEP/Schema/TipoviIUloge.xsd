@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.gradskaskupstina.rs/tipovi"
+    xmlns:gs="http://www.gradskaskupstina.rs"
+    xmlns:gs_tipovi="http://www.gradskaskupstina.rs/tipovi"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
+    <xs:complexType mixed="true" name="TSadrzajDela">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Glava">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajGlave"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                    <xs:attribute name="Naziv" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType mixed="true" name="TSadrzajGlave">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Odeljak">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajOdeljka"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                    <xs:attribute name="Naziv" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Clan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajClana"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType mixed="true" name="TSadrzajOdeljka">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Clan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajClana"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="TSadrzajClana">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element maxOccurs="unbounded" name="Stav">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajStava"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="TSadrzajStava">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="gs_tipovi:TSadrzajTacke"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="TSadrzajTacke">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="gs_tipovi:referenca"/>
+            <xs:element name="Alineja">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="xs:string"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:element name="referenca">
+        <xs:complexType mixed="false">
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="oznaka">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:pattern value="(\/[A-Za-z]*[0-9]*)+"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TGradjanin">
+        <xs:sequence>
+            <xs:element name="Ime" type="xs:string"/>
+            <xs:element name="Prezime" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TOdbornik">
+        <xs:complexContent>
+            <xs:extension base="gs_tipovi:TGradjanin">
+                <xs:sequence>
+                    <xs:element name="Stranka" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TPredsednik_skupstine">
+        <xs:complexContent>
+            <xs:extension base="gs_tipovi:TOdbornik">
+                <xs:sequence>
+                    <xs:element name="Mandat" nillable="false" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

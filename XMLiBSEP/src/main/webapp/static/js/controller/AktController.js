@@ -1,8 +1,9 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var UserController = function($scope, UserService) {
-        
+	var AktController = function($scope, AktService) {
+		
+		$scope.akt = {};
 		
 		var onSuccess = function(response){	  
 			console.log(response.data);
@@ -23,16 +24,15 @@
 			//alertify.error("ERROR");
 		}
 		
-		$scope.signin = function(){
-			UserService.signin(
-				   $scope.username, 
-				   $scope.password, 
+		$scope.searchAkt = function(){
+			AktService.searchAkt(
+				   $scope.aktSearch, 
 				   onSuccess
 				   ,onError);
 	  		};
     }
 	
-	app.controller('UserController', UserController);
+	app.controller('AktController', AktController);
 
 }());
 

@@ -1,32 +1,30 @@
-<c:if test="${not empty porukaOIsteku}">
-		<strong>Neuspesno registrovanje!</strong> ${porukaOIsteku}						
-</c:if>	
-
-
-
-
-<div align="left" class="col-xs-3">
-	<c:url var="action" value="/akt" />
-	<form:form id="formSearchAkt" action="${action}" method="post" modelAttribute="aktId">
-			<table class="pretraga">
-			<fildSet>						
-				<tr>
-					<td>
-						<form:input  path="preambula" placeholder="Pretrazite akte..." rows="5" cols="50" />
-						<form:errors path="preambula" cssClass="error" />
-					</td>	
-				
-			</fildSet>
-					<td>
-						<button type="submit" class="btn btn-primary" name="searchString" >
-							<b> Pretrazi </b>
-						</button>				
-					</td>				
-				</tr>
-			</table>							
-	</form:form>
+<!-- 
+<div class="col-md-4">
+	<h4><strong>User Registration</strong></h4>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title"><strong>Insert necessary information</strong></h3>
+		</div>
+		
+		<div class="panel-body">
+			<form ng-submit="signup()" role="form">
+					<div class="form-group">
+					<label for="username">Username</label>
+					<input type="text" ng-model="username"  class="form-control" id="username" placeholder="Username">
+				</div>
+				<div class="form-group">
+					<label for="password">Password</label>
+					<input type="password" ng-model="password" class="form-control" id="password" placeholder="Password">
+				</div>
+                   <div class="form-group">
+					<label for="password2">Repeat password</label>
+					<input type="password" ng-model="password2" class="form-control" id="password2" placeholder="Repeat password">
+				</div>
+				<p align="center"><button type="submit" class="btn btn-sm btn-default">Sign Up</button></p>
+			</form>
+ 			</div>
+	</div>
 </div>
-
 
 
 <div align="center" class="col-xs-3">
@@ -69,3 +67,7 @@
 			</tbody>
 		</table>
 </div>
+ -->
+ <div ng-controller="AktController">
+ 	<div ng-include="'static/content/home_gra.jsp'"></div>
+ </div>

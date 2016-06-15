@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
+    <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+        schemaLocation="xmldsig-core-schema.xsd"/>
+    <xs:element name="Akt">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="Preambula" type="xs:string"/>
+                <xs:element name="Naziv" type="xs:string"/>
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" ref="Deo"/>
+                </xs:sequence>
+                <xs:element ref="PrelazneIZavrsneOdredbe"/>
+                <xs:element minOccurs="0" name="ID" type="xs:string"/>
+                <xs:element minOccurs="0" name="TimeStamp" type="xs:dateTime"/>
+                <xs:element ref="ds:Signature" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Deo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="2" name="Glava">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Sadrzaj" type="TSadrzajGlave"/>
+                        </xs:sequence>
+                        <xs:attribute name="Oznaka" type="xs:string"/>
+                        <xs:attribute name="Naziv" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Oznaka" type="xs:string" use="optional"/>
+            <xs:attribute name="Naziv" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PrelazneIZavrsneOdredbe">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Predlagac" type="TOdbornik"/>
+                <xs:element maxOccurs="1" name="Datum" type="xs:dateTime"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="TSadrzajGlave">
+        <xs:choice maxOccurs="1" minOccurs="1">
+            <xs:element maxOccurs="unbounded" minOccurs="2" name="Odeljak">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" name="Stav">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                                            </xs:sequence>
+                                            <xs:attribute name="Oznaka" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="Oznaka" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                    <xs:attribute name="Naziv" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" name="Stav">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                                </xs:sequence>
+                                <xs:attribute name="Oznaka" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="TSadrzajStava">
+        <xs:sequence maxOccurs="1" minOccurs="1">
+            <xs:element ref="Tekst"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="TSadrzajTacke"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TSadrzajTacke">
+        <xs:sequence maxOccurs="1" minOccurs="1">
+            <xs:element ref="Tekst"/>
+            <xs:element name="Alineja" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="xs:string"/>
+                    </xs:sequence>
+                    <xs:attribute name="Oznaka" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TGradjanin">
+        <xs:sequence>
+            <xs:element name="Ime" type="xs:string"/>
+            <xs:element name="Prezime" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TOdbornik">
+        <xs:complexContent>
+            <xs:extension base="TGradjanin">
+                <xs:sequence>
+                    <xs:element name="Stranka" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TPredsednik_skupstine">
+        <xs:complexContent>
+            <xs:extension base="TOdbornik">
+                <xs:sequence>
+                    <xs:element name="Mandat" nillable="false" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:element name="Tekst" type="xs:string"/>
+</xs:schema>

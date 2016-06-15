@@ -2,35 +2,35 @@
     var app = angular.module("MyApp");
     
     app.config(function ($stateProvider,$urlRouterProvider) {
-    $urlRouterProvider.otherwise('/homePage');
-    $stateProvider.state('homePage', 
+    $urlRouterProvider.otherwise('/main');
+    $stateProvider.state('main', 
         {//naziv stanja!
-        url: '/homePage',
+        url: '/main',
         views: {
             header:{
-                templateUrl: '/XMLiBSEP/static/content/header.jsp',
+                templateUrl: '/XMLiBSEP/static/content/headerL.jsp',
                 controller: 'MainController'
             },
             content: {
-              templateUrl: '/XMLiBSEP/static/content/home.jsp',
+              templateUrl: '/XMLiBSEP/static/content/home_pre.jsp',
               controller: 'MainController'
             }
         }
         })
-        /*.state('login',{//naziv stanja!
+        .state('login',{//naziv stanja!
         url: '/login',
         views: {
             header:{
-                templateUrl: 'header/headerNL.html',
-                controller: 'AuthController'
+                templateUrl: '/XMLiBSEP/static/content/headerNL.jsp',
+                controller: 'UserController'
             },
             content: {
-              templateUrl: 'auth/templates/signUp.html',
-              controller: 'SignUpController'
+            	templateUrl: '/XMLiBSEP/static/content/home.jsp',
+                controller: 'MainController'
             }
         }            
         })  
-        .state('projects',{//naziv stanja!
+        /*.state('projects',{//naziv stanja!
         url: '/projects',
         views: {
             header:{
