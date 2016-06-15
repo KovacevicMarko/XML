@@ -8,6 +8,8 @@
 
 package model;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -43,7 +45,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "datum"
 })
 @XmlRootElement(name = "PrelazneIZavrsneOdredbe", namespace = "http://www.gradskaskupstina.rs/")
-public class PrelazneIZavrsneOdredbe {
+public class PrelazneIZavrsneOdredbe implements Serializable {
 
     @XmlElement(name = "Predlagac", namespace = "http://www.gradskaskupstina.rs/", required = true)
     protected TOdbornik predlagac;

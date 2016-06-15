@@ -1,29 +1,22 @@
 package dto;
 
-import javax.xml.bind.annotation.XmlElement;
+import java.io.Serializable;
+
+import org.springframework.data.annotation.Transient;
 
 import model.TKorisnik;
 
-public class UserDto {
+public class UserDto implements Serializable {
 
-    protected String korisnickoIme;
-    protected String lozinka;
-    protected String ime;
-    protected String prezime;
-    protected String uloga;
-    protected String email;
+    private String korisnickoIme;
+    private String lozinka;
+    private String ime;
+    private String prezime;
+    private String uloga;
+    private String email;
     
     public UserDto(){
     	
-    }
-    
-    public UserDto(TKorisnik korisnik){
-    	this.korisnickoIme=korisnik.getKorisnickoIme();
-    	this.lozinka=korisnik.getLozinka();
-    	this.ime=korisnik.getIme();
-    	this.prezime=korisnik.getPrezime();
-    	this.uloga=korisnik.getUloga();
-    	this.email=korisnik.getEmail();
     }
     
 	public String getKorisnickoIme() {

@@ -1,64 +1,130 @@
 package rest.controllers;
 
-import java.io.File;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.xml.sax.SAXException;
 
 import businessLogic.BeanManager;
+import common.CommonQueries;
 import common.DatabaseConnection;
-import common.JaxbXmlConverter;
-import dto.AktDto;
+import dto.AktSearchDto;
+import dto.UserDto;
 import model.Akt;
-
-
 
 @RestController
 @RequestMapping(value = "/akt/")
 public class AktController {
 	
+	@RequestMapping(method = RequestMethod.GET)//AKT_DOC_ID
+	 public ResponseEntity getProposedAndApprovedActs() {
+	 
+		 ResponseEntity retVal;
+		 BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		  
+	     ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
+	     ArrayList<Akt> aktiUsvojeni = bm.executeQuery(CommonQueries.getAllApprovedActs());
+	     
+	     HashMap<String,ArrayList<Akt>> akti = new HashMap<String,ArrayList<Akt>>();
+	     
+	     akti.put("aktiUsvojeni", aktiUsvojeni);
+	     akti.put("aktiPredlozeni", aktiPredlozeni);
+	     
+		 retVal = new ResponseEntity(akti,HttpStatus.OK);
+		 return retVal;
+     }
+	
+	
+	
+	
 	@RequestMapping(value = "/addAkt/", method = RequestMethod.POST)
-	public ResponseEntity dodajAkt(@RequestBody Akt akt){//kad se preuzme ceo xml text se upise u preamublu to je tipa string, da ne pravim novi dto
+	public ResponseEntity addAkt(@RequestBody Akt akt, HttpServletRequest req){
 		
+		ResponseEntity retVal; 
 		
-		System.out.println(akt.getPrelazneIZavrsneOdredbe().getDatum());
-		ResponseEntity retVal = new ResponseEntity(akt,HttpStatus.OK);
-		
-		/*JaxbXmlConverter converter = new JaxbXmlConverter();
-		converter.writeStringToFile(akt.getPreambula());
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = null;
-		try {
-			schema = schemaFactory.newSchema(new File("Schema/Akt.xsd"));
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		Akt akt2= (Akt) converter.convertFromXml(new File("tmp.xml"), schema);
-		
-		*/
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true);
 		
-		//System.out.println(akt.getPreambula());
+		boolean isWritingFailed = false;
 		
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
+			isWritingFailed = true;
+		}
 		
-		//TODO validirati xml i dodati u bazu 
+		if(isWritingFailed){
+			retVal = new ResponseEntity("Bad request, check your xml",HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+
+		retVal = new ResponseEntity(akt,HttpStatus.OK);
+		return retVal;
+		
+	}
 	
+	@RequestMapping(value = "/search/", method = RequestMethod.POST)
+	public ResponseEntity searchAkt(@RequestBody String content) {
+		
+		ResponseEntity retVal;
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID);
+    	
+    	if(predlozeni.isEmpty()){
+    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
+    		return retVal;
+    	}
+    	
+    	//Test
+    		Iterator it = predlozeni.entrySet().iterator();
+    		while (it.hasNext()) {
+    			Map.Entry pair = (Map.Entry)it.next();
+    			System.out.println(pair.getKey() + " = " + pair.getValue());
+    		}
+        //
+        
+        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        
+		return retVal;
+	}
+	
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
+	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
+		
+		String tagName = tagAndContent.getTagName();
+		String content = tagAndContent.getContent();
+		
+		ResponseEntity retVal;
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
+    	
+    	if(predlozeni.isEmpty()){
+    		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
+    		return retVal;
+    	}
+    	
+    	//Test
+    		Iterator it = predlozeni.entrySet().iterator();
+    		while (it.hasNext()) {
+    			Map.Entry pair = (Map.Entry)it.next();
+    			System.out.println(pair.getKey() + " = " + pair.getValue());
+    		}
+    	//
+        
+        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        
 		return retVal;
 	}
 

@@ -3,6 +3,7 @@ package controller;
 import java.util.ArrayList;
 
 import model.Akt;
+import model.Amandman;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,12 +29,23 @@ public class HomeController {
 	    ArrayList<Akt> akti =bm.executeQuery(query.toString());
 		  
 	    System.out.println(" ****************************************** " + akti.size());
+	    //radi
+	    //Akt a = bm.read("10668850792282296817.xml", true);
+	    //ne radi
+	    
+//	    Akt a = bm.read("17762284118283912641.xml", true);
+//	    
+//	    System.out.println("AAAAA " + a.getPreambula());
 	    
 	    AktDto aktId= new AktDto();
 	    
 	    model.addAttribute("akti", akti);	    
 	    model.addAttribute("aktId", aktId);
-		
+	    
+	    BeanManager<Amandman> bm2 = new BeanManager<>("Schema/Amandman.xsd");
+	    
+	    Amandman am= bm2.read("12409701178653888557.xml", false);
+	    System.out.println(am.getPravniOsnov());
 			
 		return "homePage";
 	}

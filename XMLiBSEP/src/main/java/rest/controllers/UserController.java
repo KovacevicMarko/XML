@@ -31,7 +31,23 @@ import password.PasswordStorage;
 @RestController
 @RequestMapping(value = "/user/")
 public class UserController {
-
+	
+	@RequestMapping(value = "/checkSession/", method = RequestMethod.GET)
+	public ResponseEntity getUserOnSession(HttpServletRequest req){
+		
+		ResponseEntity retVal;
+		
+		if(req.getSession().getAttribute("user")!=null){
+			UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+			retVal = new ResponseEntity(userOnSession,HttpStatus.OK);
+		}
+		else{
+			retVal = new ResponseEntity("Nobody loged in",HttpStatus.NOT_FOUND);
+		}
+		
+		return retVal;
+	}
+	
 	@RequestMapping(value = "/logIn/", method = RequestMethod.POST)
 	public ResponseEntity logIn(@RequestBody LoginUserDto user, HttpServletRequest request) {
 
@@ -175,8 +191,9 @@ public class UserController {
 			// Dodavanje novog usera u listu svih
 			users.getKorisnik().add(newUser);
 			// Persistencija
+			//TODO da li parametar write metode treba da bude newUser.username (zbog certifikata) ?
 			BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
-			bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false);
+			bm1.write(users, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false,"jocko");
 
 		}
 

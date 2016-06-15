@@ -8,6 +8,8 @@
 
 package model;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,7 +55,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "salt",
     "datumPromeneLozinke"
 })
-public class TKorisnik {
+public class TKorisnik{
 
     @XmlElement(name = "KorisnickoIme", namespace = "http://www.gradskaskupstina.rs/" , required = true)
     protected String korisnickoIme;
@@ -72,7 +74,8 @@ public class TKorisnik {
     @XmlElement(name = "DatumPromeneLozinke", namespace = "http://www.gradskaskupstina.rs/", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar datumPromeneLozinke;
-
+    
+    
     /**
      * Gets the value of the korisnickoIme property.
      * 
