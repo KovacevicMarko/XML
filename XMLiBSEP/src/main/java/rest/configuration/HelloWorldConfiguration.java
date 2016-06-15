@@ -1,4 +1,4 @@
-package com.websystique.springmvc.configuration;
+package rest.configuration;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.websystique.springmvc")
+@ComponentScan(basePackages = "rest")
 public class HelloWorldConfiguration extends WebMvcConfigurerAdapter{
 	
 	@Override

@@ -1,4 +1,4 @@
-package com.websystique.springmvc.controller;
+package rest.controllers;
  
 import java.util.List;
 
