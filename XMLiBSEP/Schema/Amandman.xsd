@@ -58,17 +58,10 @@
         </xs:sequence>
         <xs:attribute name="NazivAkta" type="xs:string"/>
     </xs:complexType>
-    <xs:complexType name="TTipIzmene">
-        <xs:choice>
-            <xs:element default="Dodavanje" name="Dodavanje" type="xs:string"/>
-            <xs:element default="Izmena" name="Izmena" type="xs:string"/>
-            <xs:element default="Brisanje" name="Brisanje" type="xs:string"/>
-        </xs:choice>
-    </xs:complexType>
     <xs:complexType name="TTekstIzmene">
         <xs:sequence>
             <xs:element name="IzmenaSadrzaja" type="xs:string"/>
-            <xs:element name="TipIzmene" type="TTipIzmene"/>
+            <xs:element name="TipIzmene" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="TClanAmandnam">
