@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><ns2:Akt xmlns:ns2="http://www.gradskaskupstina.rs/" xmlns="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gradskaskupstina.rs/">
+    <ns2:Preambula><xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Type="http://www.w3.org/2001/04/xmlenc#Content"><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:KeyName>Kriptovani tajni kljuc</ds:KeyName>
+<xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/><xenc:CipherData><xenc:CipherValue>E1FK0Kh7Tot7ubXWGyzL74ALOWzYsPQ76F1X8jdQiQdhCjD8QrFXohvC2kSb6ytek5fTpadKgY+6
+j0Us43/S1Wg+ZlCHv4MnpDxmvHPOmUQKjKaw2cfAUVQRazJDSKyIbXX2Rp/ntFBMWL3tuoQFxOAg
+FOvaVvzAoF2OSUdUZyY=</xenc:CipherValue></xenc:CipherData></xenc:EncryptedKey></ds:KeyInfo><xenc:CipherData><xenc:CipherValue>ze13yiswWWamxUuhSLfGgyeRH3UsBq4p</xenc:CipherValue></xenc:CipherData></xenc:EncryptedData></ns2:Preambula>
+    <ns2:Naziv>Akt1</ns2:Naziv>
+    <ns2:Deo Naziv="deo1" Oznaka="oznaka1">
+        <ns2:Glava Naziv="glava1" Oznaka="glava1">
+            <ns2:Sadrzaj>
+                <ns2:Clan Oznaka="clan1">
+                    <ns2:Stav Oznaka="stav1">
+                        <ns2:Sadrzaj>
+                            <ns2:Tekst>Sadrzaj stava o donosenju akta.</ns2:Tekst>
+                            <ns2:Tacka Oznaka="Tacka1">
+<ns2:Sadrzaj>
+    <ns2:Tekst>Sadrzaj tacke o donosenju akta.</ns2:Tekst>
+    <ns2:Alineja Oznaka="Alineja1">
+        <ns2:Sadrzaj>Sadrzaj alineje o donosenju akta.</ns2:Sadrzaj>
+    </ns2:Alineja>
+</ns2:Sadrzaj>
+                            </ns2:Tacka>
+                            <ns2:Tacka Oznaka="Tacka2">
+<ns2:Sadrzaj>
+    <ns2:Tekst>Sadrzaj tacke o donosenju akta.</ns2:Tekst>
+    <ns2:Alineja Oznaka="Alineja1">
+        <ns2:Sadrzaj>Sadrzaj alineje o donosenju akta.</ns2:Sadrzaj>
+    </ns2:Alineja>
+</ns2:Sadrzaj>
+                            </ns2:Tacka>
+                        </ns2:Sadrzaj>
+                    </ns2:Stav>
+                </ns2:Clan>
+            </ns2:Sadrzaj>
+        </ns2:Glava>
+        <ns2:Glava Naziv="glava2" Oznaka="glava2">
+            <ns2:Sadrzaj>
+                <ns2:Clan Oznaka="clan1">
+                    <ns2:Stav Oznaka="stav1">
+                        <ns2:Sadrzaj>
+                            <ns2:Tekst>Sadrzaj stava o donosenju akta.</ns2:Tekst>
+                            <ns2:Tacka Oznaka="Tacka1">
+<ns2:Sadrzaj>
+    <ns2:Tekst>Sadrzaj tacke o donosenju akta.</ns2:Tekst>
+    <ns2:Alineja Oznaka="Alineja1">
+        <ns2:Sadrzaj>Sadrzaj alineje o donosenju akta.</ns2:Sadrzaj>
+    </ns2:Alineja>
+</ns2:Sadrzaj>
+                            </ns2:Tacka>
+                            <ns2:Tacka Oznaka="Tacka2">
+<ns2:Sadrzaj>
+    <ns2:Tekst>Sadrzaj tacke o donosenju akta.</ns2:Tekst>
+    <ns2:Alineja Oznaka="Alineja1">
+        <ns2:Sadrzaj>Sadrzaj alineje o donosenju akta.</ns2:Sadrzaj>
+    </ns2:Alineja>
+</ns2:Sadrzaj>
+                            </ns2:Tacka>
+                        </ns2:Sadrzaj>
+                    </ns2:Stav>
+                </ns2:Clan>
+            </ns2:Sadrzaj>
+        </ns2:Glava>
+    </ns2:Deo>
+    <ns2:PrelazneIZavrsneOdredbe>
+        <ns2:Predlagac>
+            <ns2:Ime>odbornikIme</ns2:Ime>
+            <ns2:Prezime>odbornikPrezime</ns2:Prezime>
+            <ns2:Stranka>odbornikStranka</ns2:Stranka>
+        </ns2:Predlagac>
+        <ns2:Datum>2016-06-14T21:59:04.966+02:00</ns2:Datum>
+    </ns2:PrelazneIZavrsneOdredbe>
+    <ns2:ID>636679263</ns2:ID>
+    <ns2:TimeStamp>2016-06-14T21:59:08.026+02:00</ns2:TimeStamp>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+<ds:Reference URI="">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+<ds:DigestValue>ad/zPouDDdCPxJaHfcneg46wZh4=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue>
+BqfABmP7A55Cn01ShD7MIZiye5scx+Szz+lXsjze0D2gOzEyGd26xyn+Npu+4VZg3XzV30F++6qQ
+rMnC0kUl668JbwONKboAg81Ycli47zznuqoWvP+E0+evCTMIfLlxq8cZh3bNeebXXsvFria3NPZs
+5FOJsy9Qzwk1uCav7hM=
+</ds:SignatureValue>
+<ds:KeyInfo>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+hGO7dVbPz2PmSaCT4VJHq8fBFEY0xZxX42RQVNi4JwFwQJsIdbardF+gWQldNDnCxUaXR54M9QQ0
+fFjKyc0tRbZytOrzFEjiWxDCzIRvKfoKtAWhIRGHw5ktEUlB+z8v+OEOPiviooEe+bk2CvUBNOMv
+Q+7kaVNQYH57Xci3xQ8=
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+<ds:X509Data>
+<ds:X509Certificate>
+MIICsTCCAhqgAwIBAgIDAP8LMA0GCSqGSIb3DQEBCwUAMIGfMREwDwYDVQQDDAhOb3ZpIFNhZDEY
+MBYGA1UEBAwPU2t1cHN0aW5hIGdyYWRhMQ0wCwYDVQQqDARzZ25zMQ0wCwYDVQQKDARzZ25zMQ0w
+CwYDVQQLDARzZ25zMQ0wCwYDVQQGEwQyMDAwMR0wGwYJKoZIhvcNAQkBFg5zZ25zQGdtYWlsLmNv
+bTEVMBMGCgmSJomT8ixkAQEMBTE2MzA5MB4XDTEwMTAwOTIyMDAwMFoXDTIwMTAwOTIyMDAwMFow
+gZoxDzANBgNVBAMMBk5qb3NrYTEOMAwGA1UEBAwFSm9jZXYxDjAMBgNVBCoMBUpvY2tvMQ8wDQYD
+VQQKDAZOam96ZWYxDzANBgNVBAsMBk5qb2NrbzENMAsGA1UEBhMEMjAwMDEfMB0GCSqGSIb3DQEJ
+ARYQbmpvY2tvQGdtYWlsLmNvbTEVMBMGCgmSJomT8ixkAQEMBTg5NDk5MIGfMA0GCSqGSIb3DQEB
+AQUAA4GNADCBiQKBgQCEY7t1Vs/PY+ZJoJPhUkerx8EURjTFnFfjZFBU2LgnAXBAmwh1tqt0X6BZ
+CV00OcLFRpdHngz1BDR8WMrJzS1FtnK06vMUSOJbEMLMhG8p+gq0BaEhEYfDmS0RSUH7Py/44Q4+
+K+KigR75uTYK9QE04y9D7uRpU1BgfntdyLfFDwIDAQABMA0GCSqGSIb3DQEBCwUAA4GBAAqt1PMG
+tkS9/uUQFjvP/Q0ooMbh+hlKpdLLhu+Y1w7XFjprK2C1ejpSXvHa8NaXIsNT5wOkDA83dQP5bAES
+xDrqWUjYDK+aqqB3/axIduiPV4jMm4/IVv0YdxGbpCIz9eN5n5FbIxxy1icSyMBwH7yCGSwHeTqr
+xnRreLLVXV6Y
+</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+</ds:Signature></ns2:Akt>

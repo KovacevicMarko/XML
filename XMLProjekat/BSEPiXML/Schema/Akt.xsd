@@ -9,39 +9,21 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element minOccurs="0" name="Preambula" type="xs:string"/>
-                <xs:element name="Naziv" type="xs:string"/>
+                <xs:element name="NazivAkt" type="xs:string"/>
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" ref="Deo"/>
+                    <xs:element maxOccurs="unbounded" name="Deo" type="TDeo"/>
+                    <xs:element name="PrelazneIZavrsneOdredbe">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Predlagac" type="TOdbornik"/>
+                                <xs:element maxOccurs="1" name="Datum" type="xs:dateTime"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:sequence>
-                <xs:element ref="PrelazneIZavrsneOdredbe"/>
-                <xs:element minOccurs="0" name="ID" type="xs:string"/>
+                <xs:element minOccurs="0" name="Id" type="xs:string"/>
                 <xs:element minOccurs="0" name="TimeStamp" type="xs:dateTime"/>
                 <xs:element ref="ds:Signature" minOccurs="0"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Deo">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="2" name="Glava">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="Sadrzaj" type="TSadrzajGlave"/>
-                        </xs:sequence>
-                        <xs:attribute name="Oznaka" type="xs:string"/>
-                        <xs:attribute name="Naziv" type="xs:string"/>
-                    </xs:complexType>
-                </xs:element>
-            </xs:sequence>
-            <xs:attribute name="Oznaka" type="xs:string" use="optional"/>
-            <xs:attribute name="Naziv" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="PrelazneIZavrsneOdredbe">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="Predlagac" type="TOdbornik"/>
-                <xs:element maxOccurs="1" name="Datum" type="xs:dateTime"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -50,65 +32,38 @@
             <xs:element maxOccurs="unbounded" minOccurs="2" name="Odeljak">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element maxOccurs="unbounded" name="Stav">
-                                        <xs:complexType>
-                                            <xs:sequence>
-                                                <xs:element name="Sadrzaj" type="TSadrzajStava"/>
-                                            </xs:sequence>
-                                            <xs:attribute name="Oznaka" type="xs:string"/>
-                                        </xs:complexType>
-                                    </xs:element>
-                                </xs:sequence>
-                                <xs:attribute name="Oznaka" type="xs:string"/>
-                            </xs:complexType>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan" type="TClan">
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
-                    <xs:attribute name="Naziv" type="xs:string"/>
+                    <xs:attribute name="OznakaOdeljak" type="xs:string"/>
+                    <xs:attribute name="NazivOdeljak" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
-            <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" name="Stav">
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element name="Sadrzaj" type="TSadrzajStava"/>
-                                </xs:sequence>
-                                <xs:attribute name="Oznaka" type="xs:string"/>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
-                </xs:complexType>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="Clan" type="TClan"/>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TSadrzajStava">
         <xs:sequence maxOccurs="1" minOccurs="1">
-            <xs:element ref="Tekst"/>
+            <xs:element name="TekstStav" type="TTekst"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="Tacka">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Sadrzaj" type="TSadrzajTacke"/>
                     </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
+                    <xs:attribute name="OznakaTacka" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="TSadrzajTacke">
         <xs:sequence maxOccurs="1" minOccurs="1">
-            <xs:element ref="Tekst"/>
+            <xs:element name="TekstTacka" type="TTekst"/>
             <xs:element name="Alineja" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="Sadrzaj" type="xs:string"/>
+                        <xs:element name="SadrzajAlineja" type="xs:string"/>
                     </xs:sequence>
-                    <xs:attribute name="Oznaka" type="xs:string"/>
+                    <xs:attribute name="OznakaAlineja" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -124,6 +79,7 @@
             <xs:extension base="TGradjanin">
                 <xs:sequence>
                     <xs:element name="Stranka" type="xs:string"/>
+                    <xs:element name="Username" type="xs:string"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -137,5 +93,45 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:element name="Tekst" type="xs:string"/>
+    <xs:complexType name="TTekst">
+        <xs:sequence>
+            <xs:element name="Tekst" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Referenca" type="TReferenca"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TReferenca">
+        <xs:sequence>
+            <xs:element name="refAkt" type="xs:string"/>
+            <xs:element name="refClan" type="xs:string"/>
+            <xs:element minOccurs="0" name="refStav" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TDeo">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="2" name="Glava">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="SadrzajGlava" type="TSadrzajGlave"/>
+                    </xs:sequence>
+                    <xs:attribute name="OznakaGlava" type="xs:string"/>
+                    <xs:attribute name="NazivGlava" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="OznakaDeo" type="xs:string" use="optional"/>
+        <xs:attribute name="NazivDeo" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="TClan">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="Stav">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Sadrzaj" type="TSadrzajStava"/>
+                    </xs:sequence>
+                    <xs:attribute name="OznakaStav" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="OznakaClan" type="xs:string"/>
+    </xs:complexType>
 </xs:schema>

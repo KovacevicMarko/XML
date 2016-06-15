@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import securityPackage.DecryptKEK;
 import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
 import securityPackage.VerifySignatureEnveloped;
@@ -298,9 +299,12 @@ public class DatabaseManager<T> {
 
         ret = content.get();
         if (signatureFlag)
-        {
+        {	
+        	
+        	Document decrypredDoc = decryptContenc(ret); 
+        	System.out.println("**********************" + decrypredDoc.toString());
             VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            if (!verifySignatureEnveloped.verifySignature(ret))
+            if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
             {
                 ret = null;
             }
@@ -477,7 +481,7 @@ public class DatabaseManager<T> {
 		
     	if(bean instanceof Akt)
     	{
-    		((Akt) bean).setID(GenerateRandNumber());
+    		((Akt) bean).setId(GenerateRandNumber());
     		
     		try {
     			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
@@ -490,7 +494,7 @@ public class DatabaseManager<T> {
     	}
     	else if(bean instanceof Amandman)
     	{
-    		((Amandman) bean).setID(GenerateRandNumber());
+    		((Amandman) bean).setId(GenerateRandNumber());
     		
     		try {
     			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
@@ -579,6 +583,27 @@ public class DatabaseManager<T> {
     		System.out.println("[DatabaseManager] Unexpected error: " +e.getMessage());
     		return false;
     	}
+    }
+    
+    private Document decryptContenc(Document doc)
+    {
+    	Document retValue = null;
+    	
+    	try
+    	{
+    		DecryptKEK decript = new DecryptKEK();
+    		PrivateKey privateKey = decript.readPrivateKey();
+    		Document document = decript.decrypt(doc, privateKey);
+    		decript.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
+    		retValue = document;
+    	}
+    	catch(Exception ex)
+    	{
+    		System.out.println("Ne uspesna dekripcija!");
+    		retValue = null;
+    	}
+    	
+    	return retValue;
     }
     
     /**

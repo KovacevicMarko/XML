@@ -138,7 +138,7 @@ public class AktContoller {
 		    String aktXML="";
 		    
 		    for(int i=0; i<akti.size(); i++){
-		    	if(akti.get(i).getID().equals(akt.getId())){
+		    	if(akti.get(i).getId().equals(akt.getId())){
 		    		if(bm.convertToXml((akti.get(i)))){
 		    			System.out.println("uspeo");
 		    		}
