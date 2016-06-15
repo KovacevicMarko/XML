@@ -26,11 +26,7 @@ import model.TKorisnik;
 import model.TOdbornik;
 import model.TSadrzajAmandmana;
 import model.TSadrzajAmandmana.GlavaAmandman;
-import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam;
-import model.TSadrzajAmandmana.GlavaAmandman.ClanAmandnam.StavAmandman;
 import model.TSadrzajGlave;
-import model.TSadrzajGlave.Clan;
-import model.TSadrzajGlave.Clan.Stav;
 import model.TSadrzajStava;
 import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
@@ -40,7 +36,7 @@ import password.PasswordStorage;
 @RestController
 @RequestMapping(value = "/initialize")
 public class TestController {
-	
+	/*
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
@@ -112,7 +108,7 @@ public class TestController {
             System.out.println(e.toString());
         }
         k.setSalt(PasswordStorage.base64Encode(salt));
-        /*hash pass*/
+        //hash pass//
         byte[] hashedPassword = new byte[0];
         try {
              hashedPassword = PasswordStorage.hashPassword("despinica", salt);
@@ -142,7 +138,7 @@ public class TestController {
             System.out.println(e.toString());
         }
         k2.setSalt(PasswordStorage.base64Encode(salt));
-        /*hash pass*/
+        //hash pass//
         hashedPassword = new byte[0];
         try {
              hashedPassword = PasswordStorage.hashPassword("jocko", salt);
@@ -332,5 +328,7 @@ public class TestController {
 		Random randomGenerator = new Random();
 		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
 	}
+	
+	*/
 
 }
