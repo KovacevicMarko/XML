@@ -1,5 +1,16 @@
 package rest.controllers;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,16 +18,33 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 
 import businessLogic.BeanHelperMethods;
-import businessLogic.BeanManager;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
@@ -250,6 +278,28 @@ public class AktController {
         
 		return retVal;
 	}
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
+	public ResponseEntity getAktbyId(String data) {//@RequestBody String data
+		//data="15169449515975435548"+".xml";
+        System.out.println("ID je : "+data);
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Source xslt = new StreamSource(new File("transform/akt.xsl"));
+        if(xslt==null){
+            System.out.println("xslt = null");
+        }
+        try {
+            Transformer transformer = factory.newTransformer(xslt);
+            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+            Akt akt=bm.read(data, true);
+            bm.convertToXml(akt);
+            
+            Source text = new StreamSource(new File("tmp.xml"));
+            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
 
 	@RequestMapping(value = "/findReferences/", method = RequestMethod.POST)
 	public ResponseEntity findReferences(@RequestBody AktSearchRefDto aktRefDto){
@@ -295,4 +345,72 @@ public class AktController {
 		
 		return retVal;
 	}
+	
+	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
+	public void generatePdf(String docId) throws Exception{
+		docId="3847327626572118583"+".xml";
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+        Akt akt=bm.read(docId, true);
+        bm.convertToXml(akt);
+        FopFactory fopFactory=null;
+        
+        try {
+			fopFactory = FopFactory.newInstance(new File("transform/fop.xconf"));
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        TransformerFactory transformerFactory = new TransformerFactoryImpl();
+        File xsltFile = new File("transform/akt-fo.xsl");
+        StreamSource transformSource = new StreamSource(xsltFile);
+		StreamSource source = new StreamSource(new File("tmp.xml"));
+		FOUserAgent userAgent = fopFactory.newFOUserAgent();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		Transformer xslFoTransformer =transformerFactory.newTransformer(transformSource);
+		
+			
+		Fop fop =fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, outStream);
+			
+	
+		Result res =null;
+			try {
+				res=new SAXResult(fop.getDefaultHandler());
+			} catch (FOPException e) {
+				e.printStackTrace();
+			}
+				
+		
+			xslFoTransformer.transform(source, res);
+		
+		
+		
+		File pdfFile = new File("transform/akt.pdf");
+		OutputStream out=null;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(pdfFile));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			out.write(outStream.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			System.out.println("[INFO] File \"" + pdfFile.getCanonicalPath() + "\" generated successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//return new ResponseEntity(akt,HttpStatus.OK);
+	}
+
 }

@@ -1,12 +1,20 @@
 package businessLogic;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
@@ -17,6 +25,10 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -34,9 +46,13 @@ import model.Korisnici;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.vendor.Database;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import rest.controllers.ArhivController;
 import securityPackage.DecryptKEK;
 import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
@@ -65,6 +81,9 @@ import common.ValidationXmlSchema;
  *
  */
 public class DatabaseManager<T> {
+	
+	@Autowired
+	private ArhivController arhivController;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
@@ -105,7 +124,7 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeFile(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+    public boolean writeFile(T bean, FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try{
         	
@@ -113,10 +132,21 @@ public class DatabaseManager<T> {
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-        	//TODO odkomentarisati            
-            //if (signFlag && !encriptContent(null, null)) {
-            //    throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            //}
+        	
+    		String tmpColId = null;
+    		
+    		if(bean instanceof Akt)
+    		{
+    			tmpColId = DatabaseConnection.AKT_USVOJEN_COL_ID;
+    		}
+    		else if(bean instanceof Amandman)
+    		{
+    			tmpColId = DatabaseConnection.AMANDMAN_USVOJEN_COL_ID;
+    		}
+            /*if (colId.equals(tmpColId) && !encriptContent())
+            {
+                throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            }*/
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -141,10 +171,11 @@ public class DatabaseManager<T> {
      */
     public boolean writeBean(T bean, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
-        try {
+        try
+        {
         	if(signFlag && !writeTimeStamp(bean))
         	{
-        		System.out.println("Can`t to write id and timestamp!");
+        		System.out.println("Can`t to write timestamp!");
         		return false;
         	}
         	
@@ -157,7 +188,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean))
             {
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = writeFile(inputStream,docId,colId, signFlag, username);
+                ret = writeFile(bean,inputStream,docId,colId, signFlag, username);
             } 
             else 
             {
@@ -181,7 +212,7 @@ public class DatabaseManager<T> {
     public DocumentDescriptor write(T bean,String colId, boolean signFlag, String username) {
         DocumentDescriptor ret = null;
         try {
-        	//ako su korisnici u pitanju, ne treba timestamp i id
+        	//ako su korisnici u pitanju, ne treba timestamp 
         	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
@@ -196,7 +227,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeDocument(inputStream,colId, signFlag, username);
-                boolean flagSet = setIdToBean(bean, ret.getUri(), username);
+                boolean flagSet = setIdToBean(bean, ret.getUri(), username, colId);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -205,6 +236,30 @@ public class DatabaseManager<T> {
 
         }
         finally{
+            return ret;
+        }
+    }
+   
+    
+    /**
+     * Upisivanje fajla-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
+        DocumentDescriptor ret = null;
+        try{       
+            
+            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            InputStreamHandle handle = new InputStreamHandle(inputStream);
+            ret = xmlManager.create(template,metadata, handle);
+        }
+        catch (Exception e){
+            logger.info("Could not write xml bean.");
+        } finally{
             return ret;
         }
     }
@@ -250,32 +305,17 @@ public class DatabaseManager<T> {
     }
     
     /**
-     * Upisivanje fajla-a u bazu podataka sa template docId-em.
-     * @param
-     * @param
+     * Funkcija za vracanje bean-a u odnosu na document.
+     * @param docId
      * @return
      */
-    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
-        DocumentDescriptor ret = null;
-        try{
-//        	if (signFlag && !singXml(null, username))
-//        	{
-//                throw  new Exception("Could not sign xml, check tmp.xml.");
-//          }           
-            
-            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
-            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-            metadata.getCollections().add(colId);
-            InputStreamHandle handle = new InputStreamHandle(inputStream);
-            ret = xmlManager.create(template,metadata, handle);
-        }
-        catch (Exception e){
-            logger.info("Could not write xml bean.");
-            logger.info("[ERROR] " + e.getMessage());
-            logger.info("[STACK TRACE] " + e.getStackTrace());
-        } finally{
-            return ret;
-        }
+    
+    public T getBeanByDocument(Document document)
+    {
+    	saveDocument(document);
+		T retValue = converter.convertFromXml(new File(INPUT_OUTPUT_TMP_FILE), schema);
+		
+		return retValue;
     }
     
     /*
@@ -542,7 +582,6 @@ public class DatabaseManager<T> {
     		try {
     			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
-    			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
     		
@@ -553,7 +592,6 @@ public class DatabaseManager<T> {
     		try {
     			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
-    			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
     		
@@ -572,14 +610,12 @@ public class DatabaseManager<T> {
      * @param id
      * @return
      */
-    private boolean setIdToBean(T bean, String idDoc, String username)
+    private boolean setIdToBean(T bean, String idDoc, String username, String colId)
     {
     	String id = idDoc;
     	try
     	{
-    		System.out.println(idDoc.split("\\.")[0]);
     		id = idDoc.split("\\.")[0];
-    		System.out.println("**************************** ID " + id);
     	}catch(Exception ex){
     		
     	}
@@ -587,13 +623,13 @@ public class DatabaseManager<T> {
     	if(bean instanceof Akt)
     	{
     		((Akt) bean).setId(id);
-    		writeBean(bean, idDoc, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username);
+    		writeBean(bean, idDoc, colId, true, username);
     		return true;
     	}
     	else if(bean instanceof Amandman)
     	{
     		((Amandman) bean).setId(id);
-    		writeBean(bean, idDoc, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, null);
+    		writeBean(bean, idDoc, colId, true, username);
     		return true;
     	}
     	else
@@ -655,6 +691,7 @@ public class DatabaseManager<T> {
             System.out.println("Encrypting....");
             document = encryptKek.encrypt(document ,secretKey, cert);
             encryptKek.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
+            arhivController.saveAkt(document);
             return true;
     		
     	} catch(Exception e){
@@ -739,5 +776,69 @@ public class DatabaseManager<T> {
 
         return matches;
     }
+    
+    /**
+	 * Kreira DOM od XML dokumenta
+	 */
+	private Document loadDocument() {
+		try {
+			String file = INPUT_OUTPUT_TMP_FILE;
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(file));
+
+			return document;
+		} catch (FactoryConfigurationError e) {
+			e.printStackTrace();
+			return null;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		} catch (SAXException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Snima DOM u XML fajl 
+	 */
+	private void saveDocument(Document doc) 
+	{
+		try {
+			String fileName = INPUT_OUTPUT_TMP_FILE;
+			File outFile = new File(fileName);
+			FileOutputStream f = new FileOutputStream(outFile);
+
+			TransformerFactory factory = TransformerFactory.newInstance();
+			Transformer transformer = factory.newTransformer();
+			
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(f);
+			
+			transformer.transform(source, result);
+
+			f.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

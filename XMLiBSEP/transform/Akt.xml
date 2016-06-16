@@ -1,0 +1,82 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<Akt xsi:schemaLocation="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Preambula>Preambula5</Preambula>
+<NazivAkt>Akt34a</NazivAkt>
+<Deo NazivDeo="deo1" OznakaDeo="oznaka1">
+<Glava NazivGlava="glava1" OznakaGlava="glava1">
+<SadrzajGlava>
+<Clan OznakaClan="clan1">
+<Stav OznakaStav="stav1">
+<Sadrzaj>
+<TekstStav>
+<Tekst>Sadrzaj stava o donosenju akta</Tekst>
+</TekstStav>
+<Tacka OznakaTacka="Tacka1">
+<Sadrzaj>
+<TekstTacka>
+<Tekst>Text tacke.</Tekst>
+</TekstTacka>
+<Alineja OznakaAlineja="Alineja1">
+<SadrzajAlineja>Sadrzaj alineje o donosenju akta.</SadrzajAlineja>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+<Tacka OznakaTacka="Tacka2">
+<Sadrzaj>
+<TekstTacka>
+<Tekst>Text tacke.</Tekst>
+</TekstTacka>
+<Alineja OznakaAlineja="Alineja1">
+<SadrzajAlineja>Sadrzaj alineje o donosenju akta.</SadrzajAlineja>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+</Sadrzaj>
+</Stav>
+</Clan>
+</SadrzajGlava>
+</Glava>
+<Glava NazivGlava="glava2" OznakaGlava="glava2">
+<SadrzajGlava>
+<Clan OznakaClan="clan1">
+<Stav OznakaStav="stav1">
+<Sadrzaj>
+<TekstStav>
+<Tekst>Sadrzaj stava o donosenju akta</Tekst>
+</TekstStav>
+<Tacka OznakaTacka="Tacka1">
+<Sadrzaj>
+<TekstTacka>
+<Tekst>Text tacke.</Tekst>
+</TekstTacka>
+<Alineja OznakaAlineja="Alineja1">
+<SadrzajAlineja>Sadrzaj alineje o donosenju akta.</SadrzajAlineja>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+<Tacka OznakaTacka="Tacka2">
+<Sadrzaj>
+<TekstTacka>
+<Tekst>Text tacke.</Tekst>
+</TekstTacka>
+<Alineja OznakaAlineja="Alineja1">
+<SadrzajAlineja>Sadrzaj alineje o donosenju akta.</SadrzajAlineja>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+</Sadrzaj>
+</Stav>
+</Clan>
+</SadrzajGlava>
+</Glava>
+</Deo>
+<PrelazneIZavrsneOdredbe>
+<Predlagac>
+<Ime>odbornikIme</Ime>
+<Prezime>odbornikPrezime</Prezime>
+<Stranka>odbornikStranka</Stranka>
+<Username>odbornikUsername</Username>
+</Predlagac>
+<Datum>2016-06-16T01:03:04.784+02:00</Datum>
+</PrelazneIZavrsneOdredbe>
+</Akt>

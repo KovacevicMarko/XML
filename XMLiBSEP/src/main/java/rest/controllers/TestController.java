@@ -12,8 +12,10 @@ import javax.xml.datatype.DatatypeFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 
 import businessLogic.BeanManager;
+import common.ApproveAmandmanOnAct;
 import common.DatabaseConnection;
 import common.Role;
 import enums.TTipIzmeneEnum;
@@ -25,6 +27,7 @@ import model.PrelazneIZavrsneOdredbe;
 import model.TClan;
 import model.TClan.Stav;
 import model.TClanAmandnam;
+import model.TClanAmandnam.StavAmandman.TackaAmandman;
 import model.TDeo;
 import model.TKorisnik;
 import model.TOdbornik;
@@ -47,12 +50,12 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-//		InitializeKorisnik();
+		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-		InitializeAkt();
+//		InitializeAkt();
 	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-	//InitializeAmandman();
-	//	System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+//		InitializeAmandman();
+//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -60,6 +63,24 @@ public class TestController {
 //		DeleteActs();
 		
 		return "Ajmo Kocko";
+	}
+	
+	private void readAct()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm1.read("16450434468119619897.xml", false);
+		System.out.println("******************" + akt.getId());
+		
+		BeanManager<Amandman> bm2 = new BeanManager("Schema/Amandman.xsd");
+		Amandman amandman = bm2.read("11513499627483176774.xml", false);
+		
+		ApproveAmandmanOnAct approve = new ApproveAmandmanOnAct<>(akt);
+		Akt akt2 = approve.approveAmandmanOnAkt(amandman.getSadrzajAmandmana().getGlavaAmandman(), akt);
+		System.out.println(akt2.getNazivAkt());
+		
+		
+		BeanManager<Akt> bm12 = new BeanManager<>("Schema/Akt.xsd");
+		bm12.writeDocument(akt2, DatabaseConnection.AKT_USVOJEN_COL_ID, true, "jocko");
 	}
 	
 	private void DeleteActs()
@@ -158,6 +179,36 @@ public class TestController {
         }
         k2.setLozinka(PasswordStorage.base64Encode(hashedPassword));
 		
+		TKorisnik k1 = new TKorisnik();
+		k1.setKorisnickoIme("toma");
+		k1.setEmail("toma");
+		k1.setIme("toma");
+		k1.setLozinka("toma");
+		k1.setPrezime("toma");
+		k1.setUloga(Role.ULOGA_PREDSEDNIK);
+
+		salt = new byte[0];
+		
+		try {
+            salt=PasswordStorage.generateSalt();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k1.setSalt(PasswordStorage.base64Encode(salt));
+        //hash pass//
+        hashedPassword = new byte[0];
+        try {
+             hashedPassword = PasswordStorage.hashPassword("toma", salt);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k1.setLozinka(PasswordStorage.base64Encode(hashedPassword));
+       
         Date date = new Date();
         
         
@@ -166,6 +217,7 @@ public class TestController {
 		try {
 			k.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
 			k2.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
+			k1.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
 		} catch (DatatypeConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -174,6 +226,7 @@ public class TestController {
         
 		korisnici.getKorisnik().add(k);
 		korisnici.getKorisnik().add(k2);
+		korisnici.getKorisnik().add(k1);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
 		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false,"jocko");
@@ -191,17 +244,48 @@ public class TestController {
 	
 	private void InitializeAmandman()
 	{
+		TackaAmandman tacka = new TackaAmandman();
+		tacka.setOznakaTacke("tacka1");
+		TTekstIzmene textImetodIzmene3 = new TTekstIzmene();
+		textImetodIzmene3.setIzmenaSadrzaja("Brisemo tacku iz Akta");
+		textImetodIzmene3.setTipIzmene(TTipIzmeneEnum.Brisanje.toString());
+		tacka.setIzmenaTacke(textImetodIzmene3);
+		
+		TTekstIzmene textImetodIzmene4 = new TTekstIzmene();
+		textImetodIzmene4.setIzmenaSadrzaja("Menjamo tekst iz tacke.");
+		textImetodIzmene4.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
+		
+		TackaAmandman tacka2 = new TackaAmandman();
+		tacka2.setOznakaTacke("tacka2");
+		tacka2.setIzmenaTacke(textImetodIzmene4);
+		
+		
 		//kreiranje stav amandmana
 		TClanAmandnam.StavAmandman stav = new TClanAmandnam.StavAmandman();
 		stav.setOznakaStava("stav1");
 		TTekstIzmene textImetodIzmene = new TTekstIzmene();
-		textImetodIzmene.setIzmenaSadrzaja("Predlog izmene iznosa navednom u ovom stavu se menja sa  150 na 120.");
-		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
-		stav.setIzmenaStava(textImetodIzmene);
+		textImetodIzmene.setIzmenaSadrzaja("Brisemo stav iz Akta");
+		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		//stav.setIzmenaStava(textImetodIzmene);
+		stav.getTackaAmandman().add(tacka);
+		stav.getTackaAmandman().add(tacka2);
+		
+		
+		TTekstIzmene textImetodIzmene5 = new TTekstIzmene();
+		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stav.");
+		textImetodIzmene5.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		
+		stav.setIzmenaStava(textImetodIzmene5);
+		
+		
 		
 		//Kreiranje clana i dodavanje stava na njega.
 		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
+		TTekstIzmene textImetodIzmene2 = new TTekstIzmene();
+		textImetodIzmene2.setIzmenaSadrzaja("Dodajemo novi stav u clan");
+		textImetodIzmene2.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		//clanAmandnam.setIzmenaClana(textImetodIzmene2);
 		clanAmandnam.getStavAmandman().add(stav);
 		
 		//Kreiranje glave i dodavanje clana
@@ -223,7 +307,7 @@ public class TestController {
 		odbornik.setIme("odbornikIme");
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
-		odbornik.setUsername("jocko");
+		odbornik.setUsername("odbornikUsername");
 		amandman.setPredlagacAmandmana(odbornik);
 		Date date = new Date();
 		
@@ -303,9 +387,14 @@ public class TestController {
 		stav.setOznakaStav("stav1");
 		stav.setSadrzaj(sadrzajStava);
 		
+		Stav stav2 = new Stav();
+		stav2.setOznakaStav("stav2");
+		stav2.setSadrzaj(sadrzajStava);
+		
 		TClan clan = new TClan();
 		clan.setOznakaClan("clan1");
 		clan.getStav().add(stav);
+		clan.getStav().add(stav2);
 		
 		
 		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
