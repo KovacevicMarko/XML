@@ -108,6 +108,11 @@ public class BeanManager<T>
     public boolean write(T bean, String docId, String colId, boolean signFlag, String username) {
         return databaseManager.writeBean(bean,docId,colId, signFlag, username);
     }
+    
+    public boolean writeDocumentToArchive(T bean, String colId)
+    {
+    	return databaseManager.writeDocumentToArchive(bean, colId);
+    }
 
     /**
      * Citanje xml dokumnta iz baze po DocId-u.
@@ -118,6 +123,11 @@ public class BeanManager<T>
     
     public Document read(boolean signatureFlag, String docId){
         return databaseManager.read(signatureFlag, docId);
+    }
+    
+    public Document readDocumentFromArchive(String docId)
+    {
+    	return databaseManager.readDocumentFromArchive(docId);
     }
 
     /**
