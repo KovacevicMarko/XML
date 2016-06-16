@@ -9,7 +9,6 @@ import java.util.Random;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,16 +46,13 @@ import password.PasswordStorage;
 @RequestMapping(value = "/initialize/")
 public class TestController {
 	
-	@Autowired
-	ArhivController arhiv;
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-//		InitializeKorisnik();
+		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
-//	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
@@ -64,8 +60,6 @@ public class TestController {
 //		TestReadAkt();
 	
 //		DeleteActs();
-	    
-	    readAct();
 		
 		return "Ajmo Kocko";
 	}
@@ -184,6 +178,36 @@ public class TestController {
         }
         k2.setLozinka(PasswordStorage.base64Encode(hashedPassword));
 		
+		TKorisnik k1 = new TKorisnik();
+		k1.setKorisnickoIme("toma");
+		k1.setEmail("toma");
+		k1.setIme("toma");
+		k1.setLozinka("toma");
+		k1.setPrezime("toma");
+		k1.setUloga(Role.ULOGA_PREDSEDNIK);
+
+		salt = new byte[0];
+		
+		try {
+            salt=PasswordStorage.generateSalt();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k1.setSalt(PasswordStorage.base64Encode(salt));
+        //hash pass//
+        hashedPassword = new byte[0];
+        try {
+             hashedPassword = PasswordStorage.hashPassword("toma", salt);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+        }
+        k1.setLozinka(PasswordStorage.base64Encode(hashedPassword));
+       
         Date date = new Date();
         
         
@@ -192,6 +216,7 @@ public class TestController {
 		try {
 			k.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
 			k2.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
+			k1.setDatumPromeneLozinke((DatatypeFactory.newInstance().newXMLGregorianCalendar(c)));
 		} catch (DatatypeConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -200,6 +225,7 @@ public class TestController {
         
 		korisnici.getKorisnik().add(k);
 		korisnici.getKorisnik().add(k2);
+		korisnici.getKorisnik().add(k1);
 		
 		BeanManager<Korisnici> bm1 = new BeanManager<>("Schema/Korisnici.xsd");
 		bm1.write(korisnici, DatabaseConnection.USERS_DOC_ID, DatabaseConnection.USERS_COL_ID, false,"jocko");

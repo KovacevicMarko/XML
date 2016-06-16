@@ -1,15 +1,12 @@
 package rest.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import model.Akt;
-import model.Amandman;
-import model.TClanAmandnam;
-import model.TSadrzajAmandmana.GlavaAmandman;
-import model.TTekstIzmene;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
-import common.ApproveAmandmanOnAct;
 import common.DatabaseConnection;
+import common.Role;
+import dto.AktSearchDto;
+import dto.AmandmanDto;
 import dto.UserDto;
+import model.Akt;
+import model.Amandman;
 
 @RestController
 @RequestMapping(value = "/amandman/")
@@ -76,27 +78,74 @@ public class AmandmanController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/approveAmandman/", method = RequestMethod.POST)
-	public ResponseEntity approveAmandman(@RequestBody Amandman amandman, HttpServletRequest req)
-	{
-		ResponseEntity retVal;
-		boolean flag;
+	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
+	public ResponseEntity withdrawAmandman(@RequestBody String amandmanId, HttpServletRequest req){
 		
-		String aktId = amandman.getSadrzajAmandmana().getNazivAkta();
-		BeanManager<Akt> aktBeanManager = new BeanManager<Akt>();
-		Akt akt = aktBeanManager.read(aktId, false);
-		//ApproveAmandmanOnAct approveAmandmanOnAct = new ApproveAmandmanOnAct();
-		List<GlavaAmandman> glavaList = amandman.getSadrzajAmandmana().getGlavaAmandman();
-		if(glavaList.size() != 0)
-		{
-			//approveAmandmanOnAct.approveAmandmanOnAkt(glavaList, akt);
+		ResponseEntity retVal; 
+		
+		if(req.getSession().getAttribute("user")==null){
 			
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+			
+		}	
+		
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
 		}
 		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		bm.deleteDocument(amandmanId);
 		
-		retVal = new ResponseEntity(true,HttpStatus.OK);
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		
+		HashMap<String, List<?>> proposedAktsAndAmans = bhm.getProposedAktsAndAmans();
+		
+		retVal = new ResponseEntity(proposedAktsAndAmans,HttpStatus.OK);	
 		return retVal;
 	}
 	
-
+	@RequestMapping(value = "/search/", method = RequestMethod.POST)
+	public ResponseEntity searchAmandman(@RequestBody String content) {
+		
+		ResponseEntity retVal;
+		
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID);
+    	
+    	if(predlozeni.isEmpty()){
+    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
+    		return retVal;
+    	}
+    	    
+        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        
+		return retVal;
+	}
+	
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
+	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
+		
+		String tagName = tagAndContent.getTagName();
+		String content = tagAndContent.getContent();
+		
+		ResponseEntity retVal;
+		
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+		
+    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, tagName);
+    	
+    	if(predlozeni.isEmpty()){
+    		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
+    		return retVal;
+    	}
+        
+        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        
+		return retVal;
+	}
 }

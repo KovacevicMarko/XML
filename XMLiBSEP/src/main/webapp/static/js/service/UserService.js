@@ -3,12 +3,12 @@
 	app.service('UserService', function($http, $q){
 
 		return {
-			signin: function(username, password, onSuccess, onError){
+			logIn: function(username, password, onSuccess, onError){
 				
 				
 				var req = {
 		                method : "POST",
-		                url: "/XMLiBSEP/signin",
+		                url: "/XMLiBSEP/user/logIn/",
 		                headers: {
 		                     'Content-Type': "application/json"
 		                         },

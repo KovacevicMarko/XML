@@ -99,6 +99,7 @@ public class SearchManager
                         }
                     }
                     listOfMatched.add(item);
+                    System.out.println("BrojElemenata" + listOfMatched.size());
                 }
 
             }

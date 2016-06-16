@@ -1,21 +1,21 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var UserController = function($scope, UserService) {
+	var UserController = function($scope, $rootScope, $state, UserService) {
         
 		
 		var onSuccess = function(response){	  
 			console.log(response.data);
-			/*if(response.data.success==true){
-				$scope.user = response.data.user;
-				$state.go('main');
+			if(response.data){
+				$rootScope.user = response.data;
+				if ($state.current.name == "login") {
+					$state.go('main');
+				}
 			}else{
 				delete $scope.username;
 				delete $scope.password;
-				alert(response.data.msg);
-				
+				alert(response.data);				
 			}
-			*/
 		};
 		
 		var onError = function(response){
@@ -23,8 +23,8 @@
 			//alertify.error("ERROR");
 		}
 		
-		$scope.signin = function(){
-			UserService.signin(
+		$scope.logIn = function(){
+			UserService.logIn(
 				   $scope.username, 
 				   $scope.password, 
 				   onSuccess

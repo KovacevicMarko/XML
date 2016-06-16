@@ -409,7 +409,7 @@ public class DatabaseManager<T> {
         }
         return ret;
     }
-
+        
     /**
      * Citanje dokumenta iz baze i smestanje u tmp file radi njegove validacije.
      * @param docId
