@@ -13,8 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,14 +41,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-
-import businessLogic.BeanManager;
+import businessLogic.BeanHelperMethods;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
 import common.CommonQueries;
 import common.DatabaseConnection;
+import common.Role;
+import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.UserDto;
 import model.Akt;
+import model.Amandman;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -72,9 +73,6 @@ public class AktController {
 		 retVal = new ResponseEntity(akti,HttpStatus.OK);
 		 return retVal;
      }
-	
-	
-	
 	
 	@RequestMapping(value = "/addAkt/", method = RequestMethod.POST)
 	public ResponseEntity addAkt(@RequestBody Akt akt, HttpServletRequest req){
@@ -102,6 +100,130 @@ public class AktController {
 		
 	}
 	
+	@RequestMapping(value="/approve/", method = RequestMethod.POST)//AKT_DOC_ID
+	 public ResponseEntity approveAkt(@RequestBody AktApproveDto AktIdAndAmandmanIds,HttpServletRequest req) {
+	 
+		 ResponseEntity retVal;
+		 
+		 String aktId = AktIdAndAmandmanIds.getAktId();
+		 ArrayList<String> amandmanIds = AktIdAndAmandmanIds.getAmandmanIds();
+		 
+		 if(req.getSession().getAttribute("user")==null){
+				
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+				
+		 }	
+			
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+			
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		String username = userOnSession.getKorisnickoIme();
+		
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(aktId, true);
+		
+		if(!amandmanIds.isEmpty()){
+			//TODO to implement update AKT.
+			
+			/*
+			 for(Amandman amandman in Amandmans){
+			 	updateAkt(akt, amandman);
+			 }
+			*/
+				
+		
+		}
+		
+		bm.deleteDocument(aktId);
+		
+		bm.write(akt, aktId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
+		
+		List<Akt> predlozeniAkti = bm.executeQuery(CommonQueries.getAllProposedActs());
+		retVal = new ResponseEntity(predlozeniAkti,HttpStatus.OK);
+		return retVal;
+		
+    }
+	
+	@RequestMapping(value="/getAmandmansForAktId/", method = RequestMethod.POST)//AKT_DOC_ID
+	 public ResponseEntity getAmandmans(@RequestBody String docId,HttpServletRequest req) {
+	 
+		 ResponseEntity retVal;
+		 
+		 if(req.getSession().getAttribute("user")==null){
+				
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+				
+		 }	
+			
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+			
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		String username = userOnSession.getKorisnickoIme();
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(docId, true);
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		List<Amandman> amandmansForAkt = bhm.getAmandmansForAkt(akt);
+				
+		retVal = new ResponseEntity(amandmansForAkt,HttpStatus.OK);
+		return retVal;
+		
+   }
+	
+	
+	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
+	public ResponseEntity withdrawAkt(@RequestBody String aktId, HttpServletRequest req){
+		
+		ResponseEntity retVal; 
+		
+		if(req.getSession().getAttribute("user")==null){
+			
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+			
+		}	
+		
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(aktId, true);
+		bm.deleteDocument(aktId);
+		
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		List<Amandman> amandmans =  bhm.getAmandmansForAkt(akt);
+		
+		for(Amandman amandman : amandmans){
+			bm.deleteDocument(amandman.getId());
+		}
+		
+		HashMap<String, List<?>> proposedAktsAndAmans = bhm.getProposedAktsAndAmans();
+		
+		retVal = new ResponseEntity(proposedAktsAndAmans,HttpStatus.OK);		
+		return retVal;
+	}
+	
+	
 	@RequestMapping(value = "/search/", method = RequestMethod.POST)
 	public ResponseEntity searchAkt(@RequestBody String content) {
 		
@@ -115,25 +237,17 @@ public class AktController {
     		return retVal;
     	}
     	
-    	//Test
-    		Iterator it = predlozeni.entrySet().iterator();
-    		while (it.hasNext()) {
-    			Map.Entry pair = (Map.Entry)it.next();
-    			System.out.println(pair.getKey() + " = " + pair.getValue());
-    		}
-        //
-        
         retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
         
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.GET)
 	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
 		
 		String tagName = tagAndContent.getTagName();
 		String content = tagAndContent.getContent();
-		
+				
 		ResponseEntity retVal;
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
@@ -141,17 +255,9 @@ public class AktController {
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
     	
     	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
+    		retVal = new ResponseEntity(null,HttpStatus.OK);
     		return retVal;
     	}
-    	
-    	//Test
-    		Iterator it = predlozeni.entrySet().iterator();
-    		while (it.hasNext()) {
-    			Map.Entry pair = (Map.Entry)it.next();
-    			System.out.println(pair.getKey() + " = " + pair.getValue());
-    		}
-    	//
         
         retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
         

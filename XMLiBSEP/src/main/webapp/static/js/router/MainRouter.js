@@ -9,10 +9,10 @@
         views: {
             header:{
                 templateUrl: '/XMLiBSEP/static/content/headerL.jsp',
-                controller: 'MainController'
+                controller: 'SessionController'
             },
             content: {
-              templateUrl: '/XMLiBSEP/static/content/home_pre.jsp',
+              templateUrl: '/XMLiBSEP/static/content/home_gra.jsp',
               controller: 'MainController'
             }
         }
@@ -22,28 +22,28 @@
         views: {
             header:{
                 templateUrl: '/XMLiBSEP/static/content/headerNL.jsp',
-                controller: 'UserController'
+                controller: 'SessionController'
             },
             content: {
-            	templateUrl: '/XMLiBSEP/static/content/home.jsp',
+            	templateUrl: '/XMLiBSEP/static/content/home_gra.jsp',
                 controller: 'MainController'
             }
         }            
         })  
-        /*.state('projects',{//naziv stanja!
-        url: '/projects',
+        .state('sednica',{//naziv stanja!
+        url: '/sednica',
         views: {
             header:{
-                templateUrl: 'header/headerL.html',
-                controller: 'AuthController'
+                templateUrl: '/XMLiBSEP/static/content/headerL.jsp',
+                controller: 'SessionController'
             },
             content: {
-              templateUrl: 'project/templates/projects.html',
-              controller: 'ProjectsController'
+              templateUrl: '/XMLiBSEP/static/content/sednica.jsp',
+              controller: 'SednicaController'
             }
         }            
         })
-        .state('project',{//naziv stanja!
+        /*.state('project',{//naziv stanja!
         url: '/projects/:projectId',
         views: {
             header:{

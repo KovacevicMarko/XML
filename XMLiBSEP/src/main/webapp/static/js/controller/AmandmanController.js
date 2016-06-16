@@ -1,7 +1,7 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var AmandmanController = function($scope, AmandmanService) {
+	var AmandmanController = function($scope, $rootScope, AmandmanService) {
 		
 		$scope.amandmanSearch = {};
 		

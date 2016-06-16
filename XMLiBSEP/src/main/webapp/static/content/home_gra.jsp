@@ -15,10 +15,10 @@
 								<label>Filter po tagu (opciono):</label> <select
 									ng-model="aktSearch.tag">
 									<option></option>
-									<option value="clan">Clan</option>
-									<option value="stav">Stav</option>
-									<option value="tacka">Tacka</option>
-									<option value="alineja">Alineja</option>
+									<option value="Clan">Clan</option>
+									<option value="Stav">Stav</option>
+									<option value="Tacka">Tacka</option>
+									<option value="Alineja">Alineja</option>
 								</select>
 							</div>
 
@@ -49,10 +49,8 @@
 								<label>Filter po tagu (opciono):</label> <select
 									ng-model="amandmanSearch.tag">
 									<option></option>
-									<option value="clan">Clan</option>
-									<option value="stav">Stav</option>
-									<option value="tacka">Tacka</option>
-									<option value="alineja">Alineja</option>
+									<option value="pravniOsnov">Pravni Osnov</option>
+									<option value="predlagac">Predlagac</option>
 								</select>
 							</div>
 
@@ -92,3 +90,5 @@
 		</div>
 	</div>
 </div>
+
+<div ng-if="user.uloga=='ODBORNIK' || user.uloga=='PREDSEDNIK'" ng-include="'static/content/home_odb.jsp'"></div>

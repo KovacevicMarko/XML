@@ -4,9 +4,9 @@
 			<a class="navbar-brand" ui-sref="login">WS Project</a>
 		</div>
 		<ul class="nav navbar-nav">
-			<li id="home" class="active"><a ui-sref="login">Login page</a></li>
+			<li ng-class="{ active : isActive('login') }"><a ui-sref="login">Login page</a></li>
 		</ul>
-		<form ng-submit="signin()" class="navbar-form navbar-right">
+		<form ng-controller="UserController" ng-submit="logIn()" class="navbar-form navbar-right">
 			<div class="form-group">
 				<input type="text" ng-model="username" class="form-control" name="username" placeholder="Username">
 			</div>

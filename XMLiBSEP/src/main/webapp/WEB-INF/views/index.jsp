@@ -9,15 +9,25 @@
       <script data-require="angular-resource@*" data-semver="1.4.8" src="https://code.angularjs.org/1.5.6/angular-resource.js"></script>
       <script data-require="angular-route@*" data-semver="1.4.8" src="https://code.angularjs.org/1.5.6/angular-route.js"></script>
       <script data-require="angular-ui-router@*" data-semver="0.2.15" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+      <script src="<c:url value='/static/js/bootstrap/bootstrap.js' />"></script>
       <script src="<c:url value='/static/js/app.js' />"></script>
+     
       <script src="<c:url value='/static/js/service/UserService.js' />"></script>
       <script src="<c:url value='/static/js/service/AktService.js' />"></script>
       <script src="<c:url value='/static/js/service/AmandmanService.js' />"></script>
+      <script src="<c:url value='/static/js/service/SednicaService.js' />"></script>
+      <script src="<c:url value='/static/js/service/SessionService.js' />"></script>
+      
       
       <script src="<c:url value='/static/js/controller/UserController.js' />"></script>
       <script src="<c:url value='/static/js/controller/MainController.js' />"></script>
       <script src="<c:url value='/static/js/controller/AktController.js' />"></script>
       <script src="<c:url value='/static/js/controller/AmandmanController.js' />"></script>
+      <script src="<c:url value='/static/js/controller/SednicaController.js' />"></script>
+      <script src="<c:url value='/static/js/controller/SessionController.js' />"></script>
+      
+      
       <script src="<c:url value='/static/js/router/MainRouter.js' />"></script>
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   </head>

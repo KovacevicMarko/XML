@@ -44,6 +44,9 @@ public class CommonQueries
 	    return query.toString();
 	}
 	
+	
+	
+	
 	/*
 	 * Vrati sve usvojene amandmane.
 	 */
