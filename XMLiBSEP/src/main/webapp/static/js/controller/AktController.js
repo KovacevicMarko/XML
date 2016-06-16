@@ -1,9 +1,21 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var AktController = function($scope, AktService) {
+	var AktController = function($scope, $rootScope, AktService) {
 		
-		$scope.akt = {};
+		$scope.akts = [ {
+			naziv : "naziv 1 akt",
+			amandmani : [ {
+				naziv : "naziv 1 amandman 1 akt"
+			}, {
+				naziv : "naziv 2 amandman 1 akt"
+			} ]
+		}, {
+			naziv : "naziv 2 akt",
+			amandmani : [ {
+				naziv : "naziv 1 amandman 2 akt"
+			} ]
+		} ];
 		
 		var onSuccess = function(response){	  
 			console.log(response.data);
@@ -25,11 +37,21 @@
 		}
 		
 		$scope.searchAkt = function(){
-			AktService.searchAkt(
-				   $scope.aktSearch, 
-				   onSuccess
-				   ,onError);
-	  		};
+			if ($scope.aktSearch.tag == null) {
+				AktService.searchAkt(
+						   $scope.aktSearch.sadrzaj, 
+						   onSuccess
+						   ,onError);
+			}
+			else {
+				AktService.searchAktByTag(
+						   $scope.aktSearch, 
+						   onSuccess
+						   ,onError);
+			}
+		};
+			
+	  		
     }
 	
 	app.controller('AktController', AktController);

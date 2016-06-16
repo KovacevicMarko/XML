@@ -85,8 +85,9 @@ public class SearchManager
                 {
                 	System.out.println("RET SPLIT : " + retSplit[k]);
                 }
-
-                if(retSplit[retSplit.length-1].split("\\[")[0].equals(tag)) {
+                
+                if (putanja.contains(tag)) {
+                //if(retSplit[retSplit.length-1].split("\\[")[0].equals(tag)) {
                     String item = "";
                     for (MatchSnippet snippet : location.getSnippets()) {
                         text = snippet.getText().trim();
@@ -106,7 +107,6 @@ public class SearchManager
             returnMap.put(result.getUri(),listOfMatched);
 
         }
-
         return returnMap;
     }
 

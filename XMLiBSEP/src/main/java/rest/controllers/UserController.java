@@ -29,7 +29,7 @@ import model.TKorisnik;
 import password.PasswordStorage;
 
 @RestController
-@RequestMapping(value = "/user/")
+@RequestMapping(value = "/user")
 public class UserController {
 	
 	@RequestMapping(value = "/checkSession/", method = RequestMethod.GET)
@@ -42,7 +42,7 @@ public class UserController {
 			retVal = new ResponseEntity(userOnSession,HttpStatus.OK);
 		}
 		else{
-			retVal = new ResponseEntity("Nobody loged in",HttpStatus.NOT_FOUND);
+			retVal = new ResponseEntity(null,HttpStatus.OK);
 		}
 		
 		return retVal;
@@ -89,11 +89,7 @@ public class UserController {
 				System.out.println(foundUser.getUloga());
 				System.out.println(Role.ULOGA_ODBORNIK.toUpperCase());
 				request.getSession().setAttribute("user", foundUser);
-				if (foundUser.getUloga().toUpperCase().equals(Role.ULOGA_ODBORNIK)) {
-					
-					retVal = new ResponseEntity(foundUser, HttpStatus.OK);
-					
-				}
+				retVal = new ResponseEntity(foundUser, HttpStatus.OK);
 				break;
 			}
 

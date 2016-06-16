@@ -3,19 +3,30 @@
 	app.service('AktService', function($http, $q){
 
 		return {
-			searchAkt : function (aktSearch, onSuccess, onError) {
+			searchAkt : function (sadrzaj, onSuccess, onError) {
 				var req = {
 		                method : "POST",
-		                url: "/XMLiBSEP/searchAkt",
+		                url: "/XMLiBSEP/akt/search/",
 		                headers: {
 		                     'Content-Type': "application/json"
 		                         },
-		                data: {"tag" : aktSearch.tag, "sadrzaj" : aktSearch.sadrzaj}
+		                data: sadrzaj
 		            }	
 
 				$http(req).then(onSuccess, onError);
-			}			
-		
+			},
+			searchAktByTag : function (aktSearch, onSuccess, onError) {
+				var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/akt/searchByTag/",
+		                headers: {
+		                     'Content-Type': "application/json"
+		                         },
+		                data: {"tagName" : aktSearch.tag, "content" : aktSearch.sadrzaj}
+		            }	
+
+				$http(req).then(onSuccess, onError);
+			}
 		};
 
 	});

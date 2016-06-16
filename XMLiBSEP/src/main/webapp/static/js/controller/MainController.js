@@ -3,7 +3,7 @@
 			
     var app = angular.module("MyApp");
          
-    var MainController = function($scope,  $state) {
+    var MainController = function($scope, $rootScope, $state) {
         
 		
 		/*

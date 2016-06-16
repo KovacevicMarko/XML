@@ -111,7 +111,7 @@ public class AktController {
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
     	
     	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
+    		retVal = new ResponseEntity(null,HttpStatus.OK);
     		return retVal;
     	}
     	
