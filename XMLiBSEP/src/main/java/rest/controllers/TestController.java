@@ -6,12 +6,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 
 import businessLogic.BeanManager;
 import common.DatabaseConnection;
@@ -59,6 +63,13 @@ public class TestController {
 //		DeleteActs();
 		
 		return "Ajmo Kocko";
+	}
+	
+	@RequestMapping(value="/test", method=RequestMethod.POST)
+	public ResponseEntity test() {
+		BeanManager<Amandman> bm2 = new BeanManager("Schema/Amandman.xsd");
+		Document doc = bm2.read(false,"188319238602227807.xml");
+		return new ResponseEntity(doc,HttpStatus.OK);
 	}
 	
 	private void DeleteActs()

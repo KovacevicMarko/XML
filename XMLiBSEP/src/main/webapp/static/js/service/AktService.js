@@ -56,6 +56,17 @@
 		                headers: {
 		                     'Content-Type': "text/plain"
 		                         },
+		                data : aktId+".xml"
+		            }
+				$http(req).then(onSuccess, onError);
+			},
+			getAktById : function (aktId, onSuccess, onError) {
+				var req = {
+		                method : "GET",
+		                url: "/XMLiBSEP/akt/getAktById/",
+		                headers: {
+		                     'Content-Type': "text/plain"
+		                         },
 		                data : aktId
 		            }
 				$http(req).then(onSuccess, onError);

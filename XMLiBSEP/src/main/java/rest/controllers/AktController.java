@@ -172,11 +172,11 @@ public class AktController {
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
+		/*if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
 			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
 			return retVal;
 		}
-		
+		*/
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId, true);
 		bm.deleteDocument(aktId);

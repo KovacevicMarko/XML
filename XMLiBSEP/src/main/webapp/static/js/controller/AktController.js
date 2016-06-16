@@ -1,22 +1,10 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var AktController = function($scope, $rootScope, AktService) {
-		/*
-		$scope.akts = [ {
-			naziv : "naziv 1 akt",
-			amandmani : [ {
-				naziv : "naziv 1 amandman 1 akt"
-			}, {
-				naziv : "naziv 2 amandman 1 akt"
-			} ]
-		}, {
-			naziv : "naziv 2 akt",
-			amandmani : [ {
-				naziv : "naziv 1 amandman 2 akt"
-			} ]
-		} ];
-		*/
+	var AktController = function($scope, $rootScope, $window,AktService) {
+		
+		$scope.predlozeniAktovi	=[];
+		
 		var onSuccess = function(response){	  
 			console.log(response.data);
 			/*if(response.data.success==true){
@@ -50,27 +38,45 @@
 						   ,onError);
 			}
 		};
+		var onAddSuccess = function(response) {
+			$scope.predlozeniAktovi.push(response.data);
+			$scope.clearInputs();
+			$("#ModalAddAkt").modal('hide');
+		};
 		
 		$scope.addAkt = function() {
-			AktService.addAkt($scope.aktToAdd, onSuccess,onError);
+			AktService.addAkt($scope.aktToAdd, onAddSuccess,onError);
 		}
 		
 		$scope.clearInputs = function () {
 			delete $scope.aktToAdd;
 		}
 		
+		
+		var onGetSuccess = function(response) {
+			$scope.predlozeniAktovi	= response.data.aktiPredlozeni ? response.data.aktiPredlozeni : [];
+			$scope.usvojeniAktovi =  response.data.aktiUsvojeni ? response.data.aktiUsvojeni : [];
+  		};
+		
 	  	$scope.getAkts = function () {
-	  		AktService.getAkts(function(response) {
-				$scope.predlozeniAktovi	= response.data.aktiPredlozeni;
-				$scope.usvojeniAktovi =  response.data.aktiUsvojeni;
-	  		}, onError);
+	  		AktService.getAkts(onGetSuccess, onError);
 	  		
 	  	}
 	  	
 	  	$scope.withdrawAkt = function (idAkt) {
 	  		AktService.withdraw(idAkt,function(response){
-	  			
+	  			//alert(response.data);
+	  			$scope.predlozeniAktovi = response.data.akti;
+	  			//$window.location.reload();
 	  		},onError);
+	  	}
+	  	
+	  	var onGetAktSuccess = function (response) {
+	  		console.log(response.data);
+	  	};
+	  	
+	  	$scope.getAktById = function(idAkt) {
+	  		AktService.getAktById(idAkt,onGetAktSuccess, onError);
 	  	}
     }
 	
