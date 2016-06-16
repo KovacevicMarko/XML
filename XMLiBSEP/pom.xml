@@ -193,7 +193,13 @@
     		<version>1.46</version>
 		</dependency>
 		
-		
+	
+	<!-- http://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
+	<dependency>
+    	<groupId>org.apache.xmlgraphics</groupId>
+    	<artifactId>fop</artifactId>
+    	<version>2.1</version>
+	</dependency>	
 		
 		
 	</dependencies>
