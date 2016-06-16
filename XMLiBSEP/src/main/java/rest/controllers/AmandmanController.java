@@ -1,8 +1,15 @@
 package rest.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import model.Akt;
+import model.Amandman;
+import model.TClanAmandnam;
+import model.TSadrzajAmandmana.GlavaAmandman;
+import model.TTekstIzmene;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import businessLogic.BeanManager;
+import common.ApproveAmandmanOnAct;
 import common.DatabaseConnection;
-import dto.AmandmanDto;
 import dto.UserDto;
-import model.Amandman;
 
 @RestController
 @RequestMapping(value = "/amandman/")
@@ -69,5 +75,28 @@ public class AmandmanController {
 		retVal = new ResponseEntity(amandman,HttpStatus.OK);
 		return retVal;
 	}
+	
+	@RequestMapping(value = "/approveAmandman/", method = RequestMethod.POST)
+	public ResponseEntity approveAmandman(@RequestBody Amandman amandman, HttpServletRequest req)
+	{
+		ResponseEntity retVal;
+		boolean flag;
+		
+		String aktId = amandman.getSadrzajAmandmana().getNazivAkta();
+		BeanManager<Akt> aktBeanManager = new BeanManager<Akt>();
+		Akt akt = aktBeanManager.read(aktId, false);
+		//ApproveAmandmanOnAct approveAmandmanOnAct = new ApproveAmandmanOnAct();
+		List<GlavaAmandman> glavaList = amandman.getSadrzajAmandmana().getGlavaAmandman();
+		if(glavaList.size() != 0)
+		{
+			//approveAmandmanOnAct.approveAmandmanOnAkt(glavaList, akt);
+			
+		}
+		
+		
+		retVal = new ResponseEntity(true,HttpStatus.OK);
+		return retVal;
+	}
+	
 
 }

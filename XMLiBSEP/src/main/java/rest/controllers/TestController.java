@@ -9,6 +9,7 @@ import java.util.Random;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,13 +44,16 @@ import password.PasswordStorage;
 @RequestMapping(value = "/initialize/")
 public class TestController {
 	
+	@Autowired
+	ArhivController arhiv;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
 //		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-		InitializeAkt();
-	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+//		InitializeAkt();
+//	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
@@ -57,8 +61,21 @@ public class TestController {
 //		TestReadAkt();
 	
 //		DeleteActs();
+	    
+	    readAct();
 		
 		return "Ajmo Kocko";
+	}
+	
+	private void readAct()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm1.read("1136059015000972529.xml", true);
+		System.out.println("******************" + akt.getId());
+		akt.setNazivAkt("wwwwwwwww");
+		arhiv.saveAkt(akt);
+		arhiv.saveAkt(akt);
+		
 	}
 	
 	private void DeleteActs()

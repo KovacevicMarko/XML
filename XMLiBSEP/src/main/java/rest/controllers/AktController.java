@@ -98,11 +98,15 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
-	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.GET)
+	//public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
+	public ResponseEntity searchAktByTag() {
 		
-		String tagName = tagAndContent.getTagName();
-		String content = tagAndContent.getContent();
+//		String tagName = tagAndContent.getTagName();
+//		String content = tagAndContent.getContent();
+		
+		String tagName = "SadrzajAlineja";
+		String content = "Sadrzaj";
 		
 		ResponseEntity retVal;
 		
