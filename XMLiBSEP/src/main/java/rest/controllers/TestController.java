@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 
 import businessLogic.BeanManager;
+import common.ApproveAmandmanOnAct;
 import common.DatabaseConnection;
 import common.Role;
 import enums.TTipIzmeneEnum;
@@ -26,6 +28,7 @@ import model.PrelazneIZavrsneOdredbe;
 import model.TClan;
 import model.TClan.Stav;
 import model.TClanAmandnam;
+import model.TClanAmandnam.StavAmandman.TackaAmandman;
 import model.TDeo;
 import model.TKorisnik;
 import model.TOdbornik;
@@ -70,12 +73,19 @@ public class TestController {
 	private void readAct()
 	{
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm1.read("1136059015000972529.xml", true);
+		Akt akt = bm1.read("16450434468119619897.xml", false);
 		System.out.println("******************" + akt.getId());
-		akt.setNazivAkt("wwwwwwwww");
-		arhiv.saveAkt(akt);
-		arhiv.saveAkt(akt);
 		
+		BeanManager<Amandman> bm2 = new BeanManager("Schema/Amandman.xsd");
+		Amandman amandman = bm2.read("11513499627483176774.xml", false);
+		
+		ApproveAmandmanOnAct approve = new ApproveAmandmanOnAct<>(akt);
+		Akt akt2 = approve.approveAmandmanOnAkt(amandman.getSadrzajAmandmana().getGlavaAmandman(), akt);
+		System.out.println(akt2.getNazivAkt());
+		
+		
+		BeanManager<Akt> bm12 = new BeanManager<>("Schema/Akt.xsd");
+		bm12.writeDocument(akt2, DatabaseConnection.AKT_USVOJEN_COL_ID, true, "jocko");
 	}
 	
 	private void DeleteActs()
@@ -207,17 +217,48 @@ public class TestController {
 	
 	private void InitializeAmandman()
 	{
+		TackaAmandman tacka = new TackaAmandman();
+		tacka.setOznakaTacke("tacka1");
+		TTekstIzmene textImetodIzmene3 = new TTekstIzmene();
+		textImetodIzmene3.setIzmenaSadrzaja("Brisemo tacku iz Akta");
+		textImetodIzmene3.setTipIzmene(TTipIzmeneEnum.Brisanje.toString());
+		tacka.setIzmenaTacke(textImetodIzmene3);
+		
+		TTekstIzmene textImetodIzmene4 = new TTekstIzmene();
+		textImetodIzmene4.setIzmenaSadrzaja("Menjamo tekst iz tacke.");
+		textImetodIzmene4.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
+		
+		TackaAmandman tacka2 = new TackaAmandman();
+		tacka2.setOznakaTacke("tacka2");
+		tacka2.setIzmenaTacke(textImetodIzmene4);
+		
+		
 		//kreiranje stav amandmana
 		TClanAmandnam.StavAmandman stav = new TClanAmandnam.StavAmandman();
 		stav.setOznakaStava("stav1");
 		TTekstIzmene textImetodIzmene = new TTekstIzmene();
-		textImetodIzmene.setIzmenaSadrzaja("Predlog izmene iznosa navednom u ovom stavu se menja sa  150 na 120.");
-		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
-		stav.setIzmenaStava(textImetodIzmene);
+		textImetodIzmene.setIzmenaSadrzaja("Brisemo stav iz Akta");
+		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		//stav.setIzmenaStava(textImetodIzmene);
+		stav.getTackaAmandman().add(tacka);
+		stav.getTackaAmandman().add(tacka2);
+		
+		
+		TTekstIzmene textImetodIzmene5 = new TTekstIzmene();
+		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stav.");
+		textImetodIzmene5.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		
+		stav.setIzmenaStava(textImetodIzmene5);
+		
+		
 		
 		//Kreiranje clana i dodavanje stava na njega.
 		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
+		TTekstIzmene textImetodIzmene2 = new TTekstIzmene();
+		textImetodIzmene2.setIzmenaSadrzaja("Dodajemo novi stav u clan");
+		textImetodIzmene2.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
+		//clanAmandnam.setIzmenaClana(textImetodIzmene2);
 		clanAmandnam.getStavAmandman().add(stav);
 		
 		//Kreiranje glave i dodavanje clana
@@ -303,9 +344,14 @@ public class TestController {
 		stav.setOznakaStav("stav1");
 		stav.setSadrzaj(sadrzajStava);
 		
+		Stav stav2 = new Stav();
+		stav2.setOznakaStav("stav2");
+		stav2.setSadrzaj(sadrzajStava);
+		
 		TClan clan = new TClan();
 		clan.setOznakaClan("clan1");
 		clan.getStav().add(stav);
+		clan.getStav().add(stav2);
 		
 		
 		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
