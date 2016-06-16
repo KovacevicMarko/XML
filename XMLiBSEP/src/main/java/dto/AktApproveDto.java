@@ -6,7 +6,25 @@ public class AktApproveDto {
 	
 	private String aktId;
 	private ArrayList<String> amandmanIds;
+	private int numberOfAmandmans;
+	private int numberOfApprovedAmandmans;
 	
+	public int getNumberOfAmandmans() {
+		return numberOfAmandmans;
+	}
+
+	public void setNumberOfAmandmans(int numberOfAmandmans) {
+		this.numberOfAmandmans = numberOfAmandmans;
+	}
+
+	public int getNumberOfApprovedAmandmans() {
+		return numberOfApprovedAmandmans;
+	}
+
+	public void setNumberOfApprovedAmandmans(int numberOfApprovedAmandmans) {
+		this.numberOfApprovedAmandmans = numberOfApprovedAmandmans;
+	}
+
 	public AktApproveDto() {
 		// TODO Auto-generated constructor stub
 	}

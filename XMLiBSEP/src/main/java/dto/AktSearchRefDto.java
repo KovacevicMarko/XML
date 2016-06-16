@@ -4,37 +4,30 @@ import java.io.Serializable;
 
 public class AktSearchRefDto implements Serializable {
 	
-    private String aktName;
-    private String clanName;
-    private String tackaName;
+    private String aktId;
+    private boolean approved;
     
     public AktSearchRefDto() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getAktName() {
-		return aktName;
+	public String getAktId() {
+		return aktId;
 	}
 
-	public void setAktName(String aktName) {
-		this.aktName = aktName;
+	public void setAktId(String aktId) {
+		this.aktId= aktId;
 	}
 
-	public String getClanName() {
-		return clanName;
+	public boolean isApproved() {
+		return approved;
 	}
 
-	public void setClanName(String clanName) {
-		this.clanName = clanName;
+	public void setApproved(boolean approved) {
+		this.approved = approved;
 	}
-
-	public String getTackaName() {
-		return tackaName;
-	}
-
-	public void setTackaName(String tackaName) {
-		this.tackaName = tackaName;
-	}
+	
+	
     
     
 

@@ -28,6 +28,7 @@ import model.TClanAmandnam;
 import model.TDeo;
 import model.TKorisnik;
 import model.TOdbornik;
+import model.TReferenca;
 import model.TSadrzajAmandmana;
 import model.TSadrzajAmandmana.GlavaAmandman;
 import model.TSadrzajGlave;
@@ -48,10 +49,10 @@ public class TestController {
 	{
 //		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-		//InitializeAkt();
-	  //  System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-	InitializeAmandman();
-		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+		InitializeAkt();
+	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+	//InitializeAmandman();
+	//	System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -262,6 +263,11 @@ public class TestController {
 		sadrzajTacke.getAlineja().add(alineja);
 		TTekst text = new TTekst();
 		text.setTekst("Text tacke.");
+		
+		TReferenca referenca1 = new TReferenca();
+		referenca1.setRefAkt("15169449515975435548.xml");
+		referenca1.setRefClan("Clan1");
+		text.getReferenca().add(referenca1);
 		sadrzajTacke.setTekstTacka(text);
 		
 		Tacka tacka = new Tacka();
@@ -277,6 +283,17 @@ public class TestController {
 		
 		TTekst text2 = new TTekst();
 		text2.setTekst("Sadrzaj stava o donosenju akta");
+		
+		TReferenca referenca2 = new TReferenca();
+		referenca2.setRefAkt("16450434468119619897.xml");
+		referenca2.setRefClan("Clan1");
+		
+		TReferenca referenca1dupla = new TReferenca();
+		referenca1dupla.setRefAkt("15169449515975435548.xml");
+		referenca1dupla.setRefClan("Clan2");
+		
+		text2.getReferenca().add(referenca2);
+		text2.getReferenca().add(referenca1dupla);
 		
 		sadrzajStava.setTekstStav(text2);
 		sadrzajStava.getTacka().add(tacka);	
@@ -320,7 +337,7 @@ public class TestController {
 		pzo.setPredlagac(odbornik);
 		
 		Akt akt = new Akt();
-		akt.setNazivAkt("Akt2");
+		akt.setNazivAkt("AktReferencaTest");
 		akt.setPreambula("Preambula2");
 		
 		akt.getDeo().add(deo);

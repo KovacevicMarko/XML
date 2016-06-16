@@ -2,7 +2,9 @@ package rest.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +22,7 @@ import common.DatabaseConnection;
 import common.Role;
 import dto.AktApproveDto;
 import dto.AktSearchDto;
+import dto.AktSearchRefDto;
 import dto.UserDto;
 import model.Akt;
 import model.Amandman;
@@ -73,12 +76,13 @@ public class AktController {
 	}
 	
 	@RequestMapping(value="/approve/", method = RequestMethod.POST)//AKT_DOC_ID
-	 public ResponseEntity approveAkt(@RequestBody AktApproveDto AktIdAndAmandmanIds,HttpServletRequest req) {
+	 public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
 	 
 		 ResponseEntity retVal;
 		 
-		 String aktId = AktIdAndAmandmanIds.getAktId();
-		 ArrayList<String> amandmanIds = AktIdAndAmandmanIds.getAmandmanIds();
+		 String aktId = dto.getAktId();
+		 ArrayList<String> amandmanIds = dto.getAmandmanIds();
+		 int numberOfAmandmans = dto.getNumberOfAmandmans();
 		 
 		 if(req.getSession().getAttribute("user")==null){
 				
@@ -103,6 +107,13 @@ public class AktController {
 		
 		if(!amandmanIds.isEmpty()){
 			//TODO to implement update AKT.
+			if(amandmanIds.size()<numberOfAmandmans){
+				//Upisuje se u "USVOJEN_U_POJEDINOSTIMA i snimiti stari u bekap kolekciju
+			}
+			
+			else{
+				//UPISUJE SE U "USVOJEN_U_CELOSTI" i upisati stari u bekap kolekciju
+			}
 			
 			/*
 			 for(Amandman amandman in Amandmans){
@@ -113,9 +124,13 @@ public class AktController {
 		
 		}
 		
-		bm.deleteDocument(aktId);
+		else{
+			//Upisuje se u "USVOJENO_U_NACELU"
+		}
 		
-		bm.write(akt, aktId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
+		//bm.deleteDocument(aktId);
+		
+	//	bm.write(akt, aktId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
 		
 		List<Akt> predlozeniAkti = bm.executeQuery(CommonQueries.getAllProposedActs());
 		retVal = new ResponseEntity(predlozeniAkti,HttpStatus.OK);
@@ -235,6 +250,49 @@ public class AktController {
         
 		return retVal;
 	}
-	
 
+	@RequestMapping(value = "/findReferences/", method = RequestMethod.POST)
+	public ResponseEntity findReferences(@RequestBody AktSearchRefDto aktRefDto){
+		
+		ResponseEntity retVal = null;
+		
+		String aktId = aktRefDto.getAktId();
+		boolean isApproved = aktRefDto.isApproved();
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		
+		Akt akt = bm.read(aktId, true); 
+		
+		
+		HashMap<String,ArrayList<String>> referencedAktsMap = null;
+		
+		if(!isApproved){
+			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID, "refAkt");
+		}
+		else{
+			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_COL_ID, "refAkt");
+		}
+		
+		//List<String> referencedAkts = new ArrayList<>();
+		//referencedAkts.t
+		List<String> referencedAkts = new ArrayList<>();
+		
+		
+		Iterator it = referencedAktsMap.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+			if(pair.getKey().equals(aktId)){
+				for(String s : (ArrayList<String>) pair.getValue()){
+					if(!referencedAkts.contains(s)){
+						referencedAkts.add(s);
+					}
+				}
+			}
+		}
+		
+			
+		retVal = new ResponseEntity(referencedAkts,HttpStatus.OK);
+		
+		return retVal;
+	}
 }
