@@ -2,14 +2,19 @@ package rest.controllers;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import businessLogic.BeanManager;
+import common.CommonQueries;
 import common.DatabaseConnection;
 import common.HelperClass;
 import common.Role;
@@ -24,6 +30,8 @@ import dto.ChangePassDto;
 import dto.LoginUserDto;
 import dto.UserDto;
 import factory.UserFactory;
+import model.Akt;
+import model.Amandman;
 import model.Korisnici;
 import model.TKorisnik;
 import password.PasswordStorage;
@@ -31,6 +39,9 @@ import password.PasswordStorage;
 @RestController
 @RequestMapping(value = "/user/")
 public class UserController {
+	
+	
+	//AUTENTIFICATION METHODS
 	
 	@RequestMapping(value = "/checkSession/", method = RequestMethod.GET)
 	public ResponseEntity getUserOnSession(HttpServletRequest req){
@@ -200,5 +211,80 @@ public class UserController {
 		return retVal;
 		
 	}
+	
+	//END WITH AUTENTIFICATION METHODS
+	
+	@RequestMapping(value = "/getMyAktiAndAmandmani/", method = RequestMethod.GET)
+	public ResponseEntity getMyAktiAndAmandmani(HttpServletRequest req){
+		
+		ResponseEntity retVal;
+		 
+	   /*Proba da vrati xml
+		 HttpHeaders httpHeaders = new HttpHeaders();
+		 httpHeaders.setContentType(MediaType.APPLICATION_XML);
+		 List<MediaType> acceptList = new ArrayList<>();
+		 acceptList.add(MediaType.APPLICATION_XML);
+		 httpHeaders.setAccept(acceptList);
+	   */
+		
+		if(req.getSession().getAttribute("user")==null){
+			
+			retVal = new ResponseEntity(null,HttpStatus.OK);
+			return retVal;
+			
+		}	
+		
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		String username = userOnSession.getKorisnickoIme();
+		
+		//Kupljenje mojih akata
+		List<Akt> myAkti = new ArrayList<Akt>();
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		  
+	    ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
+	    
+	    for(Akt a : aktiPredlozeni){
+	    	if(a.getPrelazneIZavrsneOdredbe().getPredlagac().getUsername().equals(username)){
+	    		myAkti.add(a);
+	    	}
+	    }
+	    
+	    //Kupljenje mojih amandmana
+	    
+	    List<Amandman> myAmandmani = new ArrayList<Amandman>();
+		
+		BeanManager<Amandman> bm2 = new BeanManager<>("Schema/Amandman.xsd");
+		  
+	    ArrayList<Amandman> amandmaniPredlozeni = bm2.executeQuery(CommonQueries.getAllProposedAmandmans());
+	    
+	    for(Amandman a : amandmaniPredlozeni){
+	    	if(a.getPredlagacAmandmana().getUsername().equals(username)){
+	    		myAmandmani.add(a);
+	    	}
+	    }
+	    
+	   //Pakovanje u mapu i slanje na klijenta
+	    HashMap<String,List<?>> mapa = new HashMap<>();
+	    
+	    mapa.put("myAkti", myAkti);
+	    mapa.put("myAmandmani", myAmandmani);
+	    
+	    retVal = new ResponseEntity(mapa,HttpStatus.OK);
+		
+		return retVal;
+	}
+	
+	
+	
+	
+	
 
 }

@@ -13,13 +13,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 
 import businessLogic.BeanManager;
 import common.CommonQueries;
 import common.DatabaseConnection;
+import common.Role;
 import dto.AktSearchDto;
+import dto.AktSearchRefDto;
 import dto.UserDto;
 import model.Akt;
+import model.TClan;
+import model.TDeo;
+import model.TSadrzajGlave;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -42,9 +48,6 @@ public class AktController {
 		 retVal = new ResponseEntity(akti,HttpStatus.OK);
 		 return retVal;
      }
-	
-	
-	
 	
 	@RequestMapping(value = "/addAkt/", method = RequestMethod.POST)
 	public ResponseEntity addAkt(@RequestBody Akt akt, HttpServletRequest req){
@@ -72,6 +75,72 @@ public class AktController {
 		
 	}
 	
+	@RequestMapping(value="/approve/", method = RequestMethod.POST)//AKT_DOC_ID
+	 public ResponseEntity approveAkt(@RequestBody String docId,HttpServletRequest req) {
+	 
+		 ResponseEntity retVal;
+		 
+		 if(req.getSession().getAttribute("user")==null){
+				
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+				
+		 }	
+			
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+			
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		String username = userOnSession.getKorisnickoIme();
+		
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(docId, true);
+		
+		bm.deleteDocument(docId);
+		
+		
+		bm.write(akt, docId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
+		
+		retVal = new ResponseEntity(HttpStatus.OK);
+		return retVal;
+		
+    }
+	
+	
+	
+	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
+	public ResponseEntity withdrawAkt(@RequestBody String aktId, HttpServletRequest req){
+		
+		ResponseEntity retVal; 
+		
+		if(req.getSession().getAttribute("user")==null){
+			
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+			
+		}	
+		
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		bm.deleteDocument(aktId);
+		
+		retVal = new ResponseEntity(HttpStatus.OK);		
+		return retVal;
+	}
+	
+	
 	@RequestMapping(value = "/search/", method = RequestMethod.POST)
 	public ResponseEntity searchAkt(@RequestBody String content) {
 		
@@ -85,14 +154,6 @@ public class AktController {
     		return retVal;
     	}
     	
-    	//Test
-    		Iterator it = predlozeni.entrySet().iterator();
-    		while (it.hasNext()) {
-    			Map.Entry pair = (Map.Entry)it.next();
-    			System.out.println(pair.getKey() + " = " + pair.getValue());
-    		}
-        //
-        
         retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
         
 		return retVal;
@@ -114,18 +175,11 @@ public class AktController {
     		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
     		return retVal;
     	}
-    	
-    	//Test
-    		Iterator it = predlozeni.entrySet().iterator();
-    		while (it.hasNext()) {
-    			Map.Entry pair = (Map.Entry)it.next();
-    			System.out.println(pair.getKey() + " = " + pair.getValue());
-    		}
-    	//
         
         retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
         
 		return retVal;
 	}
+	
 
 }

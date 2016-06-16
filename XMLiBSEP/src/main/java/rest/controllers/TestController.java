@@ -48,10 +48,10 @@ public class TestController {
 	{
 //		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-		InitializeAkt();
-	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-//		InitializeAmandman();
-//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+		//InitializeAkt();
+	  //  System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+	InitializeAmandman();
+		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -222,7 +222,7 @@ public class TestController {
 		odbornik.setIme("odbornikIme");
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
-		odbornik.setUsername("odbornikUsername");
+		odbornik.setUsername("jocko");
 		amandman.setPredlagacAmandmana(odbornik);
 		Date date = new Date();
 		
