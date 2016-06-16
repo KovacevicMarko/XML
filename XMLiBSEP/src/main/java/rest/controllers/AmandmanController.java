@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import businessLogic.BeanManager;
+import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
 import dto.AktSearchDto;
@@ -77,7 +78,7 @@ public class AmandmanController {
 	}
 	
 	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
-	public ResponseEntity withdrawAkt(@RequestBody String aktId, HttpServletRequest req){
+	public ResponseEntity withdrawAkt(@RequestBody String amandmanId, HttpServletRequest req){
 		
 		ResponseEntity retVal; 
 		
@@ -96,10 +97,10 @@ public class AmandmanController {
 			return retVal;
 		}
 		
-		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		bm.deleteDocument(aktId);
-		
-		retVal = new ResponseEntity(HttpStatus.OK);		
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+		bm.deleteDocument(amandmanId);
+		ArrayList<Amandman> predlozeni = bm.executeQuery(CommonQueries.getAllProposedAmandmans());
+		retVal = new ResponseEntity(predlozeni,HttpStatus.OK);		
 		return retVal;
 	}
 	

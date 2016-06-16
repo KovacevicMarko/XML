@@ -2,7 +2,7 @@
 	var app = angular.module("MyApp");
 	
 	var AktController = function($scope, $rootScope, AktService) {
-		
+		/*
 		$scope.akts = [ {
 			naziv : "naziv 1 akt",
 			amandmani : [ {
@@ -16,7 +16,7 @@
 				naziv : "naziv 1 amandman 2 akt"
 			} ]
 		} ];
-		
+		*/
 		var onSuccess = function(response){	  
 			console.log(response.data);
 			/*if(response.data.success==true){
@@ -50,8 +50,28 @@
 						   ,onError);
 			}
 		};
-			
+		
+		$scope.addAkt = function() {
+			AktService.addAkt($scope.aktToAdd, onSuccess,onError);
+		}
+		
+		$scope.clearInputs = function () {
+			delete $scope.aktToAdd;
+		}
+		
+	  	$scope.getAkts = function () {
+	  		AktService.getAkts(function(response) {
+				$scope.predlozeniAktovi	= response.data.aktiPredlozeni;
+				$scope.usvojeniAktovi =  response.data.aktiUsvojeni;
+	  		}, onError);
 	  		
+	  	}
+	  	
+	  	$scope.withdrawAkt = function (idAkt) {
+	  		AktService.withdraw(idAkt,function(response){
+	  			
+	  		},onError);
+	  	}
     }
 	
 	app.controller('AktController', AktController);

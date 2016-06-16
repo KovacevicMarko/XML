@@ -18,12 +18,12 @@
 						<th>Prikaz amandmana</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr ng-repeat-start="akt in akts">
+				<tbody ng-init="getAkts()">
+					<tr ng-repeat-start="akt in predlozeniAktovi">
 					
 						
-						<td>{{akt.naziv}}</td>
-						<td><button ng-show="true" class="btn btn-danger">Povuci
+						<td>{{akt.nazivAkt}}</td>
+						<td><button ng-click="withdrawAkt(akt.id)" ng-show="true" class="btn btn-danger">Povuci
 								akt</button></td>
 						<td><button class="btn btn-default accordion-toggle"
 							data-toggle="collapse"
@@ -108,7 +108,7 @@
 			<div class="modal-body">
 				<div class="form-group">
 					<label for="sadrzaj">Sadrzaj akta</label>
-					<textarea rows="20" cols="50" ng-model="aktSadrzaj"
+					<textarea rows="20" cols="50" ng-model="aktToAdd"
 						class="form-control" id="sadrzaj" placeholder="Sadrzaj"
 						ng-required="true"></textarea>
 				</div>
@@ -137,7 +137,7 @@
 			<div class="modal-body">
 				<div class="form-group">
 					<label for="sadrzaj">Sadrzaj amandmana</label>
-					<textarea rows="20" cols="50" ng-model="amandmanSadrzaj"
+					<textarea rows="20" cols="50" ng-model="amandmanToAdd"
 						class="form-control" id="sadrzaj" placeholder="Sadrzaj"
 						ng-required="true"></textarea>
 				</div>
@@ -151,7 +151,3 @@
 		</form>
 	</div>
 </div>
-
-
-<div ng-if="user.uloga=='PREDSEDNIK'"
-	ng-include="'static/content/home_pre.jsp'"></div>

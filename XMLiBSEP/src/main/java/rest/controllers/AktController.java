@@ -20,7 +20,6 @@ import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
 import dto.AktSearchDto;
-import dto.AktSearchRefDto;
 import dto.UserDto;
 import model.Akt;
 import model.TClan;
@@ -61,7 +60,7 @@ public class AktController {
 		
 		boolean isWritingFailed = false;
 		
-		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
 			isWritingFailed = true;
 		}
 		
