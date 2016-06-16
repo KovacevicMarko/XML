@@ -2,8 +2,7 @@ package rest.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,18 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.w3c.dom.Document;
 
+import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
+import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.UserDto;
 import model.Akt;
-import model.TClan;
-import model.TDeo;
-import model.TSadrzajGlave;
+import model.Amandman;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -75,9 +73,12 @@ public class AktController {
 	}
 	
 	@RequestMapping(value="/approve/", method = RequestMethod.POST)//AKT_DOC_ID
-	 public ResponseEntity approveAkt(@RequestBody String docId,HttpServletRequest req) {
+	 public ResponseEntity approveAkt(@RequestBody AktApproveDto AktIdAndAmandmanIds,HttpServletRequest req) {
 	 
 		 ResponseEntity retVal;
+		 
+		 String aktId = AktIdAndAmandmanIds.getAktId();
+		 ArrayList<String> amandmanIds = AktIdAndAmandmanIds.getAmandmanIds();
 		 
 		 if(req.getSession().getAttribute("user")==null){
 				
@@ -98,18 +99,62 @@ public class AktController {
 		
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(docId, true);
+		Akt akt = bm.read(aktId, true);
 		
-		bm.deleteDocument(docId);
+		if(!amandmanIds.isEmpty()){
+			//TODO to implement update AKT.
+			
+			/*
+			 for(Amandman amandman in Amandmans){
+			 	updateAkt(akt, amandman);
+			 }
+			*/
+				
 		
+		}
 		
-		bm.write(akt, docId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
+		bm.deleteDocument(aktId);
 		
-		retVal = new ResponseEntity(HttpStatus.OK);
+		bm.write(akt, aktId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
+		
+		List<Akt> predlozeniAkti = bm.executeQuery(CommonQueries.getAllProposedActs());
+		retVal = new ResponseEntity(predlozeniAkti,HttpStatus.OK);
 		return retVal;
 		
     }
 	
+	@RequestMapping(value="/getAmandmansForAktId/", method = RequestMethod.POST)//AKT_DOC_ID
+	 public ResponseEntity getAmandmans(@RequestBody String docId,HttpServletRequest req) {
+	 
+		 ResponseEntity retVal;
+		 
+		 if(req.getSession().getAttribute("user")==null){
+				
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+				
+		 }	
+			
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+			
+		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
+		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+			return retVal;
+		}
+		
+		String username = userOnSession.getKorisnickoIme();
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(docId, true);
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		List<Amandman> amandmansForAkt = bhm.getAmandmansForAkt(akt);
+				
+		retVal = new ResponseEntity(amandmansForAkt,HttpStatus.OK);
+		return retVal;
+		
+   }
 	
 	
 	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
@@ -133,9 +178,20 @@ public class AktController {
 		}
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		Akt akt = bm.read(aktId, true);
 		bm.deleteDocument(aktId);
 		
-		retVal = new ResponseEntity(HttpStatus.OK);		
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		List<Amandman> amandmans =  bhm.getAmandmansForAkt(akt);
+		
+		for(Amandman amandman : amandmans){
+			bm.deleteDocument(amandman.getId());
+		}
+		
+		HashMap<String, List<?>> proposedAktsAndAmans = bhm.getProposedAktsAndAmans();
+		
+		retVal = new ResponseEntity(proposedAktsAndAmans,HttpStatus.OK);		
 		return retVal;
 	}
 	
@@ -159,15 +215,11 @@ public class AktController {
 	}
 	
 	@RequestMapping(value = "/searchByTag/", method = RequestMethod.GET)
-	//public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
-	public ResponseEntity searchAktByTag() {
+	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
 		
-//		String tagName = tagAndContent.getTagName();
-//		String content = tagAndContent.getContent();
-		
-		String tagName = "SadrzajAlineja";
-		String content = "Sadrzaj";
-		
+		String tagName = tagAndContent.getTagName();
+		String content = tagAndContent.getContent();
+				
 		ResponseEntity retVal;
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");

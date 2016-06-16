@@ -3,6 +3,7 @@ package rest.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
-import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
 import dto.AktSearchDto;
@@ -78,7 +79,7 @@ public class AmandmanController {
 	}
 	
 	@RequestMapping(value = "/withdraw/", method = RequestMethod.DELETE)
-	public ResponseEntity withdrawAkt(@RequestBody String amandmanId, HttpServletRequest req){
+	public ResponseEntity withdrawAmandman(@RequestBody String amandmanId, HttpServletRequest req){
 		
 		ResponseEntity retVal; 
 		
@@ -97,10 +98,14 @@ public class AmandmanController {
 			return retVal;
 		}
 		
-		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		bm.deleteDocument(amandmanId);
-		ArrayList<Amandman> predlozeni = bm.executeQuery(CommonQueries.getAllProposedAmandmans());
-		retVal = new ResponseEntity(predlozeni,HttpStatus.OK);		
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		
+		HashMap<String, List<?>> proposedAktsAndAmans = bhm.getProposedAktsAndAmans();
+		
+		retVal = new ResponseEntity(proposedAktsAndAmans,HttpStatus.OK);	
 		return retVal;
 	}
 	
