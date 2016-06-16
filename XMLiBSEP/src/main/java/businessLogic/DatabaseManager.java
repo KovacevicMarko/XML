@@ -2,6 +2,7 @@ package businessLogic;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.security.PrivateKey;
@@ -54,6 +55,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.StringQueryDefinition;
 
+import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -107,16 +109,14 @@ public class DatabaseManager<T> {
         boolean ret = false;
         try{
         	
-        	
-        	
     		if (signFlag &&!singXml(null, username)) 
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-        	            
-            if (!encriptContent(null, null)) {
-                throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
+        	//TODO odkomentarisati            
+            //if (signFlag && !encriptContent(null, null)) {
+            //    throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            //}
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -142,7 +142,7 @@ public class DatabaseManager<T> {
     public boolean writeBean(T bean, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try {
-        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
         		return false;
@@ -182,7 +182,7 @@ public class DatabaseManager<T> {
         DocumentDescriptor ret = null;
         try {
         	//ako su korisnici u pitanju, ne treba timestamp i id
-        	if(signFlag && !writeIdAndTimeStamp(bean))
+        	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
         		return null;
@@ -196,6 +196,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeDocument(inputStream,colId, signFlag, username);
+                boolean flagSet = setIdToBean(bean, ret.getUri(), username);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -208,6 +209,46 @@ public class DatabaseManager<T> {
         }
     }
     
+    public boolean writeDocumentToArchive(T bean, String colId)
+    {
+    	if (converter.ConvertJaxbToXml(bean))
+    	{
+    		FileInputStream inputStream = null;
+			try {
+				inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+    		if (!encriptContent())
+            {
+    			return false;
+            }
+    		
+    		InputStreamHandle handle = new InputStreamHandle(inputStream);
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            String docId = "";
+            if(bean instanceof Akt){
+            	docId = ((Akt) bean).getId();
+            }else if(bean instanceof Amandman){
+            	docId = ((Amandman) bean).getId();
+            }else{
+            	System.out.println("Ne validan bean!");
+            	return false;
+            }
+            xmlManager.write(docId,metadata,handle);
+    		
+    		/*DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            InputStreamHandle handle = new InputStreamHandle(inputStream);
+            xmlManager.create(template,metadata, handle);*/
+            
+            return true;
+    	}
+    	return false;
+    }
+    
     /**
      * Upisivanje fajla-a u bazu podataka sa template docId-em.
      * @param
@@ -217,15 +258,10 @@ public class DatabaseManager<T> {
     public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
         DocumentDescriptor ret = null;
         try{
-        	if (signFlag && !singXml(null, username))
-        	{
-                throw  new Exception("Could not sign xml, check tmp.xml.");
-            }
-            
-            if (!encriptContent(null, null))
-            {
-                throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }
+//        	if (signFlag && !singXml(null, username))
+//        	{
+//                throw  new Exception("Could not sign xml, check tmp.xml.");
+//          }           
             
             DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -245,6 +281,28 @@ public class DatabaseManager<T> {
     /*
      * Operacija za citanje iz baze.
      */
+    
+    public Document readDocumentFromArchive(String docId)
+    {
+    	Document ret = null;
+        // A metadata handle for metadata retrieval
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        // A handle to receive the document's content.
+        DOMHandle content = new DOMHandle();
+        xmlManager.read(docId, metadata, content);
+
+        ret = content.get();
+        	
+    	Document decrypredDoc = decryptContenc(ret); 
+    	System.out.println("**********************" + decrypredDoc.toString());
+        VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+        if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
+        {
+            ret = null;
+        }
+     
+        return ret;
+    }
     
     /**
      * Citanje XML dokumenta iz baze za zadati docID. 
@@ -472,7 +530,7 @@ public class DatabaseManager<T> {
     /*
      * Pomocne metode.
      */
-    private boolean writeIdAndTimeStamp(T bean)
+    private boolean writeTimeStamp(T bean)
     {
     	Date date = new Date();
 		
@@ -480,9 +538,7 @@ public class DatabaseManager<T> {
 		c.setTime(date);
 		
     	if(bean instanceof Akt)
-    	{
-    		((Akt) bean).setId(GenerateRandNumber());
-    		
+    	{    		
     		try {
     			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
@@ -493,9 +549,7 @@ public class DatabaseManager<T> {
     		return true;
     	}
     	else if(bean instanceof Amandman)
-    	{
-    		((Amandman) bean).setId(GenerateRandNumber());
-    		
+    	{    		
     		try {
     			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
@@ -512,11 +566,41 @@ public class DatabaseManager<T> {
     	
     }
     
-    private String GenerateRandNumber()
-	{
-		Random randomGenerator = new Random();
-		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
-	}
+    /**
+     * Upisi id u bean ako je u pitanju akt ili amandman.
+     * @param bean
+     * @param id
+     * @return
+     */
+    private boolean setIdToBean(T bean, String idDoc, String username)
+    {
+    	String id = idDoc;
+    	try
+    	{
+    		System.out.println(idDoc.split("\\.")[0]);
+    		id = idDoc.split("\\.")[0];
+    		System.out.println("**************************** ID " + id);
+    	}catch(Exception ex){
+    		
+    	}
+
+    	if(bean instanceof Akt)
+    	{
+    		((Akt) bean).setId(id);
+    		writeBean(bean, idDoc, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username);
+    		return true;
+    	}
+    	else if(bean instanceof Amandman)
+    	{
+    		((Amandman) bean).setId(id);
+    		writeBean(bean, idDoc, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, null);
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    }
     
     /**
      * 
@@ -555,21 +639,15 @@ public class DatabaseManager<T> {
         }
     }
     
-    private boolean encriptContent(String filePath, String element)
+    private boolean encriptContent()
     {
     	boolean ret = false;
     	try{
     		
     		EncryptKEK encryptKek = new EncryptKEK();
     		Document document;
-            if (filePath == null) 
-            {
-                document  = encryptKek.loadDocument(INPUT_OUTPUT_TMP_FILE);
-            } 
-            else 
-            {
-                document = encryptKek.loadDocument(filePath);
-            }
+    		document  = encryptKek.loadDocument(INPUT_OUTPUT_TMP_FILE);
+
             System.out.println("Generating secret key ....");
             SecretKey secretKey = encryptKek.generateDataEncryptionKey();
             

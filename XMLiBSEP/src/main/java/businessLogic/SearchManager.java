@@ -85,8 +85,7 @@ public class SearchManager
                 {
                 	System.out.println("RET SPLIT : " + retSplit[k]);
                 }
-                
-                if (putanja.contains(tag)) {
+                if(putanja.contains(tag)){
                 //if(retSplit[retSplit.length-1].split("\\[")[0].equals(tag)) {
                     String item = "";
                     for (MatchSnippet snippet : location.getSnippets()) {
@@ -100,6 +99,7 @@ public class SearchManager
                         }
                     }
                     listOfMatched.add(item);
+                    System.out.println("BrojElemenata" + listOfMatched.size());
                 }
 
             }
@@ -107,6 +107,7 @@ public class SearchManager
             returnMap.put(result.getUri(),listOfMatched);
 
         }
+
         return returnMap;
     }
 

@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import businessLogic.BeanManager;
 import common.DatabaseConnection;
 import common.Role;
+import enums.TTipIzmeneEnum;
 import model.Akt;
 import model.Amandman;
-import model.Deo;
 import model.Deo.Glava;
 import model.Korisnici;
 import model.PrelazneIZavrsneOdredbe;
+import model.TClan;
+import model.TClan.Stav;
+import model.TClanAmandnam;
+import model.TDeo;
 import model.TKorisnik;
 import model.TOdbornik;
 import model.TSadrzajAmandmana;
@@ -31,23 +35,25 @@ import model.TSadrzajStava;
 import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
 import model.TSadrzajTacke.Alineja;
+import model.TTekst;
+import model.TTekstIzmene;
 import password.PasswordStorage;
 
 @RestController
-@RequestMapping(value = "/initialize")
+@RequestMapping(value = "/initialize/")
 public class TestController {
-	/*
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
 //		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-//		InitializeAkt();
-//		System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-//		InitializeAmandman();
-//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
-		InitializeAktEncrypt();
-		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
+		//InitializeAkt();
+	  //  System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+	InitializeAmandman();
+		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+		//InitializeAktEncrypt();
+//		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
@@ -84,7 +90,7 @@ public class TestController {
 	{
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm1.read(DatabaseConnection.AKT_PREDLOZEN_DOC_ID, true);
-		System.out.println(akt.getNaziv());
+		System.out.println(akt.getNazivAkt());
 	}
 	
 	private void InitializeKorisnik()
@@ -176,7 +182,7 @@ public class TestController {
 	private void InitializeAkt()
 	{
 		
-		Akt akt = getAkt();
+		Akt akt = createAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true,"jocko");
 		
@@ -184,18 +190,25 @@ public class TestController {
 	
 	private void InitializeAmandman()
 	{
-		StavAmandman stav = new StavAmandman();
+		//kreiranje stav amandmana
+		TClanAmandnam.StavAmandman stav = new TClanAmandnam.StavAmandman();
 		stav.setOznakaStava("stav1");
-		stav.setTekstIzmene("Predlog izmene iznosa navednom u ovom stavu se menja sa n na m.");
+		TTekstIzmene textImetodIzmene = new TTekstIzmene();
+		textImetodIzmene.setIzmenaSadrzaja("Predlog izmene iznosa navednom u ovom stavu se menja sa  150 na 120.");
+		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
+		stav.setIzmenaStava(textImetodIzmene);
 		
-		ClanAmandnam clanAmandnam = new ClanAmandnam();
+		//Kreiranje clana i dodavanje stava na njega.
+		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
 		clanAmandnam.getStavAmandman().add(stav);
 		
+		//Kreiranje glave i dodavanje clana
 		GlavaAmandman glavaAmandmana = new GlavaAmandman();
-		glavaAmandmana.setOznaka("glava1");
-		glavaAmandmana.getClanAmandnam().add(clanAmandnam);
+		glavaAmandmana.setOznakaGlave("glava1");
+		glavaAmandmana.getClanAmandman().add(clanAmandnam);
 		
+		//Kreiranje sadrzaja amandmana i dodavanje glave.
 		TSadrzajAmandmana sadrzajAmandmana = new TSadrzajAmandmana();
 		sadrzajAmandmana.setNazivAkta("Akt1");
 		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana");
@@ -209,7 +222,8 @@ public class TestController {
 		odbornik.setIme("odbornikIme");
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
-		amandman.setPredlagac(odbornik);
+		odbornik.setUsername("jocko");
+		amandman.setPredlagacAmandmana(odbornik);
 		Date date = new Date();
 		
 		GregorianCalendar c = new GregorianCalendar();
@@ -220,7 +234,7 @@ public class TestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		amandman.setID(GenerateRandNumber());
+		amandman.setId(GenerateRandNumber());
 		
 		BeanManager<Amandman> bm1 = new BeanManager<>("Schema/Amandman.xsd");
 		bm1.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true,"jocko");
@@ -228,7 +242,7 @@ public class TestController {
 	
 	private void InitializeAktEncrypt()
 	{
-		Akt akt = getAkt();
+		Akt akt = createAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
 		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true,"jocko")){
@@ -238,56 +252,61 @@ public class TestController {
 		}
 	}
 	
-	private Akt getAkt()
+	private Akt createAkt()
 	{
 		Alineja alineja = new Alineja();
-		alineja.setOznaka("Alineja1");
-		alineja.setSadrzaj("Sadrzaj alineje o donosenju akta.");
+		alineja.setOznakaAlineja("Alineja1");
+		alineja.setSadrzajAlineja("Sadrzaj alineje o donosenju akta.");
 		
 		TSadrzajTacke sadrzajTacke = new TSadrzajTacke();
 		sadrzajTacke.getAlineja().add(alineja);
-		sadrzajTacke.setTekst("Sadrzaj tacke o donosenju akta.");
+		TTekst text = new TTekst();
+		text.setTekst("Text tacke.");
+		sadrzajTacke.setTekstTacka(text);
 		
 		Tacka tacka = new Tacka();
-		tacka.setOznaka("Tacka1");
+		tacka.setOznakaTacka("Tacka1");
 		tacka.setSadrzaj(sadrzajTacke);
 		
 		Tacka tacka2 = new Tacka();
-		tacka2.setOznaka("Tacka2");
+		tacka2.setOznakaTacka("Tacka2");
 		tacka2.setSadrzaj(sadrzajTacke);
 			
 		
 		TSadrzajStava sadrzajStava = new TSadrzajStava();
-
-		sadrzajStava.setTekst("Sadrzaj stava o donosenju akta.");
+		
+		TTekst text2 = new TTekst();
+		text2.setTekst("Sadrzaj stava o donosenju akta");
+		
+		sadrzajStava.setTekstStav(text2);
 		sadrzajStava.getTacka().add(tacka);	
 		sadrzajStava.getTacka().add(tacka2);
 		
 		Stav stav = new Stav();
-		stav.setOznaka("stav1");
+		stav.setOznakaStav("stav1");
 		stav.setSadrzaj(sadrzajStava);
 		
-		Clan clan = new Clan();
-		clan.setOznaka("clan1");
+		TClan clan = new TClan();
+		clan.setOznakaClan("clan1");
 		clan.getStav().add(stav);
 		
 		
 		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
 		sadrzajGlave.getClan().add(clan);
 		
-		Glava glava = new Glava();
-		glava.setNaziv("glava1");
-		glava.setOznaka("glava1");
-		glava.setSadrzaj(sadrzajGlave);
+		TDeo.Glava glava = new TDeo.Glava();
+		glava.setNazivGlava("glava1");
+		glava.setOznakaGlava("glava1");
+		glava.setSadrzajGlava(sadrzajGlave);
 		
-		Glava glava2 = new Glava();
-		glava2.setNaziv("glava2");
-		glava2.setOznaka("glava2");
-		glava2.setSadrzaj(sadrzajGlave);
+		TDeo.Glava glava2 = new TDeo.Glava();
+		glava2.setNazivGlava("glava2");
+		glava2.setOznakaGlava("glava2");
+		glava2.setSadrzajGlava(sadrzajGlave);
 		
-		Deo deo = new Deo();
-		deo.setNaziv("deo1");
-		deo.setOznaka("oznaka1");
+		TDeo deo = new TDeo();
+		deo.setNazivDeo("deo1");
+		deo.setOznakaDeo("oznaka1");
 		deo.getGlava().add(glava);
 		deo.getGlava().add(glava2);
 		
@@ -295,13 +314,14 @@ public class TestController {
 		odbornik.setIme("odbornikIme");
 		odbornik.setPrezime("odbornikPrezime");
 		odbornik.setStranka("odbornikStranka");
+		odbornik.setUsername("odbornikUsername");
 		
-		PrelazneIZavrsneOdredbe pzo = new PrelazneIZavrsneOdredbe();
+		Akt.PrelazneIZavrsneOdredbe pzo = new Akt.PrelazneIZavrsneOdredbe();
 		pzo.setPredlagac(odbornik);
 		
 		Akt akt = new Akt();
-		akt.setNaziv("Akt1");
-		akt.setPreambula("Preambula1");
+		akt.setNazivAkt("Akt2");
+		akt.setPreambula("Preambula2");
 		
 		akt.getDeo().add(deo);
 		
@@ -310,13 +330,13 @@ public class TestController {
 		GregorianCalendar c = new GregorianCalendar();
 		c.setTime(date);
 		try {
-			akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+		//	akt.setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 			pzo.setDatum(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 		} catch (DatatypeConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		akt.setID(GenerateRandNumber());
+		//akt.setId(GenerateRandNumber());
 		akt.setPrelazneIZavrsneOdredbe(pzo);
 		
 		return akt;
@@ -329,6 +349,5 @@ public class TestController {
 		return Integer.toString(randomGenerator.nextInt(Integer.MAX_VALUE));
 	}
 	
-	*/
 
 }
