@@ -145,13 +145,12 @@ public class AmandmanController {
 		
 		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeni = bm.searchByContent(content, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeni);
     	    
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -167,13 +166,12 @@ public class AmandmanController {
 		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
 		
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, tagName);
+    	HashMap<String,ArrayList<String>> usvojeni = bm.searchByContentAndTag(content, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID,tagName);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Not found content under "+tagName,HttpStatus.NOT_FOUND);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeni);
         
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}

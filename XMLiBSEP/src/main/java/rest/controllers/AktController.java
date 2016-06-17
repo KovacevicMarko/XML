@@ -259,13 +259,16 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
     	
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -280,14 +283,18 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		
-    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,tagName);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity(null,HttpStatus.OK);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
+    	
         
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -345,14 +352,17 @@ public class AktController {
 		Akt akt = bm.read(aktId, true); 
 		
 		
-		HashMap<String,ArrayList<String>> referencedAktsMap = null;
+		//HashMap<String,ArrayList<String>>  = null;
 		
-		if(!isApproved){
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID, "refAkt");
-		}
-		else{
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_COL_ID, "refAkt");
-		}
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,"refAkt");
+    	
+    	HashMap<String,ArrayList<String>> referencedAktsMap = new HashMap<>(predlozeni);
+    	referencedAktsMap.putAll(usvojeniNacelo);
+    	referencedAktsMap.putAll(usvojeniPojedinosti);
+    	referencedAktsMap.putAll(usvojeniCelosti);
 		
 		//List<String> referencedAkts = new ArrayList<>();
 		//referencedAkts.t
