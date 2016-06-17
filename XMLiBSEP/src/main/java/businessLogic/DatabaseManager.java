@@ -1,6 +1,5 @@
 package businessLogic;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,16 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import javax.crypto.SecretKey;
 import javax.xml.bind.JAXBContext;
@@ -44,15 +41,14 @@ import model.Akt;
 import model.Amandman;
 import model.Korisnici;
 
+import org.bouncycastle.cert.CertIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.vendor.Database;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import rest.controllers.ArhivController;
+import securityPackage.CRL;
 import securityPackage.DecryptKEK;
 import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
@@ -70,7 +66,6 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.StringQueryDefinition;
-
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
@@ -81,9 +76,6 @@ import common.ValidationXmlSchema;
  *
  */
 public class DatabaseManager<T> {
-	
-	@Autowired
-	private ArhivController arhivController;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
@@ -101,6 +93,10 @@ public class DatabaseManager<T> {
         
     private static String INPUT_OUTPUT_TMP_FILE = "tmp.xml";
     
+    private static String IAGNS = "iagns";
+    
+    private CRL crlVerifier;
+    
     static {
         transformerFactory = TransformerFactory.newInstance();
     }
@@ -112,6 +108,7 @@ public class DatabaseManager<T> {
         this.schemaFactory = schemaFactory;
         this.schema = schema;
         this.converter = converter;
+        
     }
   
     /*
@@ -133,20 +130,12 @@ public class DatabaseManager<T> {
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
         	
-    		String tmpColId = null;
+    		String tmpColId = DatabaseConnection.AKT_ENCRYPT_COL_ID;
     		
-    		if(bean instanceof Akt)
-    		{
-    			tmpColId = DatabaseConnection.AKT_USVOJEN_COL_ID;
-    		}
-    		else if(bean instanceof Amandman)
-    		{
-    			tmpColId = DatabaseConnection.AMANDMAN_USVOJEN_COL_ID;
-    		}
-            /*if (colId.equals(tmpColId) && !encriptContent())
+            if (colId.equals(tmpColId) && !encriptContent(username))
             {
                 throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            }*/
+            }
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -269,15 +258,12 @@ public class DatabaseManager<T> {
     	if (converter.ConvertJaxbToXml(bean))
     	{
     		FileInputStream inputStream = null;
-			try {
+			try 
+			{
 				inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-    		if (!encriptContent())
-            {
-    			return false;
-            }
     		
     		InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -291,7 +277,8 @@ public class DatabaseManager<T> {
             	System.out.println("Ne validan bean!");
             	return false;
             }
-            xmlManager.write(docId,metadata,handle);
+
+            xmlManager.write(docId+".xml",metadata,handle);
     		
     		/*DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -324,6 +311,7 @@ public class DatabaseManager<T> {
     
     public Document readDocumentFromArchive(String docId)
     {
+    	
     	Document ret = null;
         // A metadata handle for metadata retrieval
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -333,8 +321,7 @@ public class DatabaseManager<T> {
 
         ret = content.get();
         	
-    	Document decrypredDoc = decryptContenc(ret); 
-    	System.out.println("**********************" + decrypredDoc.toString());
+    	Document decrypredDoc = decryptContenc(ret, IAGNS); 
         VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
         if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
         {
@@ -398,14 +385,11 @@ public class DatabaseManager<T> {
         ret = content.get();
         if (signatureFlag)
         {	
-        	
-        	Document decrypredDoc = decryptContenc(ret); 
-        	System.out.println("**********************" + decrypredDoc.toString());
-            VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
+        	VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+        	if (!verifySignatureEnveloped.verifySignature(ret))
             {
                 ret = null;
-            }
+            } 
         }
         return ret;
     }
@@ -646,6 +630,18 @@ public class DatabaseManager<T> {
     private boolean singXml(String filePath, String username){
 
         boolean ret = false;
+        
+        try {
+        	 crlVerifier = new CRL();
+		} catch (CertificateParsingException e1) {
+			e1.printStackTrace();
+		} catch (InvalidKeyException e1) {
+			e1.printStackTrace();
+		} catch (SignatureException e1) {
+			e1.printStackTrace();
+		} catch (CertIOException e1) {
+			e1.printStackTrace();
+		}
 
         try{
 
@@ -664,6 +660,16 @@ public class DatabaseManager<T> {
             
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
+            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
+    		{
+            	System.out.println("Sertifikat je istekao!");
+            	return false;
+    		}
+            if (crlVerifier.isRevoked(cert))
+            {
+            	System.out.println("Sertifikat je povucen.");
+            	return false;
+            }
             document = signEnveloped.signDocument(document,pk,cert);
             signEnveloped.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
             ret = true;
@@ -675,7 +681,7 @@ public class DatabaseManager<T> {
         }
     }
     
-    private boolean encriptContent()
+    private boolean encriptContent(String username)
     {
     	boolean ret = false;
     	try{
@@ -687,11 +693,10 @@ public class DatabaseManager<T> {
             System.out.println("Generating secret key ....");
             SecretKey secretKey = encryptKek.generateDataEncryptionKey();
             
-            Certificate cert = encryptKek.readCertificate();
+            Certificate cert = encryptKek.readCertificate(IAGNS);
             System.out.println("Encrypting....");
             document = encryptKek.encrypt(document ,secretKey, cert);
             encryptKek.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
-            arhivController.saveAkt(document);
             return true;
     		
     	} catch(Exception e){
@@ -700,14 +705,14 @@ public class DatabaseManager<T> {
     	}
     }
     
-    private Document decryptContenc(Document doc)
+    private Document decryptContenc(Document doc, String username)
     {
     	Document retValue = null;
     	
     	try
     	{
     		DecryptKEK decript = new DecryptKEK();
-    		PrivateKey privateKey = decript.readPrivateKey();
+    		PrivateKey privateKey = decript.readPrivateKey(username);
     		Document document = decript.decrypt(doc, privateKey);
     		decript.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
     		retValue = document;

@@ -1,6 +1,9 @@
 package rest.controllers;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateParsingException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -9,6 +12,8 @@ import java.util.Random;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.bouncycastle.cert.CertIOException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,27 +46,42 @@ import model.TSadrzajTacke.Alineja;
 import model.TTekst;
 import model.TTekstIzmene;
 import password.PasswordStorage;
+import securityPackage.CRL;
 
 @RestController
 @RequestMapping(value = "/initialize/")
 public class TestController {
 	
+	@Autowired
+	ArhivController arhiv;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
+//		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
-	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+//	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
-		//InitializeAktEncrypt();
+//		InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
 		
+		sendToArchive();
+		
 		return "Ajmo Kocko";
+	}
+	
+	private void sendToArchive()
+	{
+		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		Document doc1 = bm1.read(false, "/AktEncrypt.xml");
+		Document doc2 = bm1.read(false, "/AktEncrypt.xml");
+		arhiv.saveAkt(doc1);
+		arhiv.saveAkt(doc2);
 	}
 	
 	private void readAct()
@@ -234,10 +254,9 @@ public class TestController {
 	
 	private void InitializeAkt()
 	{
-		
 		Akt akt = createAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true,"jocko");
+		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true, "jocko");
 		
 	}
 	
@@ -268,16 +287,13 @@ public class TestController {
 		//stav.setIzmenaStava(textImetodIzmene);
 		stav.getTackaAmandman().add(tacka);
 		stav.getTackaAmandman().add(tacka2);
-		
-		
+				
 		TTekstIzmene textImetodIzmene5 = new TTekstIzmene();
 		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stav.");
 		textImetodIzmene5.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
 		
 		stav.setIzmenaStava(textImetodIzmene5);
-		
-		
-		
+
 		//Kreiranje clana i dodavanje stava na njega.
 		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
@@ -315,7 +331,6 @@ public class TestController {
 		try {
 			amandman.setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
 		} catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		amandman.setId(GenerateRandNumber());

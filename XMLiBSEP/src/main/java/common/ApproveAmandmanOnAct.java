@@ -2,24 +2,21 @@ package common;
 
 import java.util.List;
 
-import org.apache.jasper.tagplugins.jstl.core.ForEach;
-import org.bouncycastle.asn1.tsp.TSTInfo;
-
-import enums.TTipIzmeneEnum;
 import model.Akt;
 import model.TClan;
 import model.TClan.Stav;
 import model.TClanAmandnam;
 import model.TClanAmandnam.StavAmandman;
 import model.TClanAmandnam.StavAmandman.TackaAmandman;
-import model.TSadrzajAmandmana.GlavaAmandman.OdeljakAmandman;
 import model.TDeo;
+import model.TSadrzajAmandmana.GlavaAmandman;
+import model.TSadrzajAmandmana.GlavaAmandman.OdeljakAmandman;
 import model.TSadrzajStava;
 import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
 import model.TTekst;
 import model.TTekstIzmene;
-import model.TSadrzajAmandmana.GlavaAmandman;
+import enums.TTipIzmeneEnum;
 
 public class ApproveAmandmanOnAct<T> 
 {

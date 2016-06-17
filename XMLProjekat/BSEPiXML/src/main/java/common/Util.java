@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.hibernate.validator.internal.util.privilegedactions.GetClassLoader;
-
 import com.marklogic.client.DatabaseClientFactory.Authentication;
 
 public class Util {
