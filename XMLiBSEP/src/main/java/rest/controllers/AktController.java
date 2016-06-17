@@ -37,6 +37,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -311,7 +312,7 @@ public class AktController {
 	            bm.convertToXml(akt);
 	            
 	            Source text = new StreamSource(new File("tmp.xml"));
-	            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+	            transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
 	        } catch (TransformerConfigurationException e) {
 	            e.printStackTrace();
 	        } catch (TransformerException e) {
@@ -328,9 +329,10 @@ public class AktController {
 	                akt+=line;
 	            }
 	            System.out.println(akt);
-
-
-	            return new ResponseEntity(akt,HttpStatus.OK);
+	            
+	            JSONObject obj = new JSONObject();
+	            obj.put("akt", akt);
+	            return new ResponseEntity(obj.toString(),HttpStatus.OK);
 	        } catch (FileNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (IOException e) {
