@@ -98,9 +98,9 @@
 			AktService.getAktById(idAkt, onGetAktSuccess, onError);
 		}
 
-		$scope.generate = function(id) {
+		$scope.generateAktPdf = function(id) {
 
-			AktService.generate(id, function(response) {
+			AktService.generateAktPdf(id, function(response) {
 				console.log("ODGOVOR SA PDF-OM");
 				console.log(response);
 				var file = new Blob([ response.data ], {

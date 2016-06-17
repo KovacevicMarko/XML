@@ -214,12 +214,6 @@ public class AktController {
 	 public ResponseEntity getAmandmans(@RequestBody String docId,HttpServletRequest req) {
 	 
 		 ResponseEntity retVal;
-		 
-		 if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
-				retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
-				return retVal;
-			}
-			
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		String username = userOnSession.getKorisnickoIme();
