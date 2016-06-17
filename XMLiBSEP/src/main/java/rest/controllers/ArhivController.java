@@ -75,7 +75,6 @@ public class ArhivController
 				return;
 			}
 		}
-		bm.writeDocumentToArchive(akt, DatabaseConnection.ARHIV_AKT_USVOJEN_COL_ID);
 		lastSavedAkt = akt;
 	}
 }
