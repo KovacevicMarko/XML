@@ -29,7 +29,18 @@
 				   $scope.amandmanSearch, 
 				   onSuccess
 				   ,onError);
-	  		};
+	  	};
+	  	
+	  	$scope.addAmandman = function () {
+	  		AmandmanService.addAmandman($scope.amandmanToAdd, 
+				   onSuccess
+				   ,onError);
+	  	}
+	  	
+
+		$scope.clearInputs = function () {
+			delete $scope.amandmanToAdd;
+		}
     }
 	
 	app.controller('AmandmanController', AmandmanController);

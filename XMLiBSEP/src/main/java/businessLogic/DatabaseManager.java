@@ -593,7 +593,7 @@ public class DatabaseManager<T> {
     	else if(bean instanceof Amandman)
     	{
     		((Amandman) bean).setId(id);
-    		writeBean(bean, idDoc, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, null);
+    		writeBean(bean, idDoc, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, username);
     		return true;
     	}
     	else
