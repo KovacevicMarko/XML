@@ -15,7 +15,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
-
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 
@@ -83,8 +82,8 @@ public class BeanManager<T>
     /**
      * Upis fajla u bazu.
      */
-    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
-        return  databaseManager.writeFile(inputStream,docId,colId, signFlag, username);
+    public boolean write(T bean, FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+        return  databaseManager.writeFile(bean, inputStream,docId,colId, signFlag, username);
     }
     
     /**
@@ -128,6 +127,16 @@ public class BeanManager<T>
     public Document readDocumentFromArchive(String docId)
     {
     	return databaseManager.readDocumentFromArchive(docId);
+    }
+    
+    /**
+    * Funkcija za vracanje bean-a u odnosu na dokument.
+     * @param document
+     * @return
+     */
+    public T getBeanByDocument(Document document)
+    {
+    	return databaseManager.getBeanByDocument(document);
     }
 
     /**

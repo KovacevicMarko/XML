@@ -97,11 +97,13 @@ public class CRL {
           char[] password="sgns".toCharArray();
           
           X509Certificate cert = null;
+          X509Certificate certBurni = null;
           
           try {
               if(ks.isKeyEntry("sgns")) {
                   ret = (PrivateKey)ks.getKey("sgns", password);
                   cert = (X509Certificate) ks.getCertificate("sgns");
+                  certBurni = (X509Certificate) ks.getCertificate("burni");
               }
           } catch (KeyStoreException e) {
               System.out.println("[ERROR] Can't initialize.");
@@ -123,10 +125,11 @@ public class CRL {
 		  }
           cert.getSerialNumber();
           X509v2CRLBuilder crlBuilder = new X509v2CRLBuilder(rootName,now);
+          
 
           crlBuilder.addCRLEntry(cert.getSerialNumber(), update, CRLReason.privilegeWithdrawn);
           crlBuilder.addExtension(X509Extensions.AuthorityKeyIdentifier,false,new AuthorityKeyIdentifierStructure(cert));
-          crlBuilder.addExtension(X509Extensions.CRLNumber,false,new CRLNumber(BigInteger.ONE));
+          crlBuilder.addExtension(X509Extensions.CRLNumber,false,new CRLNumber(certBurni.getSerialNumber()));
  
           JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
             //koji provider se koristi
@@ -148,6 +151,8 @@ public class CRL {
           {
 			  e.printStackTrace();
 		  }
+          
+     
   
           return crl;
 	}

@@ -29,6 +29,9 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import model.Akt;
+import model.Amandman;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -43,19 +46,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import securityPackage.SessionHandler;
 import businessLogic.BeanHelperMethods;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
+import businessLogic.BeanManager;
+
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
-import dto.AktApproveDto;
+
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
 import dto.UserDto;
-import model.Akt;
-import model.Amandman;
-import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -111,8 +114,9 @@ public class AktController {
 		
 	}
 	
-	@RequestMapping(value="/approve/", method = RequestMethod.POST)
-	 public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
+	@RequestMapping(value="/approve/", method = RequestMethod.GET)
+	 //public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
+		public ResponseEntity approveAkt() {
 	 
 		ResponseEntity retVal;
 		 
@@ -121,10 +125,15 @@ public class AktController {
 		//	return retVal;
 		//}
 		
-		String aktId = dto.getAktId();
+		/*String aktId = dto.getAktId();
 		System.out.println(aktId);
 		List<String> amandmanIds = dto.getAmandmanIds();
-		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();
+		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();*/
+		
+		String aktId = "1082855909737227691.xml";
+		int numberOfProposedAmandmans = 1;
+		List<String> amandmanIds = new ArrayList<String>();
+		amandmanIds.add("2571930459973688753.xml");
 			
 		//UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
@@ -139,6 +148,8 @@ public class AktController {
 		Akt akt = bm.read(aktId, true);
 		System.out.println("Id akta" + akt.getId());
 		
+		akt.setSignature(null);
+		
 		Akt newAkt=null;
 		System.out.println("Usao u izmenu.");
 		List<Amandman> amandmani;
@@ -149,7 +160,7 @@ public class AktController {
 			ApproveAmandmanOnAct appClass = new ApproveAmandmanOnAct<>(akt);
 			
 			System.out.println("Usao");
-			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, true, username);
+			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, false, username);
 				
 				//Update akt and write amandman into approved
 				for(Amandman am : amandmani)
@@ -157,31 +168,31 @@ public class AktController {
 					newAkt = appClass.approveAmandmanOnAkt(am.getSadrzajAmandmana().getGlavaAmandman(), akt);
 					akt = newAkt;
 					
-					bmAmandman.deleteDocument(am.getId());
-					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, true, username);
+					bmAmandman.deleteDocument(am.getId() + ".xml");
+					am.setSignature(null);
+					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, false, username);
 					
 				}
 				
 				//Delete akt from predlozeni collection
 				bm.deleteDocument(aktId);
-				
+				akt.setSignature(null);
 				//Writing into new collection
 				if(amandmani.size()<numberOfProposedAmandmans)
-				{
-					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID, true, username);
+				{	
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID, false, username);
 				}
-				
 				else
 				{
-					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID, true, username);
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID, false, username);
 				}
 				
-			}		
-		
-		else{
-			
+		}			
+		else
+		{
+			akt.setSignature(null);
 			bm.deleteDocument(aktId);
-			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, true, username);
+			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
 		retVal = new ResponseEntity(HttpStatus.OK);
@@ -204,7 +215,7 @@ public class AktController {
 		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(docId, true);
+		Akt akt = bm.read(docId+".xml", true);
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
 		List<Amandman> amandmansForAkt = bhm.getAmandmansForAkt(akt);
