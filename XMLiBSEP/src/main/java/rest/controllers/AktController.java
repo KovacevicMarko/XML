@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import model.Akt;
 import model.Amandman;
+import model.TOdbornik;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -102,6 +103,14 @@ public class AktController {
 		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		
+		TOdbornik odbornik = new TOdbornik();
+		odbornik.setIme(userOnSession.getIme());
+		odbornik.setPrezime(userOnSession.getPrezime());
+		odbornik.setUsername(username);
+		odbornik.setStranka("Stranka");
+		
+		akt.getPrelazneIZavrsneOdredbe().setPredlagac(odbornik);
 		
 		boolean isWritingFailed = false;
 		
