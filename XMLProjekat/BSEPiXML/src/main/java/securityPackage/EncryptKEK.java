@@ -2,7 +2,6 @@ package securityPackage;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,9 +11,11 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -60,23 +61,6 @@ public class EncryptKEK {
         org.apache.xml.security.Init.init();
     }
 	
-	public void testIt() {
-		//ucitava se dokument
-		Document doc = loadDocument(INPUT_OUTPUT_TMP_FILE);
-		//generise tajni kljuc
-		System.out.println("Generating secret key ....");
-		SecretKey secretKey = generateDataEncryptionKey();
-		//ucitava sertifikat za kriptovanje tajnog kljuca
-		Certificate cert = readCertificate();
-		//kriptuje se dokument
-		System.out.println("Encrypting....");
-		doc = encrypt(doc ,secretKey, cert);
-		//snima se tajni kljuc
-		//snima se dokument
-		saveDocument(doc, INPUT_OUTPUT_TMP_FILE);
-		System.out.println("Encryption done");
-	}
-	
 	/**
 	 * Kreira DOM od XML dokumenta
 	 */
@@ -107,7 +91,7 @@ public class EncryptKEK {
 	 * Ucitava sertifikat is KS fajla
 	 * alias primer
 	 */
-	public Certificate readCertificate() {
+	public Certificate readCertificate(String username) {
 		try {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
@@ -116,8 +100,8 @@ public class EncryptKEK {
 			BufferedInputStream in = new BufferedInputStream(EncryptKEK.openStream("sgns.jks"));
 			ks.load(in, "sgns".toCharArray());
 			
-			if(ks.isKeyEntry("jocko")) {
-				Certificate cert = ks.getCertificate("jocko");
+			if(ks.isKeyEntry(username)) {
+				Certificate cert = ks.getCertificate(username);
 				return cert;
 				
 			}
@@ -249,9 +233,7 @@ public class EncryptKEK {
 				akt = doc.getElementsByTagName("Akt");
 				odsek = (Element) akt.item(0);
 			}
-			
-			
-			
+	
 			xmlCipher.doFinal(doc, odsek, true); //kriptuje sa sadrzaj
 			
 			return doc;
@@ -271,9 +253,5 @@ public class EncryptKEK {
 		return Util.class.getClassLoader().getResourceAsStream("/cfg/data/" + fileName);
 	}
 	
-	public static void main(String[] args) {
-		EncryptKEK encrypt = new EncryptKEK();
-		encrypt.testIt();
-	}
 	
 }

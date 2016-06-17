@@ -144,7 +144,8 @@ public class SignEnveloped {
 			BufferedInputStream in = new BufferedInputStream(SignEnveloped.openStream(KEY_STORE_FILE2));
 			ks.load(in, CERT_PASS.toCharArray());
 			
-			if(ks.isKeyEntry(username)) {
+			if(ks.isKeyEntry(username)) 
+			{
 				Certificate cert = ks.getCertificate(username);
 				return cert;
 				

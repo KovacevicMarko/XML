@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.security.InvalidKeyException;
 import java.security.PrivateKey;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Random;
 
 import javax.crypto.SecretKey;
 import javax.xml.bind.JAXBContext;
@@ -17,6 +22,10 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -32,11 +41,14 @@ import model.Akt;
 import model.Amandman;
 import model.Korisnici;
 
+import org.bouncycastle.cert.CertIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import securityPackage.CRL;
 import securityPackage.DecryptKEK;
 import securityPackage.EncryptKEK;
 import securityPackage.SignEnveloped;
@@ -54,7 +66,6 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.StringQueryDefinition;
-
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
@@ -82,6 +93,10 @@ public class DatabaseManager<T> {
         
     private static String INPUT_OUTPUT_TMP_FILE = "tmp.xml";
     
+    private static String IAGNS = "iagns";
+    
+    private CRL crlVerifier;
+    
     static {
         transformerFactory = TransformerFactory.newInstance();
     }
@@ -93,6 +108,7 @@ public class DatabaseManager<T> {
         this.schemaFactory = schemaFactory;
         this.schema = schema;
         this.converter = converter;
+        
     }
   
     /*
@@ -105,7 +121,7 @@ public class DatabaseManager<T> {
      * @param colId
      * @return
      */
-    public boolean writeFile(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+    public boolean writeFile(T bean, FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
         try{
         	
@@ -113,10 +129,13 @@ public class DatabaseManager<T> {
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
             }
-        	//TODO odkomentarisati            
-            //if (signFlag && !encriptContent(null, null)) {
-            //    throw  new Exception("Could not encrypt xml, check tmp.xml.");
-            //}
+        	
+    		String tmpColId = DatabaseConnection.AKT_ENCRYPT_COL_ID;
+    		
+            if (colId.equals(tmpColId) && !encriptContent(username))
+            {
+                throw  new Exception("Could not encrypt xml, check tmp.xml.");
+            }
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -141,10 +160,11 @@ public class DatabaseManager<T> {
      */
     public boolean writeBean(T bean, String docId, String colId, boolean signFlag, String username) {
         boolean ret = false;
-        try {
+        try
+        {
         	if(signFlag && !writeTimeStamp(bean))
         	{
-        		System.out.println("Can`t to write id and timestamp!");
+        		System.out.println("Can`t to write timestamp!");
         		return false;
         	}
         	
@@ -157,7 +177,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean))
             {
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
-                ret = writeFile(inputStream,docId,colId, signFlag, username);
+                ret = writeFile(bean,inputStream,docId,colId, signFlag, username);
             } 
             else 
             {
@@ -181,7 +201,7 @@ public class DatabaseManager<T> {
     public DocumentDescriptor write(T bean,String colId, boolean signFlag, String username) {
         DocumentDescriptor ret = null;
         try {
-        	//ako su korisnici u pitanju, ne treba timestamp i id
+        	//ako su korisnici u pitanju, ne treba timestamp 
         	if(signFlag && !writeTimeStamp(bean))
         	{
         		System.out.println("Can`t to write id and timestamp!");
@@ -196,7 +216,7 @@ public class DatabaseManager<T> {
             if (converter.ConvertJaxbToXml(bean)){
                 FileInputStream inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
                 ret = writeDocument(inputStream,colId, signFlag, username);
-                boolean flagSet = setIdToBean(bean, ret.getUri(), username);
+                boolean flagSet = setIdToBean(bean, ret.getUri(), username, colId);
             } else {
                 throw new Exception(" Can't convert JAXB bean to XML.");
             }
@@ -208,21 +228,42 @@ public class DatabaseManager<T> {
             return ret;
         }
     }
+   
+    
+    /**
+     * Upisivanje fajla-a u bazu podataka sa template docId-em.
+     * @param
+     * @param
+     * @return
+     */
+    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
+        DocumentDescriptor ret = null;
+        try{       
+            
+            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            metadata.getCollections().add(colId);
+            InputStreamHandle handle = new InputStreamHandle(inputStream);
+            ret = xmlManager.create(template,metadata, handle);
+        }
+        catch (Exception e){
+            logger.info("Could not write xml bean.");
+        } finally{
+            return ret;
+        }
+    }
     
     public boolean writeDocumentToArchive(T bean, String colId)
     {
     	if (converter.ConvertJaxbToXml(bean))
     	{
     		FileInputStream inputStream = null;
-			try {
+			try 
+			{
 				inputStream = new FileInputStream(new File(INPUT_OUTPUT_TMP_FILE));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-    		if (!encriptContent())
-            {
-    			return false;
-            }
     		
     		InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -236,7 +277,8 @@ public class DatabaseManager<T> {
             	System.out.println("Ne validan bean!");
             	return false;
             }
-            xmlManager.write(docId,metadata,handle);
+
+            xmlManager.write(docId+".xml",metadata,handle);
     		
     		/*DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -250,32 +292,17 @@ public class DatabaseManager<T> {
     }
     
     /**
-     * Upisivanje fajla-a u bazu podataka sa template docId-em.
-     * @param
-     * @param
+     * Funkcija za vracanje bean-a u odnosu na document.
+     * @param docId
      * @return
      */
-    public DocumentDescriptor writeDocument(FileInputStream inputStream, String colId, boolean signFlag, String username) {
-        DocumentDescriptor ret = null;
-        try{
-//        	if (signFlag && !singXml(null, username))
-//        	{
-//                throw  new Exception("Could not sign xml, check tmp.xml.");
-//          }           
-            
-            DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
-            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-            metadata.getCollections().add(colId);
-            InputStreamHandle handle = new InputStreamHandle(inputStream);
-            ret = xmlManager.create(template,metadata, handle);
-        }
-        catch (Exception e){
-            logger.info("Could not write xml bean.");
-            logger.info("[ERROR] " + e.getMessage());
-            logger.info("[STACK TRACE] " + e.getStackTrace());
-        } finally{
-            return ret;
-        }
+    
+    public T getBeanByDocument(Document document)
+    {
+    	saveDocument(document);
+		T retValue = converter.convertFromXml(new File(INPUT_OUTPUT_TMP_FILE), schema);
+		
+		return retValue;
     }
     
     /*
@@ -284,6 +311,7 @@ public class DatabaseManager<T> {
     
     public Document readDocumentFromArchive(String docId)
     {
+    	
     	Document ret = null;
         // A metadata handle for metadata retrieval
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -293,8 +321,7 @@ public class DatabaseManager<T> {
 
         ret = content.get();
         	
-    	Document decrypredDoc = decryptContenc(ret); 
-    	System.out.println("**********************" + decrypredDoc.toString());
+    	Document decrypredDoc = decryptContenc(ret, IAGNS); 
         VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
         if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
         {
@@ -358,14 +385,11 @@ public class DatabaseManager<T> {
         ret = content.get();
         if (signatureFlag)
         {	
-        	
-        	Document decrypredDoc = decryptContenc(ret); 
-        	System.out.println("**********************" + decrypredDoc.toString());
-            VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
-            if (!verifySignatureEnveloped.verifySignature(decrypredDoc))
+        	VerifySignatureEnveloped verifySignatureEnveloped = new VerifySignatureEnveloped();
+        	if (!verifySignatureEnveloped.verifySignature(ret))
             {
                 ret = null;
-            }
+            } 
         }
         return ret;
     }
@@ -542,7 +566,6 @@ public class DatabaseManager<T> {
     		try {
     			((Akt) bean).setTimeStamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
-    			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
     		
@@ -553,7 +576,6 @@ public class DatabaseManager<T> {
     		try {
     			((Amandman) bean).setTimestamp(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
     		} catch (DatatypeConfigurationException e) {
-    			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
     		
@@ -572,14 +594,12 @@ public class DatabaseManager<T> {
      * @param id
      * @return
      */
-    private boolean setIdToBean(T bean, String idDoc, String username)
+    private boolean setIdToBean(T bean, String idDoc, String username, String colId)
     {
     	String id = idDoc;
     	try
     	{
-    		System.out.println(idDoc.split("\\.")[0]);
     		id = idDoc.split("\\.")[0];
-    		System.out.println("**************************** ID " + id);
     	}catch(Exception ex){
     		
     	}
@@ -587,13 +607,13 @@ public class DatabaseManager<T> {
     	if(bean instanceof Akt)
     	{
     		((Akt) bean).setId(id);
-    		writeBean(bean, idDoc, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username);
+    		writeBean(bean, idDoc, colId, true, username);
     		return true;
     	}
     	else if(bean instanceof Amandman)
     	{
     		((Amandman) bean).setId(id);
-    		writeBean(bean, idDoc, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, username);
+    		writeBean(bean, idDoc, colId, true, username);
     		return true;
     	}
     	else
@@ -610,6 +630,18 @@ public class DatabaseManager<T> {
     private boolean singXml(String filePath, String username){
 
         boolean ret = false;
+        
+        try {
+        	 crlVerifier = new CRL();
+		} catch (CertificateParsingException e1) {
+			e1.printStackTrace();
+		} catch (InvalidKeyException e1) {
+			e1.printStackTrace();
+		} catch (SignatureException e1) {
+			e1.printStackTrace();
+		} catch (CertIOException e1) {
+			e1.printStackTrace();
+		}
 
         try{
 
@@ -628,6 +660,16 @@ public class DatabaseManager<T> {
             
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
+            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
+    		{
+            	System.out.println("Sertifikat je istekao!");
+            	return false;
+    		}
+            if (crlVerifier.isRevoked(cert))
+            {
+            	System.out.println("Sertifikat je povucen.");
+            	return false;
+            }
             document = signEnveloped.signDocument(document,pk,cert);
             signEnveloped.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
             ret = true;
@@ -639,7 +681,7 @@ public class DatabaseManager<T> {
         }
     }
     
-    private boolean encriptContent()
+    private boolean encriptContent(String username)
     {
     	boolean ret = false;
     	try{
@@ -651,7 +693,7 @@ public class DatabaseManager<T> {
             System.out.println("Generating secret key ....");
             SecretKey secretKey = encryptKek.generateDataEncryptionKey();
             
-            Certificate cert = encryptKek.readCertificate();
+            Certificate cert = encryptKek.readCertificate(IAGNS);
             System.out.println("Encrypting....");
             document = encryptKek.encrypt(document ,secretKey, cert);
             encryptKek.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
@@ -663,14 +705,14 @@ public class DatabaseManager<T> {
     	}
     }
     
-    private Document decryptContenc(Document doc)
+    private Document decryptContenc(Document doc, String username)
     {
     	Document retValue = null;
     	
     	try
     	{
     		DecryptKEK decript = new DecryptKEK();
-    		PrivateKey privateKey = decript.readPrivateKey();
+    		PrivateKey privateKey = decript.readPrivateKey(username);
     		Document document = decript.decrypt(doc, privateKey);
     		decript.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
     		retValue = document;
@@ -739,5 +781,69 @@ public class DatabaseManager<T> {
 
         return matches;
     }
+    
+    /**
+	 * Kreira DOM od XML dokumenta
+	 */
+	private Document loadDocument() {
+		try {
+			String file = INPUT_OUTPUT_TMP_FILE;
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document document = db.parse(new File(file));
+
+			return document;
+		} catch (FactoryConfigurationError e) {
+			e.printStackTrace();
+			return null;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		} catch (SAXException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Snima DOM u XML fajl 
+	 */
+	private void saveDocument(Document doc) 
+	{
+		try {
+			String fileName = INPUT_OUTPUT_TMP_FILE;
+			File outFile = new File(fileName);
+			FileOutputStream f = new FileOutputStream(outFile);
+
+			TransformerFactory factory = TransformerFactory.newInstance();
+			Transformer transformer = factory.newTransformer();
+			
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(f);
+			
+			transformer.transform(source, result);
+
+			f.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

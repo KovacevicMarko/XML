@@ -52,19 +52,6 @@ public class DecryptKEK {
         Security.addProvider(new BouncyCastleProvider());
         org.apache.xml.security.Init.init();
     }
-    
-	public void testIt() {
-		//ucitava se dokument
-		Document doc = loadDocument(IN_FILE);
-		//ucitava se privatni kljuc
-		PrivateKey pk = readPrivateKey();
-		//kriptuje se dokument
-		System.out.println("Decrypting....");
-		doc = decrypt(doc, pk);
-		//snima se dokument
-		saveDocument(doc, OUT_FILE);
-		System.out.println("Encryption done");
-	}
 	
 	/**
 	 * Kreira DOM od XML dokumenta
@@ -131,7 +118,7 @@ public class DecryptKEK {
 	 * Ucitava privatni kljuc is KS fajla
 	 * alias primer
 	 */
-	public PrivateKey readPrivateKey() {
+	public PrivateKey readPrivateKey(String username) {
 		try {
 			//kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
@@ -139,8 +126,8 @@ public class DecryptKEK {
 			BufferedInputStream in = new BufferedInputStream(DecryptKEK.openStream("sgns.jks"));
 			ks.load(in, "sgns".toCharArray());
 			
-			if(ks.isKeyEntry("jocko")) {
-				PrivateKey pk = (PrivateKey) ks.getKey("jocko", "sgns".toCharArray());
+			if(ks.isKeyEntry(username)) {
+				PrivateKey pk = (PrivateKey) ks.getKey(username, "sgns".toCharArray());
 				return pk;
 			}
 			else
@@ -205,11 +192,6 @@ public class DecryptKEK {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) {
-		DecryptKEK decrypt = new DecryptKEK();
-		decrypt.testIt();
 	}
 
 }

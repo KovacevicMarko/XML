@@ -1,11 +1,7 @@
-package rest.controllers;
+package businessLogic;
 
-import java.io.File;
 import java.security.PrivateKey;
-
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
+import java.util.Random;
 
 import model.Akt;
 import model.Amandman;
@@ -14,12 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import securityPackage.DecryptKEK;
-import businessLogic.BeanManager;
+
 import common.DatabaseConnection;
-import common.JaxbXmlConverter;
 
 @RestController
 @RequestMapping(value = "/IstorijskiArhiv/")
@@ -42,8 +36,11 @@ public class ArhivController
 		Document dock = dec.decrypt(doc, pk);
 		Akt akt = bm.getBeanByDocument(dock);
 		
-		System.out.println(akt.getId());
-		akt.setId("11111111111111111111");
+		if(akt.getId().isEmpty() || akt.getId() == null)
+		{
+			Random rand = new Random();
+			akt.setId(Integer.toString(rand.nextInt(Integer.MAX_VALUE)));
+		}
 		//provera zbog provg puta kad se digne server
 		if(lastSavedAkt!=null)
 		{
@@ -66,6 +63,11 @@ public class ArhivController
 		Document dock = dec.decrypt(doc, pk);
 		Amandman amandman = bm.getBeanByDocument(dock);
 		
+		if(amandman.getId().isEmpty() || amandman.getId() == null)
+		{
+			Random rand = new Random();
+			amandman.setId(Integer.toString(rand.nextInt(Integer.MAX_VALUE)));
+		}
 		
 		//provera zbog provg puta kad se digne server
 		if(lastSavedAmandman!=null)
@@ -76,7 +78,7 @@ public class ArhivController
 				return;
 			}
 		}
-		bm.writeDocumentToArchive(amandman, DatabaseConnection.ARHIV_AKT_USVOJEN_COL_ID);
+		bm.writeDocumentToArchive(amandman, DatabaseConnection.ARHIV_AMANDMAN_USVOJEN_COL_ID);
 		lastSavedAmandman = amandman;
 	}
 	
