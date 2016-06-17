@@ -71,7 +71,7 @@
 		            }
 				$http(req).then(onSuccess, onError);
 			},
-			generate:function(aktId, onSuccess, onError){
+			generateAktPdf:function(aktId, onSuccess, onError){
 
 	            $http.post('/XMLiBSEP/akt/downloadAkt/'+aktId,{}, {responseType:'arraybuffer'})
 	                .then(onSuccess,onError);

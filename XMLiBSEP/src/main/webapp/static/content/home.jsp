@@ -12,27 +12,39 @@
 						</tr>
 						<tr>
 							<th>ID akta</th>
-							<th>Naziv akta</th>
+							<th>Detalji o aktu</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="akt in usvojeniAktovi">
 							<td>{{akt.id}}</td>
-							<td>{{akt.nazivAkt}}</td>
+							<td><button ng-click="getAktById(akt.id)"
+									class="btn btn-info">Opsirnije</button>
+								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
+									Generisi PDF</button></td>
 						</tr>
 						<tr>
 							<th align="center" colspan="2">Predlozeni akti</th>
 						</tr>
 						<tr>
 							<th>ID akta</th>
-							<th>Naziv akta</th>
+							<th>Detalji o aktu</th>
 						</tr>
 						<tr ng-repeat="akt in predlozeniAktovi">
 							<td>{{akt.id}}</td>
-							<td>{{akt.nazivAkt}}</td>
+							<td><button ng-click="getAktById(akt.id)"
+									class="btn btn-info">Opsirnije</button>
+								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
+									Generisi PDF</button></td>
 						</tr>
 					</tbody>
 				</table>
+				
+				<div ng-bind-html="aktHTML"></div>
+
+	<div ng-show="showPdf" style="width: 100%; height: 600px;">
+		<embed ng-src="{{content}}" style="width: 100%; height: 600px"></embed>
+	</div>
 			</div>
 		</div>
 	</div>

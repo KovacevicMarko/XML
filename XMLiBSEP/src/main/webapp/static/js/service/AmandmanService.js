@@ -26,6 +26,34 @@
 		            }	
 
 				$http(req).then(onSuccess, onError);
+			},
+			getAmandmanById : function (amandmanId, onSuccess, onError) {
+				var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/amandman/getAmandmanById/",
+		                headers: {
+		                     'Content-Type': "text/html"
+		                         },
+		                data : amandmanId
+		            }
+				$http(req).then(onSuccess, onError);
+			},
+			generateAmandmanPdf:function(amandmanId, onSuccess, onError){
+
+	            $http.post('/XMLiBSEP/amandman/downloadAmandman/'+amandmanId,{}, {responseType:'arraybuffer'})
+	                .then(onSuccess,onError);
+
+			},
+			withdrawAmandman : function (amandmanId, onSuccess, onError) {
+				var req = {
+		                method : "DELETE",
+		                url: "/XMLiBSEP/amandman/withdraw/",
+		                headers: {
+		                     'Content-Type': "text/plain"
+		                         },
+		                data : amandmanId
+		            }
+				$http(req).then(onSuccess, onError);
 			}
 		};
 

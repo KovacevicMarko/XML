@@ -19,6 +19,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -28,6 +32,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import model.Akt;
+import model.Amandman;
+import model.TOdbornik;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -56,6 +64,7 @@ import common.Role;
 import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
+import dto.ArhivDto;
 import dto.UserDto;
 import model.Akt;
 import model.Amandman;
@@ -122,6 +131,14 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		
+		TOdbornik odbornik = new TOdbornik();
+		odbornik.setIme(userOnSession.getIme());
+		odbornik.setPrezime(userOnSession.getPrezime());
+		odbornik.setUsername(username);
+		odbornik.setStranka("Stranka");
+		
+		akt.getPrelazneIZavrsneOdredbe().setPredlagac(odbornik);
+		
 		boolean isWritingFailed = false;
 		
 		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
@@ -164,6 +181,9 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId+".xml", true);
+		
+		Document dcc = bm.read(false, aktId+".xml");
+		
 		System.out.println("Id akta" + akt.getId());
 		
 		Akt oldAkt = akt;
@@ -195,7 +215,7 @@ public class AktController {
 				}
 				
 				//Delete akt from predlozeni collection
-				bm.deleteDocument(aktId);
+				bm.deleteDocument(aktId+".xml");
 				akt.setSignature(null);
 				//Writing into new collection
 				if(amandmani.size()<numberOfProposedAmandmans)
@@ -211,7 +231,7 @@ public class AktController {
 		else
 		{
 			akt.setSignature(null);
-			bm.deleteDocument(aktId);
+			bm.deleteDocument(aktId+".xml");
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
@@ -223,7 +243,15 @@ public class AktController {
 		
 		Document doc = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
 		
-		retVal = new ResponseEntity(doc, HttpStatus.OK);
+		File file = new File("tmp.xml");
+		
+		JSONObject json = new JSONObject();
+		json.put("doc", docum);
+		
+		ArhivDto dtoArhiv = new ArhivDto();
+		dtoArhiv.setDoc(docum);
+		
+		retVal = new ResponseEntity(dtoArhiv, HttpStatus.OK);
 		return retVal;
 		
     }
@@ -232,12 +260,6 @@ public class AktController {
 	 public ResponseEntity getAmandmans(@RequestBody String docId,HttpServletRequest req) {
 	 
 		 ResponseEntity retVal;
-		 
-		 if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
-				retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
-				return retVal;
-			}
-			
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		String username = userOnSession.getKorisnickoIme();
@@ -432,7 +454,7 @@ public class AktController {
         	e.printStackTrace();
         }
         response.setContentType("application/pdf");
-        try (InputStream is = new FileInputStream(new File("akt.pdf"))){
+        try (InputStream is = new FileInputStream(new File("transform/akt.pdf"))){
             org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {

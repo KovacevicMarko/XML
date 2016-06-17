@@ -6,7 +6,9 @@
 			approve : function(akt, usvojeniAmandmani, onSuccess, onError) {
 				
 				var listaUsvojenih = [];
+				var number = 0;
 				if (akt.amandmani) {
+					number = akt.amandmani.length;
 					for (var i = 0; i < akt.amandmani.length; i++) {
 						var amandmanId = akt.amandmani[i].id;
 						if (usvojeniAmandmani['amandman_'+amandmanId]) {
@@ -16,13 +18,14 @@
 				}
 				
 				
+				
 				var req = {
 		                method : "POST",
 		                url: "/XMLiBSEP/akt/approve/",
 		                headers: {
 		                     'Content-Type': "application/json"
 		                         },
-		                data: {aktId : akt.id, amandmanIds : listaUsvojenih, numberOfAmandmans:akt.amandmani.length }
+		                data: {aktId : akt.id, amandmanIds : listaUsvojenih, numberOfAmandmans:number }
 		            }	
 
 				$http(req).then(onSuccess, onError);
@@ -30,9 +33,9 @@
 			sendToArhiv : function (forArhiv, onSuccess, onError) {
 				var req = {
 		                method : "POST",
-		                url: "/BSEPiXML/IstorijskiArhiv/saveAkt/",
+		                url: "/IstorijskiArhiv/storeAkt/",
 		                headers: {
-		                     'Content-Type': "application/xml"
+		                     'Content-Type': "application/json"
 		                         },
 		                data: forArhiv
 		            }	

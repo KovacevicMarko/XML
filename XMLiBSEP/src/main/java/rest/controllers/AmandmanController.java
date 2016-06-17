@@ -13,9 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +26,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import model.Akt;
+import model.Amandman;
+import model.TOdbornik;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -44,18 +46,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-
+import securityPackage.SessionHandler;
 import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
+
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import common.DatabaseConnection;
 import common.Role;
+
 import dto.AktSearchDto;
-import dto.AmandmanDto;
 import dto.UserDto;
-import model.Akt;
-import model.Amandman;
-import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/amandman/")
@@ -100,6 +100,14 @@ public class AmandmanController {
 		
 		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
 		
+		TOdbornik odbornik = new TOdbornik();
+		odbornik.setIme(userOnSession.getIme());
+		odbornik.setPrezime(userOnSession.getPrezime());
+		odbornik.setUsername(username);
+		odbornik.setStranka("Stranka");
+		
+		amandman.setPredlagacAmandmana(odbornik);
+		
 		boolean isWritingFailed = false;
 		
 		if(bm.writeDocument(amandman, DatabaseConnection.AMANDMAN_PREDLOZEN_COL_ID, true, username)==null){
@@ -127,7 +135,7 @@ public class AmandmanController {
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
-		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
 		bm.deleteDocument(amandmanId);
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
@@ -177,7 +185,7 @@ public class AmandmanController {
 	}
 	
 	@RequestMapping(value = "/getAmandmanById/", method = RequestMethod.POST)
-	public ResponseEntity getAktbyId(@RequestBody String data) {//@RequestBody String data
+	public ResponseEntity getAmandmanbyId(@RequestBody String data) {//@RequestBody String data
 		//data="15169449515975435548"+".xml";
 		data += ".xml";
         System.out.println("ID je : "+data);
@@ -185,9 +193,9 @@ public class AmandmanController {
         Source xslt = new StreamSource(new File("transform/amandman.xsl"));
         try {
             Transformer transformer = factory.newTransformer(xslt);
-            BeanManager<Akt> bm = new BeanManager<>("Schema/Amandman.xsd");
-            Akt akt=bm.read(data, true);
-            bm.convertToXml(akt);
+            BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+            Amandman amandman=bm.read(data, true);
+            bm.convertToXml(amandman);
             
             Source text = new StreamSource(new File("tmp.xml"));
             transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
@@ -246,8 +254,8 @@ public class AmandmanController {
  //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 public void generatePdf(String docId) throws Exception{
 	//docId+=".xml";
-	BeanManager<Akt> bm = new BeanManager<>("Schema/Amandman.xsd");
-    Akt akt=bm.read(docId, true);
+	BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+    Amandman akt=bm.read(docId, true);
     bm.convertToXml(akt);
     FopFactory fopFactory=null;
     

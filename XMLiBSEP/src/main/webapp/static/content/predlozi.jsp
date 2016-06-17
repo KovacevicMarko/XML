@@ -30,27 +30,37 @@
 									data-toggle="collapse" data-target="#aman{{$index}}">Amandmani</button></td>
 							<td><button ng-click="getAktById(akt.id)"
 									class="btn btn-info">Opsirnije</button>
-								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
-									Generisi PDF</button></td>
+								<button type="submit" class="btn btn-info"
+									ng-click="generateAktPdf(akt.id)">Generisi PDF</button></td>
 						</tr>
 						<tr ng-repeat-end>
-							<td colspan="4" class="hiddenRow">
+							<td ng-controller="AmandmanController" colspan="4" class="hiddenRow">
 								<div id="aman{{$index}}" class="accordion-body collapse">
 									<table class="table table-striped">
 										<thead>
 											<tr>
 												<th>Naziv amandmana</th>
 												<th>Povlacenje amandmana</th>
+												<th>Detalji o amandmanu</th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr ng-repeat="amandman in akt.amandmani">
-												<td>{{amandman.naziv}}</td>
-												<td><button ng-show="true" class="btn btn-danger">Povuci
+												<td>{{amandman.pravniOsnov}}</td>
+												<td><button ng-if="amandman.predlagacAmandmana.username==user.korisnickoIme" ng-click="withdrawAmandman(amandman.id, $index)" class="btn btn-danger">Povuci
 														amandman</button></td>
+												<td><button ng-click="getAmandmanById(amandman.id)"
+														class="btn btn-info">Opsirnije</button>
+													<button type="submit" class="btn btn-info"
+														ng-click="generateAmandmanPdf(amandman.id)">Generisi PDF</button></td>
 											</tr>
 										</tbody>
 									</table>
+								</div>
+								<div ng-bind-html="amandmanHTML"></div>
+
+								<div ng-show="showPdf" style="width: 100%; height: 600px;">
+									<embed ng-src="{{content}}" style="width: 100%; height: 600px"></embed>
 								</div>
 							</td>
 						</tr>
