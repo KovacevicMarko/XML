@@ -83,8 +83,8 @@ public class BeanManager<T>
     /**
      * Upis fajla u bazu.
      */
-    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
-        return  databaseManager.writeFile(inputStream,docId,colId, signFlag, username);
+    public boolean write(T bean, FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+        return  databaseManager.writeFile(bean, inputStream,docId,colId, signFlag, username);
     }
     
     /**
@@ -108,6 +108,11 @@ public class BeanManager<T>
     public boolean write(T bean, String docId, String colId, boolean signFlag, String username) {
         return databaseManager.writeBean(bean,docId,colId, signFlag, username);
     }
+    
+    public boolean writeDocumentToArchive(T bean, String colId)
+    {
+    	return databaseManager.writeDocumentToArchive(bean, colId);
+    }
 
     /**
      * Citanje xml dokumnta iz baze po DocId-u.
@@ -119,12 +124,27 @@ public class BeanManager<T>
     public Document read(boolean signatureFlag, String docId){
         return databaseManager.read(signatureFlag, docId);
     }
+    
+    public Document readDocumentFromArchive(String docId)
+    {
+    	return databaseManager.readDocumentFromArchive(docId);
+    }
 
     /**
      * Konvertovanje fajla u jaxb bean.
      */
     public T convertFromXml(File file){
         return converter.convertFromXml(file,schema);
+    }
+    
+    /**
+     * Funkcija za vracanje bean-a u odnosu na dokument.
+     * @param document
+     * @return
+     */
+    public T getBeanByDocument(Document document)
+    {
+    	return databaseManager.getBeanByDocument(document);
     }
 
     /**

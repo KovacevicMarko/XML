@@ -241,14 +241,6 @@ public class ObjectFactory {
         return new Amandman();
     }
 
-	 /**
-     * Create an instance of {@link TTipIzmene }
-     * 
-     */
-    public TTipIzmene createTTipIzmene() {
-        return new TTipIzmene();
-    }
-
     /**
      * Create an instance of {@link TTekstIzmene }
      * 

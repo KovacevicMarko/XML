@@ -28,6 +28,9 @@ public class DatabaseConnection
 	
 	public static String AMANDMAN_USVOJEN_DOC_ID="/AmandmanUsvojen.xml";
 	public static String AMANDMAN_USVOJEN_COL_ID="/ColAmandmanUsvojen";
+	
+	public static String ARHIV_AKT_USVOJEN_COL_ID = "/ColArhivAktUsvojen.xml";
+	public static String ARHIV_AMANDMAN_USVOJEN_COL_ID = "/ColArhivAmandmanUsvojen.xml";
 
     private static DatabaseClient client = null;
 

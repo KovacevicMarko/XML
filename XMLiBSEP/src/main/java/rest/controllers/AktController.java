@@ -13,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +34,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,17 +44,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import businessLogic.BeanHelperMethods;
-
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
+import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
 import dto.AktApproveDto;
 import dto.AktSearchDto;
+import dto.AktSearchRefDto;
 import dto.UserDto;
 import model.Akt;
 import model.Amandman;
+import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -61,8 +63,9 @@ public class AktController {
 	
 	@RequestMapping(method = RequestMethod.GET)//AKT_DOC_ID
 	 public ResponseEntity getProposedAndApprovedActs() {
-	 
+		
 		 ResponseEntity retVal;
+		 
 		 BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		  
 	     ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
@@ -80,7 +83,12 @@ public class AktController {
 	@RequestMapping(value = "/addAkt/", method = RequestMethod.POST)
 	public ResponseEntity addAkt(@RequestBody Akt akt, HttpServletRequest req){
 		
-		ResponseEntity retVal; 
+		ResponseEntity retVal;
+		
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+			return retVal;
+		}
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		String username = userOnSession.getKorisnickoIme();
@@ -89,7 +97,7 @@ public class AktController {
 		
 		boolean isWritingFailed = false;
 		
-		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
 			isWritingFailed = true;
 		}
 		
@@ -103,53 +111,80 @@ public class AktController {
 		
 	}
 	
-	@RequestMapping(value="/approve/", method = RequestMethod.POST)//AKT_DOC_ID
-	 public ResponseEntity approveAkt(@RequestBody AktApproveDto AktIdAndAmandmanIds,HttpServletRequest req) {
+	@RequestMapping(value="/approve/", method = RequestMethod.POST)
+	 public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
 	 
-		 ResponseEntity retVal;
+		ResponseEntity retVal;
 		 
-		 String aktId = AktIdAndAmandmanIds.getAktId();
-		 ArrayList<String> amandmanIds = AktIdAndAmandmanIds.getAmandmanIds();
-		 
-		 if(req.getSession().getAttribute("user")==null){
-				
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-				
-		 }	
-			
-		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
-			
-		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-		}
+		//if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_PREDSEDNIK)){
+		//	retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+		//	return retVal;
+		//}
 		
-		String username = userOnSession.getKorisnickoIme();
+		String aktId = dto.getAktId();
+		System.out.println(aktId);
+		List<String> amandmanIds = dto.getAmandmanIds();
+		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();
+			
+		//UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
+		//String username = userOnSession.getKorisnickoIme();
+		String username = "jocko";
+		
+		BeanHelperMethods bhm = new BeanHelperMethods();
+		
+		BeanManager<Amandman> bmAmandman = new BeanManager<>("Schema/Amandman.xsd");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId, true);
+		System.out.println("Id akta" + akt.getId());
+		
+		Akt newAkt=null;
+		System.out.println("Usao u izmenu.");
+		List<Amandman> amandmani;
 		
 		if(!amandmanIds.isEmpty()){
-			//TODO to implement update AKT.
 			
-			/*
-			 for(Amandman amandman in Amandmans){
-			 	updateAkt(akt, amandman);
-			 }
-			*/
+			amandmani = bhm.getAmandmansFromIds(amandmanIds);
+			ApproveAmandmanOnAct appClass = new ApproveAmandmanOnAct<>(akt);
+			
+			System.out.println("Usao");
+			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, true, username);
 				
+				//Update akt and write amandman into approved
+				for(Amandman am : amandmani)
+				{
+					newAkt = appClass.approveAmandmanOnAkt(am.getSadrzajAmandmana().getGlavaAmandman(), akt);
+					akt = newAkt;
+					
+					bmAmandman.deleteDocument(am.getId() + ".xml");
+					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, true, username);
+					
+				}
+				
+				//Delete akt from predlozeni collection
+				bm.deleteDocument(aktId);
+				
+				//Writing into new collection
+				if(amandmani.size()<numberOfProposedAmandmans)
+				{
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID, true, username);
+				}
+				
+				else
+				{
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID, true, username);
+				}
+				
+			}		
 		
+		else{
+			
+			bm.deleteDocument(aktId);
+			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, true, username);
 		}
 		
-		bm.deleteDocument(aktId);
-		
-		bm.write(akt, aktId, DatabaseConnection.AKT_USVOJEN_COL_ID, true, username);
-		
-		List<Akt> predlozeniAkti = bm.executeQuery(CommonQueries.getAllProposedActs());
-		retVal = new ResponseEntity(predlozeniAkti,HttpStatus.OK);
+		retVal = new ResponseEntity(HttpStatus.OK);
 		return retVal;
 		
     }
@@ -159,12 +194,10 @@ public class AktController {
 	 
 		 ResponseEntity retVal;
 		 
-		 if(req.getSession().getAttribute("user")==null){
-				
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-				
-		 }	
+		 if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+				retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+				return retVal;
+			}
 			
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
@@ -187,21 +220,13 @@ public class AktController {
 		
 		ResponseEntity retVal; 
 		
-		if(req.getSession().getAttribute("user")==null){
-			
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
 			return retVal;
-			
-		}	
+		}
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
-		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		/*if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-		}
-		*/
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId, true);
 		bm.deleteDocument(aktId);
@@ -261,77 +286,114 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getAktById/", method = RequestMethod.POST)
-	public ResponseEntity getAktbyId(@RequestBody String data) {//@RequestBody String data
-		//data="15169449515975435548"+".xml";
-		data += ".xml";
-        System.out.println("ID je : "+data);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(new File("transform/akt.xsl"));
-        try {
-            Transformer transformer = factory.newTransformer(xslt);
-            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-            Akt akt=bm.read(data, true);
-            bm.convertToXml(akt);
-            
-            Source text = new StreamSource(new File("tmp.xml"));
-            transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
+	public ResponseEntity getAktbyId(@RequestBody String data) {//String data
+		
+	        TransformerFactory factory = TransformerFactory.newInstance();
+	        Source xslt = new StreamSource(new File("transform/akt.xsl"));
+	        try {
+	            Transformer transformer = factory.newTransformer(xslt);
+	            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+	            Akt akt=bm.read(data, true);
+	            bm.convertToXml(akt);
+	            
+	            Source text = new StreamSource(new File("tmp.xml"));
+	            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+	        } catch (TransformerConfigurationException e) {
+	            e.printStackTrace();
+	        } catch (TransformerException e) {
+	            e.printStackTrace();
+	        }
 
-        File htmlFile = new File("transform/tmp.html");
-       
-        
-        try {
-            FileInputStream fis = new FileInputStream(htmlFile);
-            String akt = "";
-            for (String line : Files.readAllLines(Paths.get("transform/tmp.html"))) {
-                akt+=line;
-            }
-            System.out.println(akt);
-            JSONObject obj = new JSONObject();
-            obj.put("akt", akt);
-            
-            return new ResponseEntity<String>(obj.toString(),HttpStatus.OK);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	        File htmlFile = new File("transform/tmp.html");
+	       
+	        
+	        try {
+	            FileInputStream fis = new FileInputStream(htmlFile);
+	            String akt = "";
+	            for (String line : Files.readAllLines(Paths.get("transform/tmp.html"))) {
+	                akt+=line;
+	            }
+	            System.out.println(akt);
+
+
+	            return new ResponseEntity(akt,HttpStatus.OK);
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	 }
+	
+	@RequestMapping(value = "/findReferences/", method = RequestMethod.POST)
+	public ResponseEntity findReferences(@RequestBody AktSearchRefDto aktRefDto){
+		
+		ResponseEntity retVal = null;
+		
+		String aktId = aktRefDto.getAktId();
+		boolean isApproved = aktRefDto.isApproved();
+		
+		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		
+		Akt akt = bm.read(aktId, true); 
+		
+		
+		HashMap<String,ArrayList<String>> referencedAktsMap = null;
+		
+		if(!isApproved){
+			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID, "refAkt");
+		}
+		else{
+			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_COL_ID, "refAkt");
+		}
+		
+		//List<String> referencedAkts = new ArrayList<>();
+		//referencedAkts.t
+		List<String> referencedAkts = new ArrayList<>();
+		
+		
+		Iterator it = referencedAktsMap.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+			if(pair.getKey().equals(aktId)){
+				for(String s : (ArrayList<String>) pair.getValue()){
+					if(!referencedAkts.contains(s)){
+						referencedAkts.add(s);
+					}
+				}
+			}
+		}
+		
+			
+		retVal = new ResponseEntity(referencedAkts,HttpStatus.OK);
+		
+		return retVal;
 	}
 	
-	
-	 @RequestMapping(value="/downloadAkt/{fileName}",
-	            method=RequestMethod.POST)
-	    public void downloadPDF(HttpServletRequest request,
-	                           HttpServletResponse response,
-	                           @PathVariable String fileName) throws IOException {
-	       	System.out.println("docID= "+ fileName);
-	        fileName += ".xml";
-	        try {
-				generatePdf(fileName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	        response.setContentType("application/pdf");
-	        try (InputStream is = new FileInputStream(new File("transform/akt.pdf"))){
-	            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-	            response.flushBuffer();
-	        } catch (IOException ex) {
-	           System.out.println("Error");
-	            throw 
-	            new RuntimeException("IOError writing file to output stream");
-	        }
-	    }
-	
+	@RequestMapping(value="/downloadAkt/{fileName}",method=RequestMethod.POST)
+    public void downloadPDF(HttpServletRequest request, HttpServletResponse response, @PathVariable String fileName) throws IOException {
+        System.out.println("docID= "+ fileName);
+        fileName += ".xml";
+        try {
+        	generatePdf(fileName);
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        response.setContentType("application/pdf");
+        try (InputStream is = new FileInputStream(new File("Akt.pdf"))){
+            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+           System.out.println("Error");
+            throw 
+            new RuntimeException("IOError writing file to output stream");
+        }
+    }
 	
 	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 	public void generatePdf(String docId) throws Exception{
-		//docId+=".xml";
+		docId="3847327626572118583"+".xml";
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
         Akt akt=bm.read(docId, true);
         bm.convertToXml(akt);

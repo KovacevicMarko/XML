@@ -5,7 +5,7 @@
 // Generated on: 2016.06.15 at 08:30:32 PM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2000/09/xmldsig#",xmlns = {@XmlNs(prefix = "", namespaceURI = "http://www.gradskaskupstina.gov/")}, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.w3.org/2000/09/xmldsig#",xmlns = {@XmlNs(prefix = "", namespaceURI = "http://www.gradskaskupstina.rs/")}, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package model;
 import javax.xml.bind.annotation.XmlNs;
 

@@ -2,7 +2,6 @@ package common;
 
 import java.util.List;
 
-import enums.TTipIzmeneEnum;
 import model.Akt;
 import model.TClan;
 import model.TClan.Stav;
@@ -17,6 +16,7 @@ import model.TSadrzajStava.Tacka;
 import model.TSadrzajTacke;
 import model.TTekst;
 import model.TTekstIzmene;
+import enums.TTipIzmeneEnum;
 
 public class ApproveAmandmanOnAct<T> 
 {
@@ -291,6 +291,7 @@ public class ApproveAmandmanOnAct<T>
 	private TClan getClanOnAct(String oznakaClana)
 	{
 		TClan retVal = null;
+		System.out.println(this.akt);
 		for(TDeo deo : this.akt.getDeo())
 		{
 			for(TDeo.Glava glava : deo.getGlava())
