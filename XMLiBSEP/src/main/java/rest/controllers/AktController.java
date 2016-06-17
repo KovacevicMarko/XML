@@ -411,7 +411,7 @@ public class AktController {
         	e.printStackTrace();
         }
         response.setContentType("application/pdf");
-        try (InputStream is = new FileInputStream(new File("akt.pdf"))){
+        try (InputStream is = new FileInputStream(new File("transform/akt.pdf"))){
             org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
