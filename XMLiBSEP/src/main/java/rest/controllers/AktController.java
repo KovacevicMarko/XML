@@ -29,6 +29,9 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import model.Akt;
+import model.Amandman;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -43,19 +46,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import securityPackage.SessionHandler;
 import businessLogic.BeanHelperMethods;
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
+import businessLogic.BeanManager;
+
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
+
 import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
 import dto.UserDto;
-import model.Akt;
-import model.Amandman;
-import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -112,24 +116,24 @@ public class AktController {
 	}
 	
 	@RequestMapping(value="/approve/", method = RequestMethod.POST)
-	 public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
+	public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
 	 
 		ResponseEntity retVal;
 		 
-		//if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_PREDSEDNIK)){
-		//	retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
-		//	return retVal;
-		//}
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+			return retVal;
+		}
 		
 		String aktId = dto.getAktId();
 		System.out.println(aktId);
 		List<String> amandmanIds = dto.getAmandmanIds();
 		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();
 			
-		//UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
-		//String username = userOnSession.getKorisnickoIme();
-		String username = "jocko";
+		String username = userOnSession.getKorisnickoIme();
+		//String username = "jocko";
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
 		
@@ -138,6 +142,8 @@ public class AktController {
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId+".xml", true);
 		System.out.println("Id akta" + akt.getId());
+		
+		akt.setSignature(null);
 		
 		Akt newAkt=null;
 		System.out.println("Usao u izmenu.");
@@ -149,7 +155,7 @@ public class AktController {
 			ApproveAmandmanOnAct appClass = new ApproveAmandmanOnAct<>(akt);
 			
 			System.out.println("Usao");
-			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, true, username);
+			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, false, username);
 				
 				//Update akt and write amandman into approved
 				for(Amandman am : amandmani)
@@ -158,30 +164,30 @@ public class AktController {
 					akt = newAkt;
 					
 					bmAmandman.deleteDocument(am.getId() + ".xml");
-					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, true, username);
+					am.setSignature(null);
+					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, false, username);
 					
 				}
 				
 				//Delete akt from predlozeni collection
 				bm.deleteDocument(aktId);
-				
+				akt.setSignature(null);
 				//Writing into new collection
 				if(amandmani.size()<numberOfProposedAmandmans)
-				{
-					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID, true, username);
+				{	
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID, false, username);
 				}
-				
 				else
 				{
-					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID, true, username);
+					bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID, false, username);
 				}
 				
-			}		
-		
-		else{
-			
+		}			
+		else
+		{
+			akt.setSignature(null);
 			bm.deleteDocument(aktId);
-			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, true, username);
+			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
 		retVal = new ResponseEntity(HttpStatus.OK);
@@ -253,13 +259,16 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
     	
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -274,14 +283,18 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		
-    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,tagName);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity(null,HttpStatus.OK);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
+    	
         
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -339,14 +352,17 @@ public class AktController {
 		Akt akt = bm.read(aktId, true); 
 		
 		
-		HashMap<String,ArrayList<String>> referencedAktsMap = null;
+		//HashMap<String,ArrayList<String>>  = null;
 		
-		if(!isApproved){
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID, "refAkt");
-		}
-		else{
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_COL_ID, "refAkt");
-		}
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,"refAkt");
+    	
+    	HashMap<String,ArrayList<String>> referencedAktsMap = new HashMap<>(predlozeni);
+    	referencedAktsMap.putAll(usvojeniNacelo);
+    	referencedAktsMap.putAll(usvojeniPojedinosti);
+    	referencedAktsMap.putAll(usvojeniCelosti);
 		
 		//List<String> referencedAkts = new ArrayList<>();
 		//referencedAkts.t
