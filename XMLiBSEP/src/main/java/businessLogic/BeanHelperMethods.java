@@ -7,6 +7,7 @@ import java.util.List;
 import common.CommonQueries;
 import model.Akt;
 import model.Amandman;
+import model.TSadrzajAmandmana.GlavaAmandman;
 
 public class BeanHelperMethods {
 	
@@ -45,6 +46,21 @@ public class BeanHelperMethods {
 		mapa.put("amandmani", amandmani);
 		
 		return mapa;
+		
+	}
+	
+	public List<Amandman> getAmandmansFromIds(List<String> ids){
+		
+		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+		
+		List<Amandman> amandmans = new ArrayList<>();
+		
+		for(String id : ids){
+			Amandman am = bm.read(id, true);
+			amandmans.add(am);
+		}
+		
+		return amandmans;
 		
 	}
 

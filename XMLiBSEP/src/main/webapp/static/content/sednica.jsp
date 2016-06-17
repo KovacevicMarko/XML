@@ -19,9 +19,16 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat-start="akt in akts"class="accordion-toggle">
-							<td data-toggle="collapse"
-							data-target="#aman{{$index}}" style="cursor:pointer">{{akt.naziv}}</td>
-							<td><input type="checkbox" /></td>
+							<td>{{akt.naziv}}</td>
+							<td>
+							<!-- <input ng-init="usvojeniAktovi['akt_'+akt.id] = false" ng-model="usvojeniAktovi['akt_'+akt.id]"type="checkbox" /> -->
+									<button data-toggle="collapse"
+							data-target="#aman{{$index}}" class="btn btn-info">Amandmani</button>
+							<span style="float:right">
+								<button class="btn btn-info">Usvajanje</button>
+								<button class="btn btn-danger">Odbijanje</button>
+							</span>
+							</td>
 						</tr>
 						<tr ng-repeat-end>
 							<td colspan="2" class="hiddenRow">
@@ -38,7 +45,7 @@
 									<tbody>
 										<tr ng-repeat="amandman in akt.amandmani">
 											<td>{{amandman.naziv}}</td>
-											<td><input type="checkbox" /></td>
+											<td><input ng-init="usvojeniAmandmani['amandman_'+amandman.id] = false" ng-model="usvojeniAmandmani['amandman_'+amandman.id]" type="checkbox" /></td>
 										</tr>
 									</tbody>
 								</table>

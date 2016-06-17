@@ -83,8 +83,8 @@ public class BeanManager<T>
     /**
      * Upis fajla u bazu.
      */
-    public boolean write(FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
-        return  databaseManager.writeFile(inputStream,docId,colId, signFlag, username);
+    public boolean write(T bean, FileInputStream inputStream, String docId, String colId, boolean signFlag, String username) {
+        return  databaseManager.writeFile(bean, inputStream,docId,colId, signFlag, username);
     }
     
     /**
@@ -135,6 +135,16 @@ public class BeanManager<T>
      */
     public T convertFromXml(File file){
         return converter.convertFromXml(file,schema);
+    }
+    
+    /**
+     * Funkcija za vracanje bean-a u odnosu na dokument.
+     * @param document
+     * @return
+     */
+    public T getBeanByDocument(Document document)
+    {
+    	return databaseManager.getBeanByDocument(document);
     }
 
     /**

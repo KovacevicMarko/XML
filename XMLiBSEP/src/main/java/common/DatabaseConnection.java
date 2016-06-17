@@ -17,6 +17,12 @@ public class DatabaseConnection
 	public static String AKT_PREDLOZEN_DOC_ID="/AktPredlozen.xml";
 	public static String AKT_PREDLOZEN_COL_ID="/ColAktPredlozen";
 	
+	public static String AKT_USVOJEN_POJEDINOSTI_COL_ID="/ColAktUsvojenPojedinosti";
+	public static String AKT_USVOJEN_CELOSTI_COL_ID="/ColAktUsvojenCelosti";
+	public static String AKT_USVOJEN_NACELO_COL_ID="/ColAktUsvojenNacelu";
+	
+	public static String AKT_BACKUP_COL_ID = "/ColAktBackup";
+	
 	public static String AKT_USVOJEN_DOC_ID="/AktUsvojen.xml";
 	public static String AKT_USVOJEN_COL_ID="/ColAktUsvojen";
 	

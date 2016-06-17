@@ -14,8 +14,19 @@
 		            }	
 
 				$http(req).then(onSuccess, onError);
-			}			
-		
+			},
+			addAmandman : function (amandman, onSuccess, onError) {
+				var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/amandman/addAmandman/",
+		                headers: {
+		                     'Content-Type': "application/xml"
+		                         },
+		                data: amandman
+		            }	
+
+				$http(req).then(onSuccess, onError);
+			}
 		};
 
 	});

@@ -10,6 +10,8 @@
       <script data-require="angular-route@*" data-semver="1.4.8" src="https://code.angularjs.org/1.5.6/angular-route.js"></script>
       <script data-require="angular-ui-router@*" data-semver="0.2.15" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+      <script src="https://code.angularjs.org/1.4.8/angular-sanitize.js"></script>
+      
       <script src="<c:url value='/static/js/bootstrap/bootstrap.js' />"></script>
       <script src="<c:url value='/static/js/app.js' />"></script>
      
