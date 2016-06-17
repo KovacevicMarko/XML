@@ -9,8 +9,8 @@ public class SessionHandler {
 	
 	public static boolean isValidSession(HttpSession session , String role){
 		
-		if(!role.equals(Role.ULOGA_GRADJANIN) || 
-				!role.equals(Role.ULOGA_ODBORNIK) ||
+		if(!role.equals(Role.ULOGA_GRADJANIN) && 
+				!role.equals(Role.ULOGA_ODBORNIK) &&
 				      !role.equals(Role.ULOGA_PREDSEDNIK))
 		{
 			return false;

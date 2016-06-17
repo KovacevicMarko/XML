@@ -5,8 +5,18 @@
 
 		$rootScope.predlozeniAktovi = [];
 		$scope.aktHTML = "";
+		$scope.filtriraniAktovi = [];
+		
 		var onSuccess = function(response) {
 			console.log(response.data);
+		}
+		
+		var onFilterSuccess = function(response) {
+			var data = response.data;
+			for (var id in data) {
+				$scope.filtriraniAktovi.push(id.substring(0,id.length-4));
+			}
+				
 			/*if(response.data.success==true){
 				$scope.user = response.data.user;
 				$state.go('main');
@@ -26,10 +36,10 @@
 
 		$scope.searchAkt = function() {
 			if ($scope.aktSearch.tag == null) {
-				AktService.searchAkt($scope.aktSearch.sadrzaj, onSuccess,
+				AktService.searchAkt($scope.aktSearch.sadrzaj, onFilterSuccess,
 						onError);
 			} else {
-				AktService.searchAktByTag($scope.aktSearch, onSuccess, onError);
+				AktService.searchAktByTag($scope.aktSearch, onFilterSuccess, onError);
 			}
 		};
 		var onAddSuccess = function(response) {

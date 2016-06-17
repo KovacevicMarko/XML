@@ -19,21 +19,14 @@
 				//alert(username+"\n"+password)
 				
 				},
-		    
-		    createUser: function(user){
-					return $http.post('/XMLiBSEP/user/', user)
-							.then(
-									function(response){
-										return response.data;
-									}, 
-									function(errResponse){
-										console.error('Error while creating user');
-										return $q.reject(errResponse);
-									}
-							);
-		    },
 		    logOut : function (onSuccess,onError) {
 		    	
+		    	var req = {
+		                method : "GET",
+		                url: "/XMLiBSEP/user/logOut/"
+		            }	
+
+				$http(req).then(onSuccess, onError);
 		    }
 		};
 

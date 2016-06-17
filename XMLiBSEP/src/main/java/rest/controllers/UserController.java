@@ -117,9 +117,9 @@ public class UserController {
 
 		request.getSession().invalidate();
 
-		String msg = "Succesfully loged out!";
+		//String msg = "Succesfully loged out!";
 
-		retVal = new ResponseEntity<String>(msg, HttpStatus.OK);
+		retVal = new ResponseEntity<String>(HttpStatus.OK);
 
 		return retVal;
 	}

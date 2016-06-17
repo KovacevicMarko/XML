@@ -1,26 +1,18 @@
 package rest.controllers;
 
-import java.io.File;
 import java.security.PrivateKey;
 import java.util.Random;
-
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import model.Akt;
-import model.Amandman;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import securityPackage.DecryptKEK;
 import businessLogic.BeanManager;
 import common.DatabaseConnection;
-import common.JaxbXmlConverter;
+import model.Akt;
+import model.Amandman;
+import securityPackage.DecryptKEK;
 
 @RestController
 @RequestMapping(value = "/IstorijskiArhiv/")

@@ -37,6 +37,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -104,7 +105,7 @@ public class AktController {
 		
 		boolean isWritingFailed = false;
 		
-		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
 			isWritingFailed = true;
 		}
 		
@@ -143,7 +144,7 @@ public class AktController {
 		BeanManager<Amandman> bmAmandman = new BeanManager<>("Schema/Amandman.xsd");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
+		Akt akt = bm.read(aktId+".xml", true);
 		System.out.println("Id akta" + akt.getId());
 		
 		akt.setSignature(null);
@@ -239,8 +240,8 @@ public class AktController {
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
-		bm.deleteDocument(aktId);
+		Akt akt = bm.read(aktId+".xml", true);
+		bm.deleteDocument(aktId+".xml");
 		
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
@@ -264,13 +265,16 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
     	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContent(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContent(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity("Content not found",HttpStatus.NOT_FOUND);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
     	
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
@@ -285,19 +289,23 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		
-    	HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID, tagName);
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(content, DatabaseConnection.AKT_PREDLOZEN_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,tagName);
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(content, DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,tagName);
     	
-    	if(predlozeni.isEmpty()){
-    		retVal = new ResponseEntity(null,HttpStatus.OK);
-    		return retVal;
-    	}
+    	HashMap<String,ArrayList<String>> allAkts = new HashMap<>(predlozeni);
+    	allAkts.putAll(usvojeniNacelo);
+    	allAkts.putAll(usvojeniPojedinosti);
+    	allAkts.putAll(usvojeniCelosti);
+    	
         
-        retVal = new ResponseEntity(predlozeni,HttpStatus.OK);
+        retVal = new ResponseEntity(allAkts,HttpStatus.OK);
         
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.POST)
 	public ResponseEntity getAktbyId(@RequestBody String data) {//String data
 		
 	        TransformerFactory factory = TransformerFactory.newInstance();
@@ -305,11 +313,11 @@ public class AktController {
 	        try {
 	            Transformer transformer = factory.newTransformer(xslt);
 	            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-	            Akt akt=bm.read(data, true);
+	            Akt akt=bm.read(data+".xml", true);
 	            bm.convertToXml(akt);
 	            
 	            Source text = new StreamSource(new File("tmp.xml"));
-	            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+	            transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
 	        } catch (TransformerConfigurationException e) {
 	            e.printStackTrace();
 	        } catch (TransformerException e) {
@@ -326,9 +334,10 @@ public class AktController {
 	                akt+=line;
 	            }
 	            System.out.println(akt);
-
-
-	            return new ResponseEntity(akt,HttpStatus.OK);
+	            
+	            JSONObject obj = new JSONObject();
+	            obj.put("akt", akt);
+	            return new ResponseEntity(obj.toString(),HttpStatus.OK);
 	        } catch (FileNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (IOException e) {
@@ -350,14 +359,17 @@ public class AktController {
 		Akt akt = bm.read(aktId, true); 
 		
 		
-		HashMap<String,ArrayList<String>> referencedAktsMap = null;
+		//HashMap<String,ArrayList<String>>  = null;
 		
-		if(!isApproved){
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID, "refAkt");
-		}
-		else{
-			referencedAktsMap = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_COL_ID, "refAkt");
-		}
+		HashMap<String,ArrayList<String>> predlozeni = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_PREDLOZEN_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniNacelo = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniPojedinosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID,"refAkt");
+    	HashMap<String,ArrayList<String>> usvojeniCelosti = bm.searchByContentAndTag(".xml", DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID,"refAkt");
+    	
+    	HashMap<String,ArrayList<String>> referencedAktsMap = new HashMap<>(predlozeni);
+    	referencedAktsMap.putAll(usvojeniNacelo);
+    	referencedAktsMap.putAll(usvojeniPojedinosti);
+    	referencedAktsMap.putAll(usvojeniCelosti);
 		
 		List<String> referencedAkts = new ArrayList<>();
 		
@@ -390,7 +402,7 @@ public class AktController {
         	e.printStackTrace();
         }
         response.setContentType("application/pdf");
-        try (InputStream is = new FileInputStream(new File("Akt.pdf"))){
+        try (InputStream is = new FileInputStream(new File("akt.pdf"))){
             org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
@@ -402,7 +414,7 @@ public class AktController {
 	
 	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 	public void generatePdf(String docId) throws Exception{
-		docId="3847327626572118583"+".xml";
+		//docId="3847327626572118583"+".xml";
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
         Akt akt=bm.read(docId, true);
         bm.convertToXml(akt);
