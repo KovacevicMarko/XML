@@ -11,6 +11,7 @@ import javax.xml.validation.SchemaFactory;
 import model.Akt;
 import model.Amandman;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +33,8 @@ public class ArhivController
 	private static String IAGNS = "iagns";
 	private static String SGNS = "sgns";
 	
-	@RequestMapping(value = "/saveAkt/", method = RequestMethod.GET)
-	public void saveAkt(Document doc)
+	@RequestMapping(value = "/saveAkt/", method = RequestMethod.POST)
+	public void saveAkt(@RequestBody Document doc)
 	{
 		
 		BeanManager<Akt> bm = new BeanManager<Akt>();
@@ -76,5 +77,6 @@ public class ArhivController
 			}
 		}
 		lastSavedAkt = akt;
+		bm.write(akt, akt.getId(), DatabaseConnection.ARHIV_AKT_USVOJEN_COL_ID, false, null);
 	}
 }

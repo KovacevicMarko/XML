@@ -24,7 +24,7 @@ public class ArhivController
 	private static String IAGNS = "iagns";
 	private static String SGNS = "sgns";
 	
-	@RequestMapping(value = "/saveAkt/", method = RequestMethod.GET)
+	@RequestMapping(value = "/saveAkt/", method = RequestMethod.POST)
 	public void saveAkt(Document doc)
 	{
 		

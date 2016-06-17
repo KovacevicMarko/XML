@@ -4,7 +4,8 @@
 	var SednicaController = function($scope,$rootScope, SednicaService) {
 
 		$scope.sednicaStarted = false;
-
+		$scope.usvojeniAmandmani = {};
+		
 		$scope.startSednica = function() {
 			$scope.sednicaStarted = true;
 		}
@@ -21,11 +22,13 @@
 		var onApproveSuccess = function(response) {
 			var forArhiv = response.data;
 			SednicaService.sendToArhiv(forArhiv, onSendArhivSuccess, onError);
-			alert("Usvojen");
 		}
-		
+		var onError = function(response) {
+			console.log(response.data);
+			//alertify.error("ERROR");
+		}
 		$scope.approve = function (akt) {
-			SednicaService.approve(akt,onApproveSuccess, onError);
+			SednicaService.approve(akt,$scope.usvojeniAmandmani,onApproveSuccess, onError);
 		}
 	}
 
