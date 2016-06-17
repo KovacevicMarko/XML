@@ -27,7 +27,7 @@ import common.JaxbXmlConverter;
  */
 public class BeanManager<T> 
 {
-
+	
     private DatabaseClient client;
 
     private XMLDocumentManager xmlManager;
@@ -108,9 +108,9 @@ public class BeanManager<T>
         return databaseManager.writeBean(bean,docId,colId, signFlag, username);
     }
     
-    public boolean writeDocumentToArchive(T bean, String colId)
+    public Document getEncryptedDocForArchive(T bean, String username, String colId)
     {
-    	return databaseManager.writeDocumentToArchive(bean, colId);
+    	return databaseManager.getEncryptedDocForArchive(bean, username, colId);
     }
 
     /**

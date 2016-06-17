@@ -60,9 +60,9 @@ public class TestController {
 	{
 //		InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
-//		InitializeAkt();
+		InitializeAkt();
 //	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-		InitializeAmandman();
+//		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 //		InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
@@ -256,8 +256,8 @@ public class TestController {
 	{
 		Akt akt = createAkt();
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true, "jocko");
-		
+		bm1.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID , true, "toma");
+
 	}
 	
 	private void InitializeAmandman()

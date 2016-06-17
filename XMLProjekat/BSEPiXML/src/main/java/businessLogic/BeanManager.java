@@ -15,7 +15,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.document.DocumentMetadataPatchBuilder;
 import com.marklogic.client.document.XMLDocumentManager;
-
 import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 
@@ -28,7 +27,7 @@ import common.JaxbXmlConverter;
  */
 public class BeanManager<T> 
 {
-
+	
     private DatabaseClient client;
 
     private XMLDocumentManager xmlManager;
@@ -109,9 +108,9 @@ public class BeanManager<T>
         return databaseManager.writeBean(bean,docId,colId, signFlag, username);
     }
     
-    public boolean writeDocumentToArchive(T bean, String colId)
+    public Document getEncryptedDocForArchive(T bean, String username, String colId)
     {
-    	return databaseManager.writeDocumentToArchive(bean, colId);
+    	return databaseManager.getEncryptedDocForArchive(bean, username, colId);
     }
 
     /**
@@ -129,22 +128,22 @@ public class BeanManager<T>
     {
     	return databaseManager.readDocumentFromArchive(docId);
     }
-
-    /**
-     * Konvertovanje fajla u jaxb bean.
-     */
-    public T convertFromXml(File file){
-        return converter.convertFromXml(file,schema);
-    }
     
     /**
-     * Funkcija za vracanje bean-a u odnosu na dokument.
+    * Funkcija za vracanje bean-a u odnosu na dokument.
      * @param document
      * @return
      */
     public T getBeanByDocument(Document document)
     {
     	return databaseManager.getBeanByDocument(document);
+    }
+
+    /**
+     * Konvertovanje fajla u jaxb bean.
+     */
+    public T convertFromXml(File file){
+        return converter.convertFromXml(file,schema);
     }
 
     /**

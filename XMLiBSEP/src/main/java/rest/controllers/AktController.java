@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import securityPackage.SessionHandler;
@@ -52,11 +53,11 @@ import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
+
 import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
-
 import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
@@ -65,6 +66,8 @@ import dto.UserDto;
 @RestController
 @RequestMapping(value = "/akt/")
 public class AktController {
+	
+	private String docIdForArchiv;
 	
 	@RequestMapping(method = RequestMethod.GET)//AKT_DOC_ID
 	 public ResponseEntity getProposedAndApprovedActs() {
@@ -191,7 +194,9 @@ public class AktController {
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
-		retVal = new ResponseEntity(HttpStatus.OK);
+		Document doc = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
+		
+		retVal = new ResponseEntity(doc, HttpStatus.OK);
 		return retVal;
 		
     }
@@ -366,8 +371,6 @@ public class AktController {
     	referencedAktsMap.putAll(usvojeniPojedinosti);
     	referencedAktsMap.putAll(usvojeniCelosti);
 		
-		//List<String> referencedAkts = new ArrayList<>();
-		//referencedAkts.t
 		List<String> referencedAkts = new ArrayList<>();
 		
 		
