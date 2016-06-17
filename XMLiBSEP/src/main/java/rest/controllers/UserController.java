@@ -35,9 +35,10 @@ import model.Amandman;
 import model.Korisnici;
 import model.TKorisnik;
 import password.PasswordStorage;
+import securityPackage.SessionHandler;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/user/")
 public class UserController {
 	
 	
@@ -223,20 +224,11 @@ public class UserController {
 		 httpHeaders.setAccept(acceptList);
 	   */
 		
-		if(req.getSession().getAttribute("user")==null){
-			
-			retVal = new ResponseEntity(null,HttpStatus.OK);
-			return retVal;
-			
-		}	
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+		}
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
-		
-		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-		}
 		
 		String username = userOnSession.getKorisnickoIme();
 		
@@ -277,10 +269,4 @@ public class UserController {
 		
 		return retVal;
 	}
-	
-	
-	
-	
-	
-
 }

@@ -24,6 +24,7 @@ import dto.AmandmanDto;
 import dto.UserDto;
 import model.Akt;
 import model.Amandman;
+import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/amandman/")
@@ -56,7 +57,12 @@ public class AmandmanController {
 	@RequestMapping(value = "/addAmandman/", method = RequestMethod.POST)
 	public ResponseEntity addAmandman(@RequestBody Amandman amandman, HttpServletRequest req){
 		
-		ResponseEntity retVal; 
+		ResponseEntity retVal;
+		
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+			return retVal;
+		}
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		String username = userOnSession.getKorisnickoIme();
@@ -83,20 +89,12 @@ public class AmandmanController {
 		
 		ResponseEntity retVal; 
 		
-		if(req.getSession().getAttribute("user")==null){
-			
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_ODBORNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
 			return retVal;
-			
 		}	
 		
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
-		
-		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		if(userOnSession.getUloga().equals(Role.ULOGA_PREDSEDNIK)){
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-		}
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		bm.deleteDocument(amandmanId);
@@ -128,7 +126,7 @@ public class AmandmanController {
 	}
 	
 	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
-	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
+	public ResponseEntity searchAmandmanByTag(@RequestBody AktSearchDto tagAndContent) {
 		
 		String tagName = tagAndContent.getTagName();
 		String content = tagAndContent.getContent();

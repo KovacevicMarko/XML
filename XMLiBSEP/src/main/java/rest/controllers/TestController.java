@@ -54,8 +54,8 @@ public class TestController {
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
 	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-//		InitializeAmandman();
-//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+	InitializeAmandman();
+		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -272,7 +272,7 @@ public class TestController {
 		
 		
 		TTekstIzmene textImetodIzmene5 = new TTekstIzmene();
-		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stav.");
+		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stavic.");
 		textImetodIzmene5.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
 		
 		stav.setIzmenaStava(textImetodIzmene5);
@@ -290,13 +290,13 @@ public class TestController {
 		
 		//Kreiranje glave i dodavanje clana
 		GlavaAmandman glavaAmandmana = new GlavaAmandman();
-		glavaAmandmana.setOznakaGlave("glava1");
+		glavaAmandmana.setOznakaGlave("glava2");
 		glavaAmandmana.getClanAmandman().add(clanAmandnam);
 		
 		//Kreiranje sadrzaja amandmana i dodavanje glave.
 		TSadrzajAmandmana sadrzajAmandmana = new TSadrzajAmandmana();
-		sadrzajAmandmana.setNazivAkta("Akt1");
-		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana");
+		sadrzajAmandmana.setNazivAkta("3611083535794987444.xml");
+		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana DRUGI");
 		sadrzajAmandmana.setPredmetIzmene("Predmet izmene amandmana");
 		sadrzajAmandmana.getGlavaAmandman().add(glavaAmandmana);
 		

@@ -1,13 +1,14 @@
 package dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class AktApproveDto {
+public class AktApproveDto implements Serializable {
 	
 	private String aktId;
-	private ArrayList<String> amandmanIds;
+	private List<String> amandmanIds;
 	private int numberOfAmandmans;
-	private int numberOfApprovedAmandmans;
 	
 	public int getNumberOfAmandmans() {
 		return numberOfAmandmans;
@@ -15,14 +16,6 @@ public class AktApproveDto {
 
 	public void setNumberOfAmandmans(int numberOfAmandmans) {
 		this.numberOfAmandmans = numberOfAmandmans;
-	}
-
-	public int getNumberOfApprovedAmandmans() {
-		return numberOfApprovedAmandmans;
-	}
-
-	public void setNumberOfApprovedAmandmans(int numberOfApprovedAmandmans) {
-		this.numberOfApprovedAmandmans = numberOfApprovedAmandmans;
 	}
 
 	public AktApproveDto() {
@@ -37,11 +30,11 @@ public class AktApproveDto {
 		this.aktId = aktId;
 	}
 
-	public ArrayList<String> getAmandmanIds() {
+	public List<String> getAmandmanIds() {
 		return amandmanIds;
 	}
 
-	public void setAmandmanIds(ArrayList<String> amandmanIds) {
+	public void setAmandmanIds(List<String> amandmanIds) {
 		this.amandmanIds = amandmanIds;
 	}
 	
