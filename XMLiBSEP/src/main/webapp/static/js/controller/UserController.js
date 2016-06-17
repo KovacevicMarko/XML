@@ -10,6 +10,10 @@
 	  		$state.go('main');
 	  	}
 	  	
+	  	var onError = function(response){
+	  		alert('Error');
+	  	}
+	  	
 	  	$scope.register = function(){
 	  		
 	  		if($scope.lozinka2!==$scope.user.lozinka){
