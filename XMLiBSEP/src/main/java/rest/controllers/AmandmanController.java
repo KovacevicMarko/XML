@@ -13,9 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +26,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import model.Akt;
+import model.Amandman;
+import model.TOdbornik;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -44,18 +46,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-
+import securityPackage.SessionHandler;
 import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
+
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import common.DatabaseConnection;
 import common.Role;
+
 import dto.AktSearchDto;
-import dto.AmandmanDto;
 import dto.UserDto;
-import model.Akt;
-import model.Amandman;
-import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/amandman/")
@@ -99,6 +99,14 @@ public class AmandmanController {
 		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Amandman> bm = new BeanManager<>("Schema/Amandman.xsd");
+		
+		TOdbornik odbornik = new TOdbornik();
+		odbornik.setIme(userOnSession.getIme());
+		odbornik.setPrezime(userOnSession.getPrezime());
+		odbornik.setUsername(username);
+		odbornik.setStranka("Stranka");
+		
+		amandman.setPredlagacAmandmana(odbornik);
 		
 		boolean isWritingFailed = false;
 		

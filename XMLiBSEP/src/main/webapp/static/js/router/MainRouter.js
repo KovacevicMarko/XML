@@ -55,7 +55,20 @@
               //controller: ''
             }
         }            
-        })/*
+        })
+        .state('register', {
+        	url: '/register',
+        	views: {
+        		content: {
+                    templateUrl: '/XMLiBSEP/static/content/signUp.jsp',
+                    controller: 'UserController'
+                }
+        	}
+        })
+     
+        
+        
+        /*
         .state('task', {
             url: '/projects/:projectId/tasks/:taskId',
             views: {

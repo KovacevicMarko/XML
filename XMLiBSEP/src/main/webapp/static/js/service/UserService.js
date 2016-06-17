@@ -19,6 +19,21 @@
 				//alert(username+"\n"+password)
 				
 				},
+		    
+		    register: function(onSuccess,onError,user){
+					
+		    	var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/user/register/",
+		                headers: {
+		                     'Content-Type': "application/json"
+		                         },
+		                data: user
+		            }	
+
+				$http(req).then(onSuccess, onError);
+		    	
+		    },
 		    logOut : function (onSuccess,onError) {
 		    	
 		    	var req = {

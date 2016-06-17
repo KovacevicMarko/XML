@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.websystique.springmvc</groupId>
-	<artifactId>BSEPiXML</artifactId>
+	<artifactId>IstorijskiArhiv</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
-	<name>BSEPiXML Maven Webapp</name>
+	<name>IstorijskiArhiv</name>
 
 	<properties>
 		<springframework.version>4.2.0.RELEASE</springframework.version>
@@ -231,6 +231,6 @@
 			</plugins>
 		</pluginManagement>
 
-		<finalName>BSEPiXML</finalName>
+		<finalName>IstorijskiArhiv</finalName>
 	</build>
 </project>
