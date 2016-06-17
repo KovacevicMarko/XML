@@ -20,20 +20,28 @@
 				
 				},
 		    
-		    createUser: function(user){
-					return $http.post('/XMLiBSEP/user/', user)
-							.then(
-									function(response){
-										return response.data;
-									}, 
-									function(errResponse){
-										console.error('Error while creating user');
-										return $q.reject(errResponse);
-									}
-							);
+		    register: function(onSuccess,onError,user){
+					
+		    	var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/user/register/",
+		                headers: {
+		                     'Content-Type': "application/json"
+		                         },
+		                data: user
+		            }	
+
+				$http(req).then(onSuccess, onError);
+		    	
 		    },
 		    logOut : function (onSuccess,onError) {
 		    	
+		    	var req = {
+		                method : "GET",
+		                url: "/XMLiBSEP/user/logOut/"
+		            }	
+
+				$http(req).then(onSuccess, onError);
 		    }
 		};
 

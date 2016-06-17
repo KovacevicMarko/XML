@@ -1,6 +1,57 @@
-<div class="container">
-	<div class="row">
-		<div ng-controller="AktController">
+<div class="container" ng-controller="AktController" ng-init="getAkts()">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Svi akti</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th align="center" colspan="2">Usvojeni akti</th>
+						</tr>
+						<tr>
+							<th>ID akta</th>
+							<th>Detalji o aktu</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="akt in usvojeniAktovi">
+							<td>{{akt.id}}</td>
+							<td><button ng-click="getAktById(akt.id)"
+									class="btn btn-info">Opsirnije</button>
+								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
+									Generisi PDF</button></td>
+						</tr>
+						<tr>
+							<th align="center" colspan="2">Predlozeni akti</th>
+						</tr>
+						<tr>
+							<th>ID akta</th>
+							<th>Detalji o aktu</th>
+						</tr>
+						<tr ng-repeat="akt in predlozeniAktovi">
+							<td>{{akt.id}}</td>
+							<td><button ng-click="getAktById(akt.id)"
+									class="btn btn-info">Opsirnije</button>
+								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
+									Generisi PDF</button></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div ng-bind-html="aktHTML"></div>
+
+	<div ng-show="showPdf" style="width: 100%; height: 600px;">
+		<embed ng-src="{{content}}" style="width: 100%; height: 600px"></embed>
+	</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div>
+		<div >
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -30,11 +81,30 @@
 							</div>
 							<input type="submit" class="btn btn-info" />
 						</form>
+
+						<div>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID akta</th>
+										<th>Detalji</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="akt in filtriraniAktovi">
+										<td>{{akt}}</td>
+										<td><button ng-click="getAktById(akt)"
+												class="btn btn-info">Opsirnije</button></td>
+									</tr>
+								</tbody>
+							</table>
+							<div ng-bind-html="aktHTML"></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div ng-controller="AmandmanController">
+		<!-- <div ng-controller="AmandmanController">
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -65,30 +135,9 @@
 				</div>
 			</div>
 		</div>
+		-->
 	</div>
-	<div class="row col-md-6">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Usvojeni akti</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>ID akta</th>
-							<th>Naziv akta</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="akt in akts">
-							<td>{{akt.id}}</td>
-							<td>{{akt.naziv}}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
+
 </div>
 
 <!-- <div ng-if="user.uloga=='ODBORNIK' || user.uloga=='PREDSEDNIK'" ng-include="'static/content/home_odb.jsp'"></div>-->

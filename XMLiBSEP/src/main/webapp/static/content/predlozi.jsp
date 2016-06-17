@@ -45,7 +45,7 @@
 										</thead>
 										<tbody>
 											<tr ng-repeat="amandman in akt.amandmani">
-												<td>{{amandman.naziv}}</td>
+												<td>{{amandman.naziv}} {{amandman.predlagac}}</td>
 												<td><button ng-show="true" class="btn btn-danger">Povuci
 														amandman</button></td>
 											</tr>
