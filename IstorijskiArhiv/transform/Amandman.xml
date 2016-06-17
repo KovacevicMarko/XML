@@ -1,0 +1,24 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<Amandman xsi:schemaLocation="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<PravniOsnov>Pravni osnov1</PravniOsnov>
+<PredlagacAmandmana>
+<Ime>odbornikIme</Ime>
+<Prezime>odbornikPrezime</Prezime>
+<Stranka>odbornikStranka</Stranka>
+<Username>odbornikUsername</Username>
+</PredlagacAmandmana>
+<SadrzajAmandmana NazivAkta="Akt1">
+<GlavaAmandman OznakaGlave="glava1">
+<ClanAmandman OznakaClana="clan1">
+<StavAmandman OznakaStava="stav1">
+<IzmenaStava>
+<IzmenaSadrzaja>Brisemo stav iz Akta</IzmenaSadrzaja>
+<TipIzmene>Brisanje</TipIzmene>
+</IzmenaStava>
+</StavAmandman>
+</ClanAmandman>
+</GlavaAmandman>
+<PredmetIzmene>Predmet izmene amandmana</PredmetIzmene>
+<CiljIzmene>Cilj izmene amandmana</CiljIzmene>
+</SadrzajAmandmana>
+</Amandman>

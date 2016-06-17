@@ -424,7 +424,7 @@ public class TestController {
 		pzo.setPredlagac(odbornik);
 		
 		Akt akt = new Akt();
-		akt.setNazivAkt("Akt2");
+		akt.setNazivAkt("Akt2222222222");
 		akt.setPreambula("Preambula2");
 		
 		akt.getDeo().add(deo);
