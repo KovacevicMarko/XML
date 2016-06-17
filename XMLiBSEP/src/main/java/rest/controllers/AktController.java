@@ -56,6 +56,7 @@ import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
 
+import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
 import dto.UserDto;
@@ -114,31 +115,25 @@ public class AktController {
 		
 	}
 	
-	@RequestMapping(value="/approve/", method = RequestMethod.GET)
-	 //public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
-		public ResponseEntity approveAkt() {
+	@RequestMapping(value="/approve/", method = RequestMethod.POST)
+	public ResponseEntity approveAkt(@RequestBody AktApproveDto dto,HttpServletRequest req) {
 	 
 		ResponseEntity retVal;
 		 
-		//if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_PREDSEDNIK)){
-		//	retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
-		//	return retVal;
-		//}
+		if(!SessionHandler.isValidSession(req.getSession(), Role.ULOGA_PREDSEDNIK)){
+			retVal = new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
+			return retVal;
+		}
 		
-		/*String aktId = dto.getAktId();
+		String aktId = dto.getAktId();
 		System.out.println(aktId);
 		List<String> amandmanIds = dto.getAmandmanIds();
-		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();*/
-		
-		String aktId = "1082855909737227691.xml";
-		int numberOfProposedAmandmans = 1;
-		List<String> amandmanIds = new ArrayList<String>();
-		amandmanIds.add("2571930459973688753.xml");
+		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();
 			
-		//UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
+		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
-		//String username = userOnSession.getKorisnickoIme();
-		String username = "jocko";
+		String username = userOnSession.getKorisnickoIme();
+		//String username = "jocko";
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
 		
