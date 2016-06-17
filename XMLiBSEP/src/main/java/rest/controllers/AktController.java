@@ -215,7 +215,7 @@ public class AktController {
 		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(docId, true);
+		Akt akt = bm.read(docId+".xml", true);
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
 		List<Amandman> amandmansForAkt = bhm.getAmandmansForAkt(akt);
