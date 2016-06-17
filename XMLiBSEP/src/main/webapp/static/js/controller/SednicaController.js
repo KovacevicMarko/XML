@@ -19,8 +19,8 @@
 		}
 		
 		var onApproveSuccess = function(response) {
-			//var forArhiv = response.data;
-			//SednicaService.sendToArhiv(forArhiv, onSendArhivSuccess, onError);
+			var forArhiv = response.data;
+			SednicaService.sendToArhiv(forArhiv, onSendArhivSuccess, onError);
 			alert("Usvojen");
 		}
 		
