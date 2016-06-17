@@ -122,6 +122,7 @@ public class AktController {
 		//}
 		
 		String aktId = dto.getAktId();
+		System.out.println(aktId);
 		List<String> amandmanIds = dto.getAmandmanIds();
 		int numberOfProposedAmandmans = dto.getNumberOfAmandmans();
 			
@@ -136,9 +137,10 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId, true);
+		System.out.println("Id akta" + akt.getId());
 		
 		Akt newAkt=null;
-		
+		System.out.println("Usao u izmenu.");
 		List<Amandman> amandmani;
 		
 		if(!amandmanIds.isEmpty()){
@@ -146,7 +148,7 @@ public class AktController {
 			amandmani = bhm.getAmandmansFromIds(amandmanIds);
 			ApproveAmandmanOnAct appClass = new ApproveAmandmanOnAct<>(akt);
 			
-			
+			System.out.println("Usao");
 			bm.writeDocument(akt, DatabaseConnection.AKT_BACKUP_COL_ID, true, username);
 				
 				//Update akt and write amandman into approved
@@ -182,7 +184,7 @@ public class AktController {
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, true, username);
 		}
 		
-		retVal = new ResponseEntity(bhm.getProposedAktsAndAmans(),HttpStatus.OK);
+		retVal = new ResponseEntity(HttpStatus.OK);
 		return retVal;
 		
     }
@@ -262,7 +264,7 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/searchByTag/", method = RequestMethod.GET)
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
 	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
 		
 		String tagName = tagAndContent.getTagName();
@@ -285,7 +287,7 @@ public class AktController {
 	}
 	
 	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
-	 public ResponseEntity getAktbyId(@RequestBody String data) {//String data
+	public ResponseEntity getAktbyId(@RequestBody String data) {//String data
 		
 	        TransformerFactory factory = TransformerFactory.newInstance();
 	        Source xslt = new StreamSource(new File("transform/akt.xsl"));
@@ -323,8 +325,6 @@ public class AktController {
 	        }
 	        return new ResponseEntity(HttpStatus.BAD_REQUEST);
 	 }
-	
-	
 	
 	@RequestMapping(value = "/findReferences/", method = RequestMethod.POST)
 	public ResponseEntity findReferences(@RequestBody AktSearchRefDto aktRefDto){

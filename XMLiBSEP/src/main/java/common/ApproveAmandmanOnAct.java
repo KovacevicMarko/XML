@@ -291,6 +291,7 @@ public class ApproveAmandmanOnAct<T>
 	private TClan getClanOnAct(String oznakaClana)
 	{
 		TClan retVal = null;
+		System.out.println(this.akt);
 		for(TDeo deo : this.akt.getDeo())
 		{
 			for(TDeo.Glava glava : deo.getGlava())

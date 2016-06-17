@@ -21,10 +21,18 @@ public class BeanHelperMethods {
 		List<Amandman> allAmandmans = bm.executeQuery(CommonQueries.getAllProposedAmandmans());
 		List<Amandman> amandmansForAkt = new ArrayList<>(); 
 		
+		//Mora biti prosledjen id akta bez xml-a.
 		String idAkta = akt.getId();
+		if(idAkta.endsWith(".xml")){
+			idAkta = idAkta.split("\\.")[0];
+		}
 		
 		for(Amandman amandman : allAmandmans){
-			if(amandman.getSadrzajAmandmana().getNazivAkta().equals(idAkta)){
+			String s = amandman.getSadrzajAmandmana().getNazivAkta();
+			if(s.endsWith(".xml")){
+				s = s.split("\\.")[0];
+			}
+			if(s.equals(idAkta)){
 				amandmansForAkt.add(amandman);
 			}
 		}
@@ -55,11 +63,12 @@ public class BeanHelperMethods {
 		
 		List<Amandman> amandmans = new ArrayList<>();
 		
-		for(String id : ids){
-			Amandman am = bm.read(id, true);
-			amandmans.add(am);
+		for(int i = 0; i<ids.size(); i++){
+				Amandman am = bm.read(ids.get(i), true);
+				amandmans.add(am);
 		}
 		
+		System.out.println("Broj pronadjenih" + amandmans.size());
 		return amandmans;
 		
 	}

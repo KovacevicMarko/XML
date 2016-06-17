@@ -54,8 +54,8 @@ public class TestController {
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
 	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-//		InitializeAmandman();
-//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+		InitializeAmandman();
+		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -253,7 +253,7 @@ public class TestController {
 		
 		//Kreiranje sadrzaja amandmana i dodavanje glave.
 		TSadrzajAmandmana sadrzajAmandmana = new TSadrzajAmandmana();
-		sadrzajAmandmana.setNazivAkta("Akt1");
+		sadrzajAmandmana.setNazivAkta("17022191320588718142");
 		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana");
 		sadrzajAmandmana.setPredmetIzmene("Predmet izmene amandmana");
 		sadrzajAmandmana.getGlavaAmandman().add(glavaAmandmana);
