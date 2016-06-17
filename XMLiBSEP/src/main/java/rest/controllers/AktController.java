@@ -37,6 +37,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import securityPackage.SessionHandler;
@@ -51,11 +53,11 @@ import businessLogic.BeanHelperMethods;
 import businessLogic.BeanManager;
 
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
+
 import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
 import common.Role;
-
 import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
@@ -64,6 +66,8 @@ import dto.UserDto;
 @RestController
 @RequestMapping(value = "/akt/")
 public class AktController {
+	
+	private String docIdForArchiv;
 	
 	@RequestMapping(method = RequestMethod.GET)//AKT_DOC_ID
 	 public ResponseEntity getProposedAndApprovedActs() {
@@ -101,7 +105,7 @@ public class AktController {
 		
 		boolean isWritingFailed = false;
 		
-		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
 			isWritingFailed = true;
 		}
 		
@@ -140,7 +144,7 @@ public class AktController {
 		BeanManager<Amandman> bmAmandman = new BeanManager<>("Schema/Amandman.xsd");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
+		Akt akt = bm.read(aktId+".xml", true);
 		System.out.println("Id akta" + akt.getId());
 		
 		akt.setSignature(null);
@@ -190,7 +194,9 @@ public class AktController {
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
-		retVal = new ResponseEntity(HttpStatus.OK);
+		Document doc = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
+		
+		retVal = new ResponseEntity(doc, HttpStatus.OK);
 		return retVal;
 		
     }
@@ -234,8 +240,8 @@ public class AktController {
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
-		bm.deleteDocument(aktId);
+		Akt akt = bm.read(aktId+".xml", true);
+		bm.deleteDocument(aktId+".xml");
 		
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
@@ -299,7 +305,7 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.POST)
 	public ResponseEntity getAktbyId(@RequestBody String data) {//String data
 		
 	        TransformerFactory factory = TransformerFactory.newInstance();
@@ -307,11 +313,11 @@ public class AktController {
 	        try {
 	            Transformer transformer = factory.newTransformer(xslt);
 	            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-	            Akt akt=bm.read(data, true);
+	            Akt akt=bm.read(data+".xml", true);
 	            bm.convertToXml(akt);
 	            
 	            Source text = new StreamSource(new File("tmp.xml"));
-	            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+	            transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
 	        } catch (TransformerConfigurationException e) {
 	            e.printStackTrace();
 	        } catch (TransformerException e) {
@@ -328,9 +334,10 @@ public class AktController {
 	                akt+=line;
 	            }
 	            System.out.println(akt);
-
-
-	            return new ResponseEntity(akt,HttpStatus.OK);
+	            
+	            JSONObject obj = new JSONObject();
+	            obj.put("akt", akt);
+	            return new ResponseEntity(obj.toString(),HttpStatus.OK);
 	        } catch (FileNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (IOException e) {
@@ -364,8 +371,6 @@ public class AktController {
     	referencedAktsMap.putAll(usvojeniPojedinosti);
     	referencedAktsMap.putAll(usvojeniCelosti);
 		
-		//List<String> referencedAkts = new ArrayList<>();
-		//referencedAkts.t
 		List<String> referencedAkts = new ArrayList<>();
 		
 		
@@ -397,7 +402,7 @@ public class AktController {
         	e.printStackTrace();
         }
         response.setContentType("application/pdf");
-        try (InputStream is = new FileInputStream(new File("Akt.pdf"))){
+        try (InputStream is = new FileInputStream(new File("akt.pdf"))){
             org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
@@ -409,7 +414,7 @@ public class AktController {
 	
 	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 	public void generatePdf(String docId) throws Exception{
-		docId="3847327626572118583"+".xml";
+		//docId="3847327626572118583"+".xml";
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
         Akt akt=bm.read(docId, true);
         bm.convertToXml(akt);

@@ -15,6 +15,7 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 import javax.crypto.SecretKey;
 import javax.xml.bind.JAXBContext;
@@ -66,7 +67,6 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.StringQueryDefinition;
-import common.DatabaseConnection;
 import common.JaxbXmlConverter;
 import common.ValidationXmlSchema;
 
@@ -76,7 +76,7 @@ import common.ValidationXmlSchema;
  *
  */
 public class DatabaseManager<T> {
-
+	
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
     private XMLDocumentManager xmlManager;
@@ -128,13 +128,6 @@ public class DatabaseManager<T> {
     		if (signFlag &&!singXml(null, username)) 
     		{
                 throw  new Exception("Could not sign xml, check tmp.xml.");
-            }
-        	
-    		String tmpColId = DatabaseConnection.AKT_ENCRYPT_COL_ID;
-    		
-            if (colId.equals(tmpColId) && !encriptContent(username))
-            {
-                throw  new Exception("Could not encrypt xml, check tmp.xml.");
             }
             
             InputStreamHandle handle = new InputStreamHandle(inputStream);
@@ -253,8 +246,9 @@ public class DatabaseManager<T> {
         }
     }
     
-    public boolean writeDocumentToArchive(T bean, String colId)
+    public Document getEncryptedDocForArchive(T bean, String username, String colId)
     {
+    	Document retValue = null;
     	if (converter.ConvertJaxbToXml(bean))
     	{
     		FileInputStream inputStream = null;
@@ -264,6 +258,18 @@ public class DatabaseManager<T> {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+    		
+    		if (!singXml(null, username)) 
+    		{
+    			System.out.println("Ne moze da se potpise dokument.");
+    			return null;
+            }
+    		
+            if (!encriptContent(username))
+            {
+            	System.out.println("Ne moze da se kriptuje dokument.");
+    			return null;
+            }
     		
     		InputStreamHandle handle = new InputStreamHandle(inputStream);
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -275,20 +281,29 @@ public class DatabaseManager<T> {
             	docId = ((Amandman) bean).getId();
             }else{
             	System.out.println("Ne validan bean!");
-            	return false;
+            	return retValue;
+            }
+            
+            if(docId == null || docId.isEmpty())
+            {
+            	Random rand = new Random();
+            	docId = Integer.toString(rand.nextInt(Integer.MAX_VALUE));
             }
 
-            xmlManager.write(docId+".xml",metadata,handle);
-    		
-    		/*DocumentUriTemplate template = xmlManager.newDocumentUriTemplate("xml");
-            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-            metadata.getCollections().add(colId);
-            InputStreamHandle handle = new InputStreamHandle(inputStream);
-            xmlManager.create(template,metadata, handle);*/
+            xmlManager.write(docId,metadata,handle);
             
-            return true;
+            DocumentMetadataHandle metadataRead = new DocumentMetadataHandle();
+            // A handle to receive the document's content.
+            DOMHandle content = new DOMHandle();
+            xmlManager.read(docId, metadataRead, content);
+            
+            retValue = content.get();
+            
+            xmlManager.delete(docId);
+
+            return retValue;
     	}
-    	return false;
+    	return retValue;
     }
     
     /**
@@ -660,16 +675,18 @@ public class DatabaseManager<T> {
             
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
-            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
-    		{
-            	System.out.println("Sertifikat je istekao!");
-            	return false;
-    		}
+            
             if (crlVerifier.isRevoked(cert))
             {
             	System.out.println("Sertifikat je povucen.");
             	return false;
             }
+            
+            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
+    		{
+            	System.out.println("Sertifikat je istekao!");
+            	return false;
+    		}
             document = signEnveloped.signDocument(document,pk,cert);
             signEnveloped.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
             ret = true;

@@ -56,7 +56,7 @@
 		                headers: {
 		                     'Content-Type': "text/plain"
 		                         },
-		                data : aktId+".xml"
+		                data : aktId
 		            }
 				$http(req).then(onSuccess, onError);
 			},

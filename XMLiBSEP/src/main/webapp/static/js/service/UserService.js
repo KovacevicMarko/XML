@@ -36,6 +36,12 @@
 		    },
 		    logOut : function (onSuccess,onError) {
 		    	
+		    	var req = {
+		                method : "GET",
+		                url: "/XMLiBSEP/user/logOut/"
+		            }	
+
+				$http(req).then(onSuccess, onError);
 		    }
 		};
 

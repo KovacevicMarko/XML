@@ -24,6 +24,7 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509CRL;
+import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
@@ -97,13 +98,13 @@ public class CRL {
           char[] password="sgns".toCharArray();
           
           X509Certificate cert = null;
-          X509Certificate certBurni = null;
+          X509Certificate certPera = null;
           
           try {
               if(ks.isKeyEntry("sgns")) {
                   ret = (PrivateKey)ks.getKey("sgns", password);
                   cert = (X509Certificate) ks.getCertificate("sgns");
-                  certBurni = (X509Certificate) ks.getCertificate("burni");
+                  certPera = (X509Certificate) ks.getCertificate("pera");
               }
           } catch (KeyStoreException e) {
               System.out.println("[ERROR] Can't initialize.");
@@ -125,11 +126,10 @@ public class CRL {
 		  }
           cert.getSerialNumber();
           X509v2CRLBuilder crlBuilder = new X509v2CRLBuilder(rootName,now);
-          
 
-          crlBuilder.addCRLEntry(cert.getSerialNumber(), update, CRLReason.privilegeWithdrawn);
-          crlBuilder.addExtension(X509Extensions.AuthorityKeyIdentifier,false,new AuthorityKeyIdentifierStructure(cert));
-          crlBuilder.addExtension(X509Extensions.CRLNumber,false,new CRLNumber(certBurni.getSerialNumber()));
+          crlBuilder.addCRLEntry(certPera.getSerialNumber(), update, CRLReason.privilegeWithdrawn);
+          //crlBuilder.addExtension(X509Extensions.AuthorityKeyIdentifier,false,new AuthorityKeyIdentifierStructure(certBurni));
+          //crlBuilder.addExtension(X509Extensions.CRLNumber,false,new CRLNumber(certBurni.getSerialNumber()));
  
           JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
             //koji provider se koristi
@@ -151,9 +151,7 @@ public class CRL {
           {
 			  e.printStackTrace();
 		  }
-          
-     
-  
+            
           return crl;
 	}
 	
