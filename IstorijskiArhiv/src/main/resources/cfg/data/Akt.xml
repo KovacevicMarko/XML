@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Akt xsi:schemaLocation="http://www.gradskaskupstina.rs/" xmlns="http://www.gradskaskupstina.rs/" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Preambula>Preambula44211
+</Preambula>
+<Naziv>Ajmo Kocko
+</Naziv>
+<Deo Naziv="deo1" Oznaka="oznaka1">
+<Glava Naziv="glava1" Oznaka="glava1">
+<Sadrzaj>
+<Clan Oznaka="clan1">
+<Stav Oznaka="stav1">
+<Sadrzaj>
+<Tekst>Sadrzaj stava o donosenju akta.
+</Tekst>
+<Tacka Oznaka="Tacka1">
+<Sadrzaj>
+<Tekst>Sadrzaj tacke o donosenju akta.
+</Tekst>
+<Alineja Oznaka="Alineja1">
+<Sadrzaj>Sadrzaj alineje o donosenju akta.
+</Sadrzaj>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+<Tacka Oznaka="Tacka2">
+<Sadrzaj>
+<Tekst>Sadrzaj tacke o donosenju akta.
+</Tekst>
+<Alineja Oznaka="Alineja1">
+<Sadrzaj>Sadrzaj alineje o donosenju akta.
+</Sadrzaj>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+</Sadrzaj>
+</Stav>
+</Clan>
+</Sadrzaj>
+</Glava>
+<Glava Naziv="glava2" Oznaka="glava2">
+<Sadrzaj>
+<Clan Oznaka="clan1">
+<Stav Oznaka="stav1">
+<Sadrzaj>
+<Tekst>Sadrzaj stava o donosenju akta.
+</Tekst>
+<Tacka Oznaka="Tacka1">
+<Sadrzaj>
+<Tekst>Sadrzaj tacke o donosenju akta.
+</Tekst>
+<Alineja Oznaka="Alineja1">
+<Sadrzaj>Sadrzaj alineje o donosenju akta.
+</Sadrzaj>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+<Tacka Oznaka="Tacka2">
+<Sadrzaj>
+<Tekst>Sadrzaj tacke o donosenju akta.
+</Tekst>
+<Alineja Oznaka="Alineja1">
+<Sadrzaj>Sadrzaj alineje o donosenju akta.
+</Sadrzaj>
+</Alineja>
+</Sadrzaj>
+</Tacka>
+</Sadrzaj>
+</Stav>
+</Clan>
+</Sadrzaj>
+</Glava>
+</Deo>
+<PrelazneIZavrsneOdredbe>
+<Predlagac>
+<Ime>odbornikIme
+</Ime>
+<Prezime>odbornikPrezime
+</Prezime>
+<Stranka>odbornikStranka
+</Stranka>
+</Predlagac>
+<Datum>2016-06-12T18:32:51.936+02:00
+</Datum>
+</PrelazneIZavrsneOdredbe>
+</Akt>
