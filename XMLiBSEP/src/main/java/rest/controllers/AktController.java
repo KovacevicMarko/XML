@@ -309,7 +309,7 @@ public class AktController {
 	}
 	
 	
-	 @RequestMapping(value="/downloadAkt1/{fileName}",
+	 @RequestMapping(value="/downloadAkt/{fileName}",
 	            method=RequestMethod.POST)
 	    public void downloadPDF(HttpServletRequest request,
 	                           HttpServletResponse response,
