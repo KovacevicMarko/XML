@@ -194,8 +194,13 @@ public class UserController {
 			
 			// Dodavanje registrovanog usera na sessiju, da automatski bude
 			// ulogovan.
-			request.getSession().setAttribute("user", newUser);
-			retVal = new ResponseEntity(newUser, HttpStatus.OK);
+			
+			UserDto userForResponse = UserFactory.createUserDto(newUser);
+			
+			request.getSession().setAttribute("user", userForResponse);
+			retVal = new ResponseEntity(userForResponse, HttpStatus.OK);
+			
+			
 			// Dodavanje novog usera u listu svih
 			users.getKorisnik().add(newUser);
 			// Persistencija
