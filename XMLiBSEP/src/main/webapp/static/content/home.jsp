@@ -18,7 +18,7 @@
 					<tbody>
 						<tr ng-repeat="akt in usvojeniAktovi">
 							<td>{{akt.id}}</td>
-							<td>{{akt.naziv}}</td>
+							<td>{{akt.nazivAkt}}</td>
 						</tr>
 						<tr>
 							<th align="center" colspan="2">Predlozeni akti</th>
@@ -29,7 +29,7 @@
 						</tr>
 						<tr ng-repeat="akt in predlozeniAktovi">
 							<td>{{akt.id}}</td>
-							<td>{{akt.naziv}}</td>
+							<td>{{akt.nazivAkt}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -92,39 +92,46 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div ng-controller="AmandmanController">
+	</div>
+	
+	<div>
+		<div >
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h3 class="panel-title">
-							<strong>Pretrazivanje amandmana</strong>
+							<strong>Pretrazivanje akata po referenci</strong>
 						</h3>
 					</div>
-
-					<div class="panel-body">
-						<form ng-submit="searchAmandman()">
-							<div class="form-group">
-								<label>Filter po tagu (opciono):</label> <select
-									ng-model="amandmanSearch.tag">
-									<option></option>
-									<option value="pravniOsnov">Pravni Osnov</option>
-									<option value="predlagac">Predlagac</option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="sadrzaj">Sadrzaj:</label><br />
-								<textarea id="sadrzaj" ng-model="amandmanSearch.sadrzaj"
-									rows="5" cols="50"></textarea>
-							</div>
-							<input type="submit" class="btn btn-info" />
-						</form>
-					</div>
+					
+					<div class="form-group">
+      					  <label for="chooseProject">Choose project:</label>
+        						<select ng-change="getReferences()" id="chooseProject" ng-options="a.nazivAkt for a in usvojeniAktovi" ng-model="p">
+         						   <option></option>    
+        						</select>    
+   					 </div>
+   					 
+   					 <div>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID akta</th>
+										<th>Detalji</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="aktId in referencedActs">
+										<td>{{aktId}}</td>
+										<td><button ng-click="getAktById(akt)"
+												class="btn btn-info">Opsirnije</button></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 				</div>
 			</div>
-		</div>
-		-->
-	</div>
+		</div>		
+	</div>									
 
 </div>
 

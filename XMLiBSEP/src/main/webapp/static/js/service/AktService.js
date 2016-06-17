@@ -87,6 +87,18 @@
 		                data : aktId
 		            }
 				$http(req).then(onSuccess, onError);
+			},
+			
+			getReferences : function (onSuccess, onError,aktId) {
+				var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/akt/findReferences/",
+		                headers: {
+		                     'Content-Type': "application/json"
+		                         },
+		                data : {aktId : aktId+".xml" ,approved : true}
+		            }
+				$http(req).then(onSuccess, onError);
 			}
 		};
 

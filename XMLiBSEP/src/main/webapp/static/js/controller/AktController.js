@@ -42,6 +42,16 @@
 				AktService.searchAktByTag($scope.aktSearch, onFilterSuccess, onError);
 			}
 		};
+		
+		var onGetReferencesSuccess = function(response){
+			alert("Usao");
+			$scope.referencedActs = response.data;
+		}
+		
+		$scope.getReferences = function(){
+			AktService.getReferences(onGetReferencesSuccess,onError,$scope.p.id);
+		}
+		
 		var onAddSuccess = function(response) {
 			$rootScope.predlozeniAktovi.push(response.data);
 			$scope.clearInputs();

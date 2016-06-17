@@ -23,11 +23,29 @@ public class CommonQueries
 	/*
 	 * Vrati sve usvojene akte.
 	 */
-	public static String getAllApprovedActs()
+	public static String getAllApprovedNaceloActs()
 	{
 		StringBuilder query = new StringBuilder();
 	    query.append("fn:collection(\"");
-	    query.append(DatabaseConnection.AKT_USVOJEN_COL_ID);
+	    query.append(DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID);
+	    query.append("\")");
+		return query.toString();
+	}
+	
+	public static String getAllApprovedCelostiActs()
+	{
+		StringBuilder query = new StringBuilder();
+	    query.append("fn:collection(\"");
+	    query.append(DatabaseConnection.AKT_USVOJEN_CELOSTI_COL_ID);
+	    query.append("\")");
+		return query.toString();
+	}
+	
+	public static String getAllApprovedPojedinostiActs()
+	{
+		StringBuilder query = new StringBuilder();
+	    query.append("fn:collection(\"");
+	    query.append(DatabaseConnection.AKT_USVOJEN_POJEDINOSTI_COL_ID);
 	    query.append("\")");
 		return query.toString();
 	}

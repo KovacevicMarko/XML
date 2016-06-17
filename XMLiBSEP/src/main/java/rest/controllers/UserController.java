@@ -128,8 +128,14 @@ public class UserController {
 	public ResponseEntity register(HttpServletRequest request, @RequestBody UserDto user) {
 		
 		
-		ResponseEntity retVal = new ResponseEntity("Person with this username already exist!",
+		ResponseEntity retVal = new ResponseEntity(
 				HttpStatus.NOT_ACCEPTABLE);
+		
+		if(!HelperClass.isValidPassword(user.getLozinka()) || !HelperClass.isValidEmail(user.getEmail()))
+		{
+			return retVal;
+		}
+			
 
 		BeanManager<Korisnici> bm = new BeanManager<>("Schema/Korisnici.xsd");
 

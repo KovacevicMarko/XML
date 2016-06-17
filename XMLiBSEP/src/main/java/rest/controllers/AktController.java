@@ -29,9 +29,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import model.Akt;
-import model.Amandman;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -48,12 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import securityPackage.SessionHandler;
-import businessLogic.BeanHelperMethods;
-import businessLogic.BeanManager;
-
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 
+import businessLogic.BeanHelperMethods;
+import businessLogic.BeanManager;
 import common.ApproveAmandmanOnAct;
 import common.CommonQueries;
 import common.DatabaseConnection;
@@ -62,6 +57,9 @@ import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
 import dto.UserDto;
+import model.Akt;
+import model.Amandman;
+import securityPackage.SessionHandler;
 
 @RestController
 @RequestMapping(value = "/akt/")
@@ -75,9 +73,30 @@ public class AktController {
 		 ResponseEntity retVal;
 		 
 		 BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		  
+		 BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
+		 BeanManager<Akt> bm2 = new BeanManager<>("Schema/Akt.xsd");
+		 BeanManager<Akt> bm3 = new BeanManager<>("Schema/Akt.xsd");
+		 
+		 
 	     ArrayList<Akt> aktiPredlozeni=bm.executeQuery(CommonQueries.getAllProposedActs());
-	     ArrayList<Akt> aktiUsvojeni = bm.executeQuery(CommonQueries.getAllApprovedActs());
+	     
+	     ArrayList<Akt> aktiUsvojeniNacelo = bm1.executeQuery(CommonQueries.getAllApprovedNaceloActs());
+	     ArrayList<Akt> aktiUsvojeniPojedinosti = bm2.executeQuery(CommonQueries.getAllApprovedPojedinostiActs());
+	     ArrayList<Akt> aktiUsvojeniCelosti = bm3.executeQuery(CommonQueries.getAllApprovedCelostiActs());
+	     
+	     ArrayList<Akt> aktiUsvojeni = new ArrayList<Akt>();
+	     
+	   
+	     
+	     if(aktiUsvojeniNacelo!=null){
+	    	 aktiUsvojeni.addAll(aktiUsvojeniNacelo);
+	     }
+	     if(aktiUsvojeniPojedinosti!=null){
+	    	 aktiUsvojeni.addAll(aktiUsvojeniPojedinosti);
+	     }
+	     if(aktiUsvojeniCelosti!=null){
+	    	 aktiUsvojeni.addAll(aktiUsvojeniCelosti);
+	     }
 	     
 	     HashMap<String,ArrayList<Akt>> akti = new HashMap<String,ArrayList<Akt>>();
 	     
@@ -147,6 +166,8 @@ public class AktController {
 		Akt akt = bm.read(aktId+".xml", true);
 		System.out.println("Id akta" + akt.getId());
 		
+		Akt oldAkt = akt;
+		
 		akt.setSignature(null);
 		
 		Akt newAkt=null;
@@ -192,6 +213,12 @@ public class AktController {
 			akt.setSignature(null);
 			bm.deleteDocument(aktId);
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
+		}
+		
+		List<Amandman> amandmansForDelete =  bhm.getAmandmansForAkt(oldAkt);
+		
+		for(Amandman amandman : amandmansForDelete){
+			bm.deleteDocument(amandman.getId()+".xml");
 		}
 		
 		Document doc = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
@@ -240,6 +267,9 @@ public class AktController {
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
+		if(aktId.endsWith(".xml")){
+			aktId = aktId.split("\\.")[0];
+		}
 		Akt akt = bm.read(aktId+".xml", true);
 		bm.deleteDocument(aktId+".xml");
 		
@@ -248,7 +278,7 @@ public class AktController {
 		List<Amandman> amandmans =  bhm.getAmandmansForAkt(akt);
 		
 		for(Amandman amandman : amandmans){
-			bm.deleteDocument(amandman.getId());
+			bm.deleteDocument(amandman.getId()+".xml");
 		}
 		
 		HashMap<String, List<?>> proposedAktsAndAmans = bhm.getProposedAktsAndAmans();
