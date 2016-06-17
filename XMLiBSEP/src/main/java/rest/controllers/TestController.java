@@ -64,13 +64,13 @@ public class TestController {
 //	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
 //		InitializeAmandman();
 //		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
-//		InitializeAktEncrypt();
+		InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
 	
 //		DeleteActs();
 		
-		sendToArchive();
+//		sendToArchive();
 		
 		return "Ajmo Kocko";
 	}
@@ -344,7 +344,7 @@ public class TestController {
 		Akt akt = createAkt();
 		
 		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true,"jocko")){
+		if(bm1.write(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID,  DatabaseConnection.AKT_ENCRYPT_COL_ID, true, "pera")){
 			System.out.println("Uspesno zapisan enkriptovan akt");
 		}else{
 			System.out.println("Ne uspesno zapisan enkriptovan akt");

@@ -157,7 +157,7 @@ public class AktController {
 					newAkt = appClass.approveAmandmanOnAkt(am.getSadrzajAmandmana().getGlavaAmandman(), akt);
 					akt = newAkt;
 					
-					bmAmandman.deleteDocument(am.getId());
+					bmAmandman.deleteDocument(am.getId() + ".xml");
 					bmAmandman.writeDocument(am, DatabaseConnection.AMANDMAN_USVOJEN_COL_ID, true, username);
 					
 				}

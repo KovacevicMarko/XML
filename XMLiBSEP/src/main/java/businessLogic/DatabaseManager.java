@@ -660,16 +660,18 @@ public class DatabaseManager<T> {
             
             PrivateKey pk = signEnveloped.readPrivateKey();
             Certificate cert = signEnveloped.readCertificate();
-            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
-    		{
-            	System.out.println("Sertifikat je istekao!");
-            	return false;
-    		}
+            
             if (crlVerifier.isRevoked(cert))
             {
             	System.out.println("Sertifikat je povucen.");
             	return false;
             }
+            
+            if(!crlVerifier.checkCertValidity((X509Certificate)cert))
+    		{
+            	System.out.println("Sertifikat je istekao!");
+            	return false;
+    		}
             document = signEnveloped.signDocument(document,pk,cert);
             signEnveloped.saveDocument(document, INPUT_OUTPUT_TMP_FILE);
             ret = true;
