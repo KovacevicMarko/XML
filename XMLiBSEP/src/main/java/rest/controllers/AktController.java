@@ -19,6 +19,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -62,6 +66,7 @@ import common.Role;
 import dto.AktApproveDto;
 import dto.AktSearchDto;
 import dto.AktSearchRefDto;
+import dto.ArhivDto;
 import dto.UserDto;
 
 @RestController
@@ -154,6 +159,9 @@ public class AktController {
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
 		Akt akt = bm.read(aktId+".xml", true);
+		
+		Document dcc = bm.read(false, aktId+".xml");
+		
 		System.out.println("Id akta" + akt.getId());
 		
 		akt.setSignature(null);
@@ -183,7 +191,7 @@ public class AktController {
 				}
 				
 				//Delete akt from predlozeni collection
-				bm.deleteDocument(aktId);
+				bm.deleteDocument(aktId+".xml");
 				akt.setSignature(null);
 				//Writing into new collection
 				if(amandmani.size()<numberOfProposedAmandmans)
@@ -199,13 +207,21 @@ public class AktController {
 		else
 		{
 			akt.setSignature(null);
-			bm.deleteDocument(aktId);
+			bm.deleteDocument(aktId+".xml");
 			bm.writeDocument(akt, DatabaseConnection.AKT_USVOJEN_NACELO_COL_ID, false, username);
 		}
 		
-		Document doc = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
+		Document docum = bm.getEncryptedDocForArchive(akt, username, DatabaseConnection.AKT_ENCRYPT_COL_ID);
 		
-		retVal = new ResponseEntity(doc, HttpStatus.OK);
+		File file = new File("tmp.xml");
+		
+		JSONObject json = new JSONObject();
+		json.put("doc", docum);
+		
+		ArhivDto dtoArhiv = new ArhivDto();
+		dtoArhiv.setDoc(docum);
+		
+		retVal = new ResponseEntity(dtoArhiv, HttpStatus.OK);
 		return retVal;
 		
     }
