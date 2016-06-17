@@ -246,10 +246,10 @@ public class AktController {
 		File file = new File("tmp.xml");
 		
 		JSONObject json = new JSONObject();
-		json.put("doc", docum);
+		json.put("doc", doc);
 		
 		ArhivDto dtoArhiv = new ArhivDto();
-		dtoArhiv.setDoc(docum);
+		dtoArhiv.setDoc(doc);
 		
 		retVal = new ResponseEntity(dtoArhiv, HttpStatus.OK);
 		return retVal;
