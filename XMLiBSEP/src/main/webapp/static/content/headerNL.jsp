@@ -6,7 +6,7 @@
 		<ul class="nav navbar-nav">
 			<li ng-class="{ active : isActive('login') }"><a ui-sref="login">Login page</a></li>
 		</ul>
-		<form ng-controller="UserController" ng-submit="logIn()" class="navbar-form navbar-right">
+		<form ng-submit="logIn()" class="navbar-form navbar-right">
 			<div class="form-group">
 				<input type="text" ng-model="username" class="form-control" name="username" placeholder="Username">
 			</div>

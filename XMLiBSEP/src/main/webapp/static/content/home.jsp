@@ -30,6 +30,25 @@
 							</div>
 							<input type="submit" class="btn btn-info" />
 						</form>
+						
+						<div>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>ID akta</th>
+										<th>Detalji</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="akt in filtriraniAktovi">
+										<td>{{akt}}</td>
+										<td><button ng-click="getAktById(akt)"
+									class="btn btn-info">Opsirnije</button></td>
+									</tr>
+								</tbody>
+							</table>
+							<div ng-bind-html="aktHTML"></div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -19,13 +19,13 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat-start="akt in predlozeniAktovi"class="accordion-toggle">
-							<td>{{akt.nazivAkta}}</td>
+							<td>{{akt.nazivAkt}}</td>
 							<td>
 							<!-- <input ng-init="usvojeniAktovi['akt_'+akt.id] = false" ng-model="usvojeniAktovi['akt_'+akt.id]"type="checkbox" /> -->
 									<button data-toggle="collapse"
 							data-target="#aman{{$index}}" class="btn btn-info">Amandmani</button>
 							<span style="float:right">
-								<button ng-click="approve(akt.id)" class="btn btn-info">Usvajanje</button>
+								<button ng-click="approve(akt)" class="btn btn-info">Usvajanje</button>
 								<button class="btn btn-danger">Odbijanje</button>
 							</span>
 							</td>

@@ -64,7 +64,7 @@ public class BeanHelperMethods {
 		List<Amandman> amandmans = new ArrayList<>();
 		
 		for(int i = 0; i<ids.size(); i++){
-				Amandman am = bm.read(ids.get(i), true);
+				Amandman am = bm.read(ids.get(i)+".xml", true);
 				amandmans.add(am);
 		}
 		

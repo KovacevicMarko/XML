@@ -97,7 +97,7 @@ public class AktController {
 		
 		boolean isWritingFailed = false;
 		
-		if(bm.writeDocument(akt, DatabaseConnection.AKT_ENCRYPT_DOC_ID, true, username)==null){
+		if(bm.writeDocument(akt, DatabaseConnection.AKT_PREDLOZEN_COL_ID, true, username)==null){
 			isWritingFailed = true;
 		}
 		
@@ -136,7 +136,7 @@ public class AktController {
 		BeanManager<Amandman> bmAmandman = new BeanManager<>("Schema/Amandman.xsd");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
+		Akt akt = bm.read(aktId+".xml", true);
 		System.out.println("Id akta" + akt.getId());
 		
 		Akt newAkt=null;
@@ -228,8 +228,8 @@ public class AktController {
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(aktId, true);
-		bm.deleteDocument(aktId);
+		Akt akt = bm.read(aktId+".xml", true);
+		bm.deleteDocument(aktId+".xml");
 		
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
@@ -286,7 +286,7 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.POST)
 	public ResponseEntity getAktbyId(@RequestBody String data) {//String data
 		
 	        TransformerFactory factory = TransformerFactory.newInstance();
@@ -294,7 +294,7 @@ public class AktController {
 	        try {
 	            Transformer transformer = factory.newTransformer(xslt);
 	            BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-	            Akt akt=bm.read(data, true);
+	            Akt akt=bm.read(data+".xml", true);
 	            bm.convertToXml(akt);
 	            
 	            Source text = new StreamSource(new File("tmp.xml"));
@@ -381,7 +381,7 @@ public class AktController {
         	e.printStackTrace();
         }
         response.setContentType("application/pdf");
-        try (InputStream is = new FileInputStream(new File("Akt.pdf"))){
+        try (InputStream is = new FileInputStream(new File("akt.pdf"))){
             org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
@@ -393,7 +393,7 @@ public class AktController {
 	
 	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 	public void generatePdf(String docId) throws Exception{
-		docId="3847327626572118583"+".xml";
+		//docId="3847327626572118583"+".xml";
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
         Akt akt=bm.read(docId, true);
         bm.convertToXml(akt);

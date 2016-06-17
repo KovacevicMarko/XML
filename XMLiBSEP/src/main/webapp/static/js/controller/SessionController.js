@@ -3,7 +3,7 @@
 	
 	app.controller(
          
-    'SessionController',function($scope,$rootScope, $state, SessionService,AktService) {
+    'SessionController',function($scope,$rootScope, $state, SessionService,UserService) {
         
 		var onSuccess = function(response){	  
 			console.log(response.data);
@@ -31,16 +31,25 @@
 			   onSuccess
 			   ,onError);
   		};
-         
-  		
-  		var onGetSuccess = function(response) {
-			$scope.predlozeniAktovi	= response.data.aktiPredlozeni ? response.data.aktiPredlozeni : [];
-  		};
-		
-	  	$scope.getAkts = function () {
-	  		AktService.getAkts(onGetSuccess, onError);
+           	
+		$scope.logIn = function(){
+			UserService.logIn(
+				   $scope.username, 
+				   $scope.password, 
+				   onSuccess
+				   ,onError);
+	  	};
+	  	
+	  	var onLogOutSuccess = function(response) {
+	  		$rootScope.user = null;
+	  		$state.go('login');
 	  	}
-  		
+	  	
+	  	$scope.logOut = function() {
+	  		UserService.logOut(onLogOutSuccess,onError);
+	  	}
+	  	
+	  	
 		 return $scope.authenticate();
     });
 }());
