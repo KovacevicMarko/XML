@@ -6,16 +6,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
 
 import businessLogic.BeanManager;
-import common.ApproveAmandmanOnAct;
 import common.DatabaseConnection;
 import common.Role;
 import enums.TTipIzmeneEnum;
@@ -27,11 +29,9 @@ import model.PrelazneIZavrsneOdredbe;
 import model.TClan;
 import model.TClan.Stav;
 import model.TClanAmandnam;
-import model.TClanAmandnam.StavAmandman.TackaAmandman;
 import model.TDeo;
 import model.TKorisnik;
 import model.TOdbornik;
-import model.TReferenca;
 import model.TSadrzajAmandmana;
 import model.TSadrzajAmandmana.GlavaAmandman;
 import model.TSadrzajGlave;
@@ -54,8 +54,8 @@ public class TestController {
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
 	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-	InitializeAmandman();
-		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+//		InitializeAmandman();
+//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -65,22 +65,11 @@ public class TestController {
 		return "Ajmo Kocko";
 	}
 	
-	private void readAct()
-	{
-		BeanManager<Akt> bm1 = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm1.read("16450434468119619897.xml", false);
-		System.out.println("******************" + akt.getId());
-		
+	@RequestMapping(value="/test", method=RequestMethod.POST)
+	public ResponseEntity test() {
 		BeanManager<Amandman> bm2 = new BeanManager("Schema/Amandman.xsd");
-		Amandman amandman = bm2.read("11513499627483176774.xml", false);
-		
-		ApproveAmandmanOnAct approve = new ApproveAmandmanOnAct<>(akt);
-		Akt akt2 = approve.approveAmandmanOnAkt(amandman.getSadrzajAmandmana().getGlavaAmandman(), akt);
-		System.out.println(akt2.getNazivAkt());
-		
-		
-		BeanManager<Akt> bm12 = new BeanManager<>("Schema/Akt.xsd");
-		bm12.writeDocument(akt2, DatabaseConnection.AKT_USVOJEN_COL_ID, true, "jocko");
+		Document doc = bm2.read(false,"188319238602227807.xml");
+		return new ResponseEntity(doc,HttpStatus.OK);
 	}
 	
 	private void DeleteActs()
@@ -244,59 +233,28 @@ public class TestController {
 	
 	private void InitializeAmandman()
 	{
-		TackaAmandman tacka = new TackaAmandman();
-		tacka.setOznakaTacke("tacka1");
-		TTekstIzmene textImetodIzmene3 = new TTekstIzmene();
-		textImetodIzmene3.setIzmenaSadrzaja("Brisemo tacku iz Akta");
-		textImetodIzmene3.setTipIzmene(TTipIzmeneEnum.Brisanje.toString());
-		tacka.setIzmenaTacke(textImetodIzmene3);
-		
-		TTekstIzmene textImetodIzmene4 = new TTekstIzmene();
-		textImetodIzmene4.setIzmenaSadrzaja("Menjamo tekst iz tacke.");
-		textImetodIzmene4.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
-		
-		TackaAmandman tacka2 = new TackaAmandman();
-		tacka2.setOznakaTacke("tacka2");
-		tacka2.setIzmenaTacke(textImetodIzmene4);
-		
-		
 		//kreiranje stav amandmana
 		TClanAmandnam.StavAmandman stav = new TClanAmandnam.StavAmandman();
 		stav.setOznakaStava("stav1");
 		TTekstIzmene textImetodIzmene = new TTekstIzmene();
-		textImetodIzmene.setIzmenaSadrzaja("Brisemo stav iz Akta");
-		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
-		//stav.setIzmenaStava(textImetodIzmene);
-		stav.getTackaAmandman().add(tacka);
-		stav.getTackaAmandman().add(tacka2);
-		
-		
-		TTekstIzmene textImetodIzmene5 = new TTekstIzmene();
-		textImetodIzmene5.setIzmenaSadrzaja("Dodajemo tacku u stavic.");
-		textImetodIzmene5.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
-		
-		stav.setIzmenaStava(textImetodIzmene5);
-		
-		
+		textImetodIzmene.setIzmenaSadrzaja("Predlog izmene iznosa navednom u ovom stavu se menja sa  150 na 120.");
+		textImetodIzmene.setTipIzmene(TTipIzmeneEnum.Izmena.toString());
+		stav.setIzmenaStava(textImetodIzmene);
 		
 		//Kreiranje clana i dodavanje stava na njega.
 		TClanAmandnam clanAmandnam = new TClanAmandnam();
 		clanAmandnam.setOznakaClana("clan1");
-		TTekstIzmene textImetodIzmene2 = new TTekstIzmene();
-		textImetodIzmene2.setIzmenaSadrzaja("Dodajemo novi stav u clan");
-		textImetodIzmene2.setTipIzmene(TTipIzmeneEnum.Dodavanje.toString());
-		//clanAmandnam.setIzmenaClana(textImetodIzmene2);
 		clanAmandnam.getStavAmandman().add(stav);
 		
 		//Kreiranje glave i dodavanje clana
 		GlavaAmandman glavaAmandmana = new GlavaAmandman();
-		glavaAmandmana.setOznakaGlave("glava2");
+		glavaAmandmana.setOznakaGlave("glava1");
 		glavaAmandmana.getClanAmandman().add(clanAmandnam);
 		
 		//Kreiranje sadrzaja amandmana i dodavanje glave.
 		TSadrzajAmandmana sadrzajAmandmana = new TSadrzajAmandmana();
-		sadrzajAmandmana.setNazivAkta("3611083535794987444.xml");
-		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana DRUGI");
+		sadrzajAmandmana.setNazivAkta("Akt1");
+		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana");
 		sadrzajAmandmana.setPredmetIzmene("Predmet izmene amandmana");
 		sadrzajAmandmana.getGlavaAmandman().add(glavaAmandmana);
 		
@@ -347,11 +305,6 @@ public class TestController {
 		sadrzajTacke.getAlineja().add(alineja);
 		TTekst text = new TTekst();
 		text.setTekst("Text tacke.");
-		
-		TReferenca referenca1 = new TReferenca();
-		referenca1.setRefAkt("15169449515975435548.xml");
-		referenca1.setRefClan("Clan1");
-		text.getReferenca().add(referenca1);
 		sadrzajTacke.setTekstTacka(text);
 		
 		Tacka tacka = new Tacka();
@@ -368,17 +321,6 @@ public class TestController {
 		TTekst text2 = new TTekst();
 		text2.setTekst("Sadrzaj stava o donosenju akta");
 		
-		TReferenca referenca2 = new TReferenca();
-		referenca2.setRefAkt("16450434468119619897.xml");
-		referenca2.setRefClan("Clan1");
-		
-		TReferenca referenca1dupla = new TReferenca();
-		referenca1dupla.setRefAkt("15169449515975435548.xml");
-		referenca1dupla.setRefClan("Clan2");
-		
-		text2.getReferenca().add(referenca2);
-		text2.getReferenca().add(referenca1dupla);
-		
 		sadrzajStava.setTekstStav(text2);
 		sadrzajStava.getTacka().add(tacka);	
 		sadrzajStava.getTacka().add(tacka2);
@@ -387,14 +329,9 @@ public class TestController {
 		stav.setOznakaStav("stav1");
 		stav.setSadrzaj(sadrzajStava);
 		
-		Stav stav2 = new Stav();
-		stav2.setOznakaStav("stav2");
-		stav2.setSadrzaj(sadrzajStava);
-		
 		TClan clan = new TClan();
 		clan.setOznakaClan("clan1");
 		clan.getStav().add(stav);
-		clan.getStav().add(stav2);
 		
 		
 		TSadrzajGlave sadrzajGlave = new TSadrzajGlave();
@@ -426,7 +363,7 @@ public class TestController {
 		pzo.setPredlagac(odbornik);
 		
 		Akt akt = new Akt();
-		akt.setNazivAkt("AktReferencaTest");
+		akt.setNazivAkt("Akt2");
 		akt.setPreambula("Preambula2");
 		
 		akt.getDeo().add(deo);

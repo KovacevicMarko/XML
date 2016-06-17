@@ -73,7 +73,7 @@ public class SearchManager
 
 
             locations = result.getMatchLocations();
-            System.out.println("Broj lokacija: "+ locations.length);
+
 
             for (MatchLocation location : locations) 
             {
