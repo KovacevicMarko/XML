@@ -1,10 +1,10 @@
 (function(){
 	var app = angular.module("MyApp");
 	
-	var AktController = function($scope, $rootScope, $window,AktService) {
+	var AktController = function($scope, $rootScope, $sce, $window,AktService) {
 		
 		$scope.predlozeniAktovi	=[];
-		
+		$scope.aktHTML = "";
 		var onSuccess = function(response){	  
 			console.log(response.data);
 			/*if(response.data.success==true){
@@ -72,12 +72,31 @@
 	  	}
 	  	
 	  	var onGetAktSuccess = function (response) {
-	  		console.log(response.data);
+	  		$scope.aktHTML = response.data.akt;
 	  	};
 	  	
 	  	$scope.getAktById = function(idAkt) {
 	  		AktService.getAktById(idAkt,onGetAktSuccess, onError);
 	  	}
+	  	
+	  	$scope.generate = function(id){
+
+            AktService.generate(
+                    id,
+                    function(response){
+                        console.log("ODGOVOR SA PDF-OM");
+                        console.log(response);
+                        var file = new Blob([response.data], {type: 'application/pdf'});
+                        var fileURL = URL.createObjectURL(file);
+                        $scope.showPdf = true;
+                        $scope.content = $sce.trustAsResourceUrl(fileURL);
+                    },
+                    function(response){
+
+                    }
+                 );
+     }
+	  	
     }
 	
 	app.controller('AktController', AktController);

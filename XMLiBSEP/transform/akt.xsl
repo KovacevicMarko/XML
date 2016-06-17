@@ -2,8 +2,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns2="http://www.gradskaskupstina.rs/">
 
 <xsl:template match="/">
-  <html>
-  <body>
   Preambula:<xsl:value-of select="ns2:Akt/ns2:Preambula"/>  <br></br><br></br>
   Akt:<b> <xsl:value-of select="ns2:Akt/ns2:NazivAkt"/> </b>	<br></br><br></br>
 
@@ -52,8 +50,6 @@
   	  
   <b>Predlagac: </b> &#160; <xsl:value-of select="ns2:Akt/ns2:PrelazneIZavrsneOdredbe/ns2:Predlagac/ns2:Ime"/> &#160; <xsl:value-of select="ns2:Akt/ns2:PrelazneIZavrsneOdredbe/ns2:Predlagac/ns2:Prezime"/> (<xsl:value-of select="ns2:Akt/ns2:PrelazneIZavrsneOdredbe/ns2:Predlagac/ns2:Stranka"/>)	<br></br>  
   	 U Novom Sadu,  <xsl:value-of select="ns2:Akt/ns2:PrelazneIZavrsneOdredbe/ns2:Datum"/>
-  </body>
-  </html>
 </xsl:template>
 </xsl:stylesheet>
 

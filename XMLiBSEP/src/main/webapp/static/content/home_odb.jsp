@@ -28,7 +28,10 @@
 									class="btn btn-danger">Povuci akt</button></td>
 							<td><button class="btn btn-default accordion-toggle"
 									data-toggle="collapse" data-target="#aman{{$index}}">Amandmani</button></td>
-							<td><button ng-click="getAktById(akt.id)" class="btn btn-info">Opsirnije</button></td>
+							<td><button ng-click="getAktById(akt.id)"
+									class="btn btn-info">Opsirnije</button>
+								<button type="submit" class="btn btn-info" ng-click="generate(akt.id)">
+									Generisi PDF</button></td>
 						</tr>
 						<tr ng-repeat-end>
 							<td colspan="4" class="hiddenRow">
@@ -96,38 +99,14 @@
 			</form>
 		</div>
 	</div>
+	<div ng-bind-html="aktHTML"></div>
 
+	<div ng-show="showPdf" style="width: 100%; height: 600px;">
+		<embed ng-src="{{content}}" style="width: 100%; height: 600px"></embed>
+	</div>
 </div>
 
 <div ng-controller="AmandmanController">
-
-	<div class="col-md-6">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title">Predlozeni amandmani</h3>
-			</div>
-			<div class="panel-body">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Naziv akta</th>
-							<th>Naziv amandmana</th>
-							<th>Povlacenje amandmana</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="amandman in amandmans">
-							<td>{{amandman.akt.naziv}}</td>
-							<td>{{amandman.naziv}}</td>
-							<td><button ng-show="true" class="btn btn-danger">Povuci
-									amandman</button></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
-		</div>
-	</div>
 
 	<div class="modal fade" id="ModalAddAmandman" role="dialog">
 		<div class="modal-dialog">
@@ -158,3 +137,6 @@
 		</div>
 	</div>
 </div>
+
+
+

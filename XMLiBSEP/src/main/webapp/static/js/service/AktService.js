@@ -62,14 +62,20 @@
 			},
 			getAktById : function (aktId, onSuccess, onError) {
 				var req = {
-		                method : "GET",
+		                method : "POST",
 		                url: "/XMLiBSEP/akt/getAktById/",
 		                headers: {
-		                     'Content-Type': "text/plain"
+		                     'Content-Type': "text/html"
 		                         },
 		                data : aktId
 		            }
 				$http(req).then(onSuccess, onError);
+			},
+			generate:function(aktId, onSuccess, onError){
+
+	            $http.post('/XMLiBSEP/akt/downloadAkt/'+aktId,{}, {responseType:'arraybuffer'})
+	                .then(onSuccess,onError);
+
 			}
 		};
 

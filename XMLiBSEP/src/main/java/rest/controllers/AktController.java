@@ -32,6 +32,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import businessLogic.BeanHelperMethods;
+
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;import businessLogic.BeanManager;
 import common.CommonQueries;
 import common.DatabaseConnection;
@@ -264,15 +267,13 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/getAktById/", method = RequestMethod.GET)
-	public ResponseEntity getAktbyId(String data) {//@RequestBody String data
+	@RequestMapping(value = "/getAktById/", method = RequestMethod.POST)
+	public ResponseEntity getAktbyId(@RequestBody String data) {//@RequestBody String data
 		//data="15169449515975435548"+".xml";
+		data += ".xml";
         System.out.println("ID je : "+data);
         TransformerFactory factory = TransformerFactory.newInstance();
         Source xslt = new StreamSource(new File("transform/akt.xsl"));
-        if(xslt==null){
-            System.out.println("xslt = null");
-        }
         try {
             Transformer transformer = factory.newTransformer(xslt);
             BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
@@ -280,7 +281,7 @@ public class AktController {
             bm.convertToXml(akt);
             
             Source text = new StreamSource(new File("tmp.xml"));
-            transformer.transform(text, new StreamResult(new File("transform/tmp.html")));
+            transformer.transform(text, new StreamResult(new File("transform/tmp.html").getPath()));
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
@@ -297,9 +298,10 @@ public class AktController {
                 akt+=line;
             }
             System.out.println(akt);
-
-
-            return new ResponseEntity(akt,HttpStatus.OK);
+            JSONObject obj = new JSONObject();
+            obj.put("akt", akt);
+            
+            return new ResponseEntity<String>(obj.toString(),HttpStatus.OK);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -309,7 +311,7 @@ public class AktController {
 	}
 	
 	
-	 @RequestMapping(value="/downloadAkt1/{fileName}",
+	 @RequestMapping(value="/downloadAkt/{fileName}",
 	            method=RequestMethod.POST)
 	    public void downloadPDF(HttpServletRequest request,
 	                           HttpServletResponse response,
@@ -322,7 +324,7 @@ public class AktController {
 				e.printStackTrace();
 			}
 	        response.setContentType("application/pdf");
-	        try (InputStream is = new FileInputStream(new File("Akt.pdf"))){
+	        try (InputStream is = new FileInputStream(new File("transform/akt.pdf"))){
 	            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
 	            response.flushBuffer();
 	        } catch (IOException ex) {
@@ -335,7 +337,7 @@ public class AktController {
 	
 	 //@RequestMapping(value="/downloadAkt/", method=RequestMethod.GET)
 	public void generatePdf(String docId) throws Exception{
-		docId="3847327626572118583"+".xml";
+		//docId+=".xml";
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
         Akt akt=bm.read(docId, true);
         bm.convertToXml(akt);
