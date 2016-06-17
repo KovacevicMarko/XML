@@ -50,12 +50,12 @@ public class TestController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String Initialize()
 	{
-		InitializeKorisnik();
+		//InitializeKorisnik();
 //		System.out.println("USPESNO INIZIJALIZOVAN KORISNIK!");
 //		InitializeAkt();
-	    System.out.println("USPESNO INIZIJALIZOVAN AKT!");
-//		InitializeAmandman();
-//		System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
+	    //System.out.println("USPESNO INIZIJALIZOVAN AKT!");
+		InitializeAmandman();
+	System.out.println("USPESNO INIZIJALIZOVAN AMANDMAN!");
 		//InitializeAktEncrypt();
 //		System.out.println("USPESNO INIZIJALIZOVAN AKT ENKRIPT!");
 //		TestReadAkt();
@@ -253,7 +253,7 @@ public class TestController {
 		
 		//Kreiranje sadrzaja amandmana i dodavanje glave.
 		TSadrzajAmandmana sadrzajAmandmana = new TSadrzajAmandmana();
-		sadrzajAmandmana.setNazivAkta("Akt1");
+		sadrzajAmandmana.setNazivAkta("13436614696972791144");
 		sadrzajAmandmana.setCiljIzmene("Cilj izmene amandmana");
 		sadrzajAmandmana.setPredmetIzmene("Predmet izmene amandmana");
 		sadrzajAmandmana.getGlavaAmandman().add(glavaAmandmana);

@@ -76,6 +76,17 @@
 	            $http.post('/XMLiBSEP/akt/downloadAkt/'+aktId,{}, {responseType:'arraybuffer'})
 	                .then(onSuccess,onError);
 
+			},
+			getAmandmansForAktId : function (aktId, onSuccess, onError) {
+				var req = {
+		                method : "POST",
+		                url: "/XMLiBSEP/akt/getAmandmansForAktId/",
+		                headers: {
+		                     'Content-Type': "text/html"
+		                         },
+		                data : aktId
+		            }
+				$http(req).then(onSuccess, onError);
 			}
 		};
 

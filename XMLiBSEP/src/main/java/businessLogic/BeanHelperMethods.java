@@ -23,6 +23,7 @@ public class BeanHelperMethods {
 		String idAkta = akt.getId();
 		
 		for(Amandman amandman : allAmandmans){
+			if (amandman == null) continue;
 			if(amandman.getSadrzajAmandmana().getNazivAkta().equals(idAkta)){
 				amandmansForAkt.add(amandman);
 			}

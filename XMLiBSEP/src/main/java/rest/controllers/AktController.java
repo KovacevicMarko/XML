@@ -167,17 +167,11 @@ public class AktController {
 		 }	
 			
 		UserDto userOnSession = (UserDto) req.getSession().getAttribute("user");
-			
-		//PROVERA DA SAMO ODBORNIK MOZE DA TRAZI OVU FUNKCIONALNOST.
-		if(userOnSession.getUloga().equals(Role.ULOGA_ODBORNIK)){
-			retVal = new ResponseEntity(null,HttpStatus.BAD_REQUEST);
-			return retVal;
-		}
 		
 		String username = userOnSession.getKorisnickoIme();
 		
 		BeanManager<Akt> bm = new BeanManager<>("Schema/Akt.xsd");
-		Akt akt = bm.read(docId, true);
+		Akt akt = bm.read(docId+".xml", true);
 		
 		BeanHelperMethods bhm = new BeanHelperMethods();
 		List<Amandman> amandmansForAkt = bhm.getAmandmansForAkt(akt);
@@ -245,7 +239,7 @@ public class AktController {
 		return retVal;
 	}
 	
-	@RequestMapping(value = "/searchByTag/", method = RequestMethod.GET)
+	@RequestMapping(value = "/searchByTag/", method = RequestMethod.POST)
 	public ResponseEntity searchAktByTag(@RequestBody AktSearchDto tagAndContent) {
 		
 		String tagName = tagAndContent.getTagName();

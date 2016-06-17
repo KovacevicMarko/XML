@@ -18,14 +18,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat-start="akt in akts"class="accordion-toggle">
-							<td>{{akt.naziv}}</td>
+						<tr ng-repeat-start="akt in predlozeniAktovi"class="accordion-toggle">
+							<td>{{akt.nazivAkta}}</td>
 							<td>
 							<!-- <input ng-init="usvojeniAktovi['akt_'+akt.id] = false" ng-model="usvojeniAktovi['akt_'+akt.id]"type="checkbox" /> -->
 									<button data-toggle="collapse"
 							data-target="#aman{{$index}}" class="btn btn-info">Amandmani</button>
 							<span style="float:right">
-								<button class="btn btn-info">Usvajanje</button>
+								<button ng-click="approve(akt.id)" class="btn btn-info">Usvajanje</button>
 								<button class="btn btn-danger">Odbijanje</button>
 							</span>
 							</td>
@@ -38,13 +38,13 @@
 									class="table table-condensed">
 									<thead>
 										<tr>
-											<th>Naziv amandmana</th>
+											<th>Pravni osnov amandmana</th>
 											<th>Usvajanje amandmana</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr ng-repeat="amandman in akt.amandmani">
-											<td>{{amandman.naziv}}</td>
+											<td>{{amandman.pravniOsnov}}</td>
 											<td><input ng-init="usvojeniAmandmani['amandman_'+amandman.id] = false" ng-model="usvojeniAmandmani['amandman_'+amandman.id]" type="checkbox" /></td>
 										</tr>
 									</tbody>

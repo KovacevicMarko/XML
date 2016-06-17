@@ -29,7 +29,16 @@
 				   $scope.password, 
 				   onSuccess
 				   ,onError);
-	  		};
+	  	};
+	  	
+	  	var onLogOutSuccess = function(response) {
+	  		$rootScope.user = null;
+	  		$state.go('login');
+	  	}
+	  	
+	  	$scope.logOut = function() {
+	  		UserService.logOut(onLogOutSuccess,onError);
+	  	}
     }
 	
 	app.controller('UserController', UserController);

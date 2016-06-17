@@ -19,18 +19,6 @@
 				//alert(username+"\n"+password)
 				
 				},
-			fetchAllUsers: function() {
-					return $http.get('/XMLiBSEP/user/')
-							.then(
-									function(response){
-										return response.data;
-									}, 
-									function(errResponse){
-										console.error('Error while fetching users');
-										return $q.reject(errResponse);
-									}
-							);
-			},
 		    
 		    createUser: function(user){
 					return $http.post('/XMLiBSEP/user/', user)
@@ -44,33 +32,9 @@
 									}
 							);
 		    },
-		    
-		    updateUser: function(user, id){
-					return $http.put('/XMLiBSEP/user/'+id, user)
-							.then(
-									function(response){
-										return response.data;
-									}, 
-									function(errResponse){
-										console.error('Error while updating user');
-										return $q.reject(errResponse);
-									}
-							);
-			},
-			    
-				/*deleteUser: function(id){
-						return $http.delete('http://localhost:8080/Spring4MVCAngularJSExample/user/'+id)
-								.then(
-										function(response){
-											return response.data;
-										}, 
-										function(errResponse){
-											console.error('Error while deleting user');
-											return $q.reject(errResponse);
-										}
-								);
-				}*/
-			
+		    logOut : function (onSuccess,onError) {
+		    	
+		    }
 		};
 
 	});

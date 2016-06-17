@@ -12,7 +12,7 @@
                 controller: 'SessionController'
             },
             content: {
-              templateUrl: '/XMLiBSEP/static/content/home_gra.jsp',
+              templateUrl: '/XMLiBSEP/static/content/home.jsp',
               controller: 'MainController'
             }
         }
@@ -25,7 +25,7 @@
                 controller: 'SessionController'
             },
             content: {
-            	templateUrl: '/XMLiBSEP/static/content/home_gra.jsp',
+            	templateUrl: '/XMLiBSEP/static/content/home.jsp',
                 controller: 'MainController'
             }
         }            
@@ -43,19 +43,19 @@
             }
         }            
         })
-        /*.state('project',{//naziv stanja!
-        url: '/projects/:projectId',
+        .state('predlozi',{//naziv stanja!
+        url: '/predlozi',
         views: {
             header:{
-                templateUrl: 'header/headerL.html',
-                controller: 'AuthController'
+                templateUrl: '/XMLiBSEP/static/content/headerL.jsp',
+                controller: 'SessionController'
             },
             content: {
-              templateUrl: 'project/templates/project.html',
-              controller: 'ProjectController'
+              templateUrl: '/XMLiBSEP/static/content/predlozi.jsp',
+              //controller: ''
             }
         }            
-        })
+        })/*
         .state('task', {
             url: '/projects/:projectId/tasks/:taskId',
             views: {
